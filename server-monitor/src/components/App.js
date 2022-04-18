@@ -16,7 +16,7 @@ import {
 import Template from "./Template.js"
 import {format, set} from 'date-fns'
 import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
-
+import TempGraf from './TempGraf'
 export { CheckboxInt }
 
 
@@ -33,6 +33,7 @@ const Hlavni = ({ children }) => {
       os: 'debian',
   },])
   const [tempData, setTempData] = React.useState(null)
+  const [timeLine, setTimeLine] = React.useState('')
   const [tempData2, setTempData2] = React.useState({})
   const [oData, setoData] = React.useState(null)
   const [valuesList, setValuesList] = React.useState(['bit_rate_in','bit_rate_out','cpu','packet_rate_in','packet_rate_out','ram','tcp_established'])
@@ -66,7 +67,8 @@ const Hlavni = ({ children }) => {
         rangeData, setRangeData,
         dates, setDates,
         valuesList, setValuesList,
-        tempData, setTempData, tempData2, setTempData2 }}>
+        tempData, setTempData, tempData2, setTempData2,
+        timeLine, setTimeLine }}>
       {children}</CheckboxInt.Provider>)
 }
 
@@ -84,9 +86,25 @@ function Druhy({ children }) {
     rangeValue, setRangeValue,
     rangeData, setRangeData,
     dates, setDates, 
-    tempData, setTempData, tempData2, setTempData2
+    tempData, setTempData, tempData2, setTempData2, timeLine, setTimeLine
    } = context
 
+
+   function timeStamps() {
+     var timeArray = [];
+     for (var i = 60; i  > -1; i--) {
+       var secsToSub = i;
+       var time = new Date()
+      var newTime = new Date(time.getTime() - secsToSub * 1000)
+      format(newTime, 'yyyy-MM-dd kk:mm:ss')
+      timeArray.push(format(newTime, 'yyyy-MM-dd kk:mm:ss'));
+      }
+      setTimeLine(timeArray)
+  }
+
+
+
+   
   React.useEffect(() => //casovac na vteriny
   {
     const interval = setInterval(() => {setSeconds(seconds => seconds + 1)}, 1000)
@@ -95,18 +113,21 @@ function Druhy({ children }) {
 
 
   React.useEffect(() => {
+    timeStamps()
     getoDataStart()    
   }, [])
   
   React.useEffect(() => 
   {
     if(startStop){
+      timeStamps()
       getoDataUpdate()
     }
   }, [seconds])
 
   React.useEffect(() => 
   {
+    timeStamps()
     getoData()
   }, [rangeValue]) 
   
@@ -123,8 +144,7 @@ UPDATE_TEMP JE DOCASNA FUNKCE DO TE DOBY NEZ DOSTANU OD VEDOUCIHO SPRAVNOU FUNKC
       .then((response) => 
         { if (!response.data.error) {
 
-
-
+        
         setTempData2(response.data.data.map((datas)=> {
           {       return ({ ...tempData2, [datas.info.ip] : {
             name: datas.info.name,
@@ -137,7 +157,7 @@ UPDATE_TEMP JE DOCASNA FUNKCE DO TE DOBY NEZ DOSTANU OD VEDOUCIHO SPRAVNOU FUNKC
             packet_rate_in: datas.values.map((datas2) => {return datas2.packet_rate_in}),
             packet_rate_out: datas.values.map((datas2) => {return datas2.packet_rate_out}), 
             tcp_established: datas.values.map((datas2) => {return datas2.tcp_established}),
-                                   }})
+              }})
                         }     
           }
                ))
@@ -180,6 +200,9 @@ function getoDataUpdate () {
         if (!response.data.error) 
         {
 
+
+
+          
           tempData2.map((datas) => 
           {
             response.data.data.map((datas2) => 
@@ -187,7 +210,7 @@ function getoDataUpdate () {
               var ipaddr = Object.keys(datas)
               var arLeng = datas[ipaddr].timestamp.length - 1
               if(ipaddr == datas2.info.ip){
-                      if(datas2.values[0].timestamp === datas[ipaddr].timestamp[arLeng]){
+                      //if(datas2.values[0].timestamp === datas[ipaddr].timestamp[arLeng]){
                         datas[ipaddr].cpu.shift()
                         datas[ipaddr].cpu.push(datas2.values[1].cpu)
                         datas[ipaddr].ram.shift()
@@ -204,25 +227,7 @@ function getoDataUpdate () {
                         datas[ipaddr].packet_rate_out.push(datas2.values[1].packet_rate_out)
                         datas[ipaddr].tcp_established.shift()
                         datas[ipaddr].tcp_established.push(datas2.values[1].tcp_established)
-                    } 
-                    else {
-                      datas[ipaddr].cpu.shift()
-                      datas[ipaddr].cpu.push(null)
-                      datas[ipaddr].ram.shift()
-                      datas[ipaddr].ram.push(null)
-                      datas[ipaddr].timestamp.shift()
-                      datas[ipaddr].timestamp.push(null)
-                      datas[ipaddr].bit_rate_in.shift()
-                      datas[ipaddr].bit_rate_in.push(null)
-                      datas[ipaddr].bit_rate_out.shift()
-                      datas[ipaddr].bit_rate_out.push(null)
-                      datas[ipaddr].packet_rate_in.shift()
-                      datas[ipaddr].packet_rate_in.push(null)
-                      datas[ipaddr].packet_rate_out.shift()
-                      datas[ipaddr].packet_rate_out.push(null)
-                      datas[ipaddr].tcp_established.shift()
-                      datas[ipaddr].tcp_established.push(null)
-                    }
+                   //} 
               }
 
     
@@ -273,8 +278,7 @@ function getoDataUpdate () {
       } 
       else  
       {
-        setoData(0)
-        tempData2.map((datas) => {
+        tempData.map((datas) => {
           var ipaddr = Object.keys(datas)
           datas[ipaddr].cpu.shift()
           datas[ipaddr].cpu.push(null)
@@ -293,31 +297,32 @@ function getoDataUpdate () {
           datas[ipaddr].tcp_established.shift()
           datas[ipaddr].tcp_established.push(null)
         })
-
+        setoData(0)
+        
       }})
     .catch((error) =>{
       console.log("Server is unavailable")
       console.log(error)
       setoData(0)
-      tempData2.map((datas) => {
-        var ipaddr = Object.keys(datas)
-        datas[ipaddr].cpu.shift()
-        datas[ipaddr].cpu.push(null)
-        datas[ipaddr].ram.shift()
-        datas[ipaddr].ram.push(null)
-        datas[ipaddr].timestamp.shift()
-        datas[ipaddr].timestamp.push(null)
-        datas[ipaddr].bit_rate_in.shift()
-        datas[ipaddr].bit_rate_in.push(null)
-        datas[ipaddr].bit_rate_out.shift()
-        datas[ipaddr].bit_rate_out.push(null)
-        datas[ipaddr].packet_rate_in.shift()
-        datas[ipaddr].packet_rate_in.push(null)
-        datas[ipaddr].packet_rate_out.shift()
-        datas[ipaddr].packet_rate_out.push(null)
-        datas[ipaddr].tcp_established.shift()
-        datas[ipaddr].tcp_established.push(null)
-      })
+      // tempData2.map((datas) => {
+      //   var ipaddr = Object.keys(datas)
+      //   datas[ipaddr].cpu.shift()
+      //   datas[ipaddr].cpu.push(null)
+      //   datas[ipaddr].ram.shift()
+      //   datas[ipaddr].ram.push(null)
+      //   datas[ipaddr].timestamp.shift()
+      //   datas[ipaddr].timestamp.push(null)
+      //   datas[ipaddr].bit_rate_in.shift()
+      //   datas[ipaddr].bit_rate_in.push(null)
+      //   datas[ipaddr].bit_rate_out.shift()
+      //   datas[ipaddr].bit_rate_out.push(null)
+      //   datas[ipaddr].packet_rate_in.shift()
+      //   datas[ipaddr].packet_rate_in.push(null)
+      //   datas[ipaddr].packet_rate_out.shift()
+      //   datas[ipaddr].packet_rate_out.push(null)
+      //   datas[ipaddr].tcp_established.shift()
+      //   datas[ipaddr].tcp_established.push(null)
+      // })
     })}
 
 
@@ -396,6 +401,7 @@ const App = () => {
 
   return(
     <div>
+      {/* <TempGraf/> */}
     <Hlavni>
       <Druhy>          
         <Template/>

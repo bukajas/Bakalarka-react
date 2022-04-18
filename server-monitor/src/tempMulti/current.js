@@ -10,6 +10,7 @@ import {
   LoadingOutlined,
 } from '@ant-design/icons';
 import { CheckboxInt } from '../components/App'
+import * as Zoom from 'chartjs-plugin-zoom'
 
 const antIcon = <LoadingOutlined style={{ fontSize: 240 }} spin />;
 Chart.register(...registerables)
@@ -83,29 +84,28 @@ return (
         }
           height={500}
           width={2000}
-          plugins={{
-            title: {
-              display: true,
-              text: ipaddr,
-              font: {
-                size: 18
-              }
-            }
-          }}
           options= {{animation: {
             duration: 0
         },
-          plugins: {
-            title: {
-              display: true,
-              text: ipaddr,
-              font: {
-                size: 18
-              }
+        plugins: {
+          zoom: {
+            zoom: {
+              wheel: {
+                enabled: true // SET SCROOL ZOOM TO TRUE
+              },
+              mode: "xy",
+              speed: 100
             },
-            
-            
-          }}}
+            pan: {
+              enabled: true,
+              mode: "xy",
+              speed: 100
+            }
+          }
+        }
+          
+
+        }}
           className="templateGraf"
           />
         }} ))   

@@ -34,17 +34,18 @@ const Home = () => {
 
 
 
-//   function timeStamps() {
-// //  console.log(tempData[0]['192.168.0.101'].timestamp[0])
-// //  var secsToSub = 1;
-//  // var time = tempData[0]['192.168.0.101'].timestamp[0];
-//   var newTime = new Date.toLocaleDateString('en-UK', {year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit'});
-//     console.log(newTime)
+    // function timeStamps() {
+    //   console.log(tempData[0]['192.168.0.101'].timestamp[0])
+    //   var secsToSub = 10000;
+    //   var time = new Date()
+    //   var newTime = new Date(time.getTime() - secsToSub * 1000);
+    //   console.log(format(newTime, 'yyyy-MM-dd kk:mm:ss'))
+    //   console.log(newTime)
 
 //   //  if(newTime)
 // //  console.log(newTime)
 //   }
-
+    // }
  function averageValue(valueArray) {
    const sum = valueArray.reduce((a,b) => a + b, 0)
    const avg = Math.floor(sum / valueArray.length) || 0
