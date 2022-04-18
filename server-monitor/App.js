@@ -7,7 +7,8 @@ import Array from './Array'
 import ChartImage from './ChartImage'
 
 
-
+var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+console.log(time)
 // komponenta
 function App() {
   // alternativa state
@@ -93,7 +94,7 @@ function App() {
             )
           )}
 
-
+            
         </div>
         <div className="toggler">
           <button onClick={handleClick} >{startStop ? "Stop" : "Start"}</button>

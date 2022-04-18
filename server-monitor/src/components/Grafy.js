@@ -25,8 +25,7 @@ function callback(key) {
 const Grafy = () => {
 
     const context = React.useContext(CheckboxInt)
-
-    const { data, setData,
+    const { oData, setoData,
       seconds, setSeconds,
       startStop, setStartStop,
       clickedServers, setClickedServers,
@@ -35,7 +34,7 @@ const Grafy = () => {
       rangeValue, setRangeValue } = context
 
 
-   const filteredHodnoty = data ? data.filter((temp2) =>     
+   const filteredHodnoty = oData ? oData.filter((temp2) =>     
       {const clickedArray = clickedServers
         if(clickedArray.includes(temp2.info.ip)) {          return temp2.info.ip         }
       }) : <Spin indicator={antIcon} />
@@ -51,9 +50,9 @@ const Grafy = () => {
 
   return (
         <div>
-
-              <RangePicker ranges={{ Today: [moment(), moment()], 'This Month': [moment().startOf('month'), moment().endOf('month')],  }} showTime format="YYYY-MM-DD HH:mm:ss" onChange={onChange} />
-            { data ? filteredHodnoty.map((da) => clickedValues.map((dat) =>
+          <RangePicker ranges={{ Today: [moment(), moment()], 'This Month': [moment().startOf('month'), moment().endOf('month')],  }} showTime format="YYYY-MM-DD HH:mm:ss" onChange={onChange} />
+          <button onClick={() => setStartStop(prevState => !prevState)} className='btn-start-stop' >{startStop ? "Stop" : "Start"}</button>
+            { oData ? filteredHodnoty.map((da) => clickedValues.map((dat) =>
             <GrafHodnot
             info={da.info} 
             values={da.values} 
@@ -62,7 +61,6 @@ const Grafy = () => {
             width={2000} 
           />)) : <AngryJOe />   
           }
-          <button onClick={() => setStartStop(prevState => !prevState)} className='btn-start-stop' >{startStop ? "Stop" : "Start"}</button>
 
 
 
