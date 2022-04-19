@@ -1,7 +1,6 @@
 import React, {createContext} from "react"
 import {Config} from '../config.js'
 import Axios from 'axios'
-import Grafy from "./Grafy.js"
 import "antd/dist/antd.css";
 import "../index.css";
 import { Layout, Menu, Breadcrumb, Spin, Button } from 'antd';
@@ -21,7 +20,7 @@ import Range from '../tempMulti/range';
 import Dashboard from '../tempMulti/dashboard';
 import Settings from '../tempMulti/settings';
 import Navbar from '../tempMulti/navbar';
-import MenuItem from "antd/lib/menu/MenuItem";
+
 
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -32,54 +31,26 @@ const Template = ({children}) => {
 
     const context = React.useContext(CheckboxInt)
     const { oData, setoData,
-        seconds, setSeconds,
+        tempData,
         startStop, setStartStop,
         collapsed, setCollapsed,
         ipAdd, setIpAdd,
-        objectKeys, setObjectKeys,
         clickedServers, setClickedServers,
-        clickedValues, setClickedValues,
         timeInterval, setTimeInterval,
         valuesPost, setValuesPost,
         dates, setDates,
         valuesList, setValuesList} = context
-
-        // function onCollapse() {
-        //     setCollapsed(prevCollapsed => !prevCollapsed)
-        //   };
           
           
           function handleClickedServers(e) {
             console.log('click ', e);
             setClickedServers(e.selectedKeys)
           };
-          function handleClickedValues(e) {
-            console.log('click ', e);
-            setClickedValues(e.selectedKeys)
-          };
-        
-          function checkAllItems() { 
-            setClickedServers(ipAdd)
-          }
-          function unCheckAllItems() { 
-            setClickedServers([])
-          }
 
-          function handleClick(){setStartStop(prevState => !prevState)}
+
   return (
     <div>
-
-{/* <Header className="header">
-    <div className="logo" />
-      <Menu theme="light" mode="horizontal" defaultSelectedKeys={['1']}>
       
-        <Menu.Item onClick={() => setValuesPost('update_temp')} key="4">Update</Menu.Item>
-        <Menu.Item onClick={() => {setValuesPost('all'); }} key="1">Current</Menu.Item>
-        <Menu.Item onClick={() => setValuesPost('range')} key="2">Time Interval</Menu.Item>
-        <Menu.Item onClick={() => setValuesPost('times')} key="3">Settings</Menu.Item>
-      </Menu>
-  </Header> */}
-
 <Layout>
   <Sider 
       style={{
@@ -112,8 +83,8 @@ const Template = ({children}) => {
               <Navbar />
           </Header> 
           <div>
-              {oData === null ? <h4>Empty oData</h4> : (
-              oData === 0 ? <h4>Server error</h4> : (
+              {tempData === null ? <h4>Empty oData</h4> : (
+              tempData === 0 ? <h4>Server error</h4> : (
               <h5>Some oData was received from the server, see the console.</h5>))}
           </div>
               <Routes>

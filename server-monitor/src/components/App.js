@@ -1,7 +1,6 @@
 import React, {createContext} from "react"
 import {Config} from '../config.js'
 import Axios from 'axios'
-import Grafy from "./Grafy.js"
 import "antd/dist/antd.css";
 import "../index.css";
 import { Layout, Menu, Breadcrumb, Spin, Button, Space  } from 'antd';
@@ -31,62 +30,55 @@ const Hlavni = ({ children }) => {
     { name: 'Device 1',
       ip: '192.168.0.101',
       os: 'debian',
-  },])
-  const [tempData, setTempData] = React.useState(null)
+  }, { 
+      name: 'Device 2',
+      ip: '192.168.0.102',
+      os: 'ubuntu',
+}])  // seznam vybranych serveru
+
+
+  const [tempData, setTempData] = React.useState(null) //curent data
+  const [rangeData, setRangeData] = React.useState(null) //range data
   const [timeLine, setTimeLine] = React.useState('')
-  const [tempData2, setTempData2] = React.useState({})
   const [oData, setoData] = React.useState(null)
-  const [valuesList, setValuesList] = React.useState(['bit_rate_in','bit_rate_out','cpu','packet_rate_in','packet_rate_out','ram','tcp_established'])
-  const [rangeData, setRangeData] = React.useState(null)
+  const valuesList = ['bit_rate_in','bit_rate_out','cpu','packet_rate_in','packet_rate_out','ram','tcp_established']
   const [valuesPost, setValuesPost] = React.useState('all')
   const [rangeValue, setRangeValue] = React.useState({
     from: "2021-02-01 01:00:00",
-    to: "2021-02-01 01:00:00"
+    to: "2021-02-01 01:01:00"
   })
-  const [seconds, setSeconds] = React.useState(0)
   const [startStop, setStartStop] = React.useState(false)
-  const [collapsed, setCollapsed] = React.useState(false)
   const [ipAdd, setIpAdd] = React.useState([])
-  const [objectKeys, setObjectKeys] = React.useState([])
   const [clickedServers, setClickedServers] = React.useState([])
-  const [clickedValues, setClickedValues] = React.useState([])
   
 
 
-  return (<CheckboxInt.Provider value={{
+  return ( <CheckboxInt.Provider value={{
         oData, setoData,
-        seconds, setSeconds,
         startStop, setStartStop,
-        collapsed, setCollapsed,
         ipAdd, setIpAdd,
-        objectKeys, setObjectKeys,
         clickedServers, setClickedServers,
-        clickedValues, setClickedValues,
         valuesPost, setValuesPost,
         rangeValue, setRangeValue,
         rangeData, setRangeData,
         dates, setDates,
-        valuesList, setValuesList,
-        tempData, setTempData, tempData2, setTempData2,
+        valuesList,
+        tempData, setTempData, 
         timeLine, setTimeLine }}>
-      {children}</CheckboxInt.Provider>)
+      {children}
+      </CheckboxInt.Provider>)
 }
+
+
 
 function Druhy({ children }) {
   const context = React.useContext(CheckboxInt)
   const { oData, setoData,
-    seconds, setSeconds,
-    startStop, setStartStop,
-    collapsed, setCollapsed,
-    ipAdd, setIpAdd,
-    objectKeys, setObjectKeys,
-    clickedServers, setClickedServers,
-    clickedValues, setClickedValues,
+    startStop,
     valuesPost, setValuesPost,
     rangeValue, setRangeValue,
     rangeData, setRangeData,
-    dates, setDates, 
-    tempData, setTempData, tempData2, setTempData2, timeLine, setTimeLine
+    tempData, setTempData, timeLine, setTimeLine
    } = context
 
 
@@ -104,19 +96,22 @@ function Druhy({ children }) {
 
 
 
-   
-  React.useEffect(() => //casovac na vteriny
+  const [seconds, setSeconds] = React.useState(0)
+  React.useEffect(() =>
   {
     const interval = setInterval(() => {setSeconds(seconds => seconds + 1)}, 1000)
     return () => clearInterval(interval)
   }, [])
 
 
+// na zacatku a pak priapdne pri zmacknuti upate tlacitka.
   React.useEffect(() => {
     timeStamps()
     getoDataStart()    
   }, [])
   
+
+// pri prubehu pokud je zapnuty startstop tlacitko
   React.useEffect(() => 
   {
     if(startStop){
@@ -125,6 +120,8 @@ function Druhy({ children }) {
     }
   }, [seconds])
 
+
+//pokud se zmeni typ zobrazeni
   React.useEffect(() => 
   {
     timeStamps()
@@ -144,26 +141,7 @@ UPDATE_TEMP JE DOCASNA FUNKCE DO TE DOBY NEZ DOSTANU OD VEDOUCIHO SPRAVNOU FUNKC
       .then((response) => 
         { if (!response.data.error) {
 
-        
-        setTempData2(response.data.data.map((datas)=> {
-          {       return ({ ...tempData2, [datas.info.ip] : {
-            name: datas.info.name,
-            os: datas.info.os,
-            timestamp: datas.values.map((datas2) => {if(datas2.timestamp) {return datas2.timestamp} else {return null}}),
-            cpu: datas.values.map((datas2) => {return datas2.cpu}),
-            ram: datas.values.map((datas2) => {return datas2.ram}),
-            bit_rate_in: datas.values.map((datas2) => {return datas2.bit_rate_in}),
-            bit_rate_out: datas.values.map((datas2) => {return datas2.bit_rate_out}),
-            packet_rate_in: datas.values.map((datas2) => {return datas2.packet_rate_in}),
-            packet_rate_out: datas.values.map((datas2) => {return datas2.packet_rate_out}), 
-            tcp_established: datas.values.map((datas2) => {return datas2.tcp_established}),
-              }})
-                        }     
-          }
-               ))
-
-
-        setTempData(response.data.data.map((datas)=> {
+         setTempData(response.data.data.map((datas)=> {
      {       return {[datas.info.ip]: {
               name: datas.info.name,
               os: datas.info.os,
@@ -178,15 +156,16 @@ UPDATE_TEMP JE DOCASNA FUNKCE DO TE DOBY NEZ DOSTANU OD VEDOUCIHO SPRAVNOU FUNKC
               
           }}}
           }))
-        
           setoData(response.data.data)
         } else  {
           setoData(0)
+          setTempData(0)
         }})
       .catch((error) =>{
         console.log("Server is unavailable")
         console.log(error)
         setoData(0)
+        setTempData(0)
       })}
 
 
@@ -199,45 +178,6 @@ function getoDataUpdate () {
       { 
         if (!response.data.error) 
         {
-
-
-
-          
-          tempData2.map((datas) => 
-          {
-            response.data.data.map((datas2) => 
-            {
-              var ipaddr = Object.keys(datas)
-              var arLeng = datas[ipaddr].timestamp.length - 1
-              if(ipaddr == datas2.info.ip){
-                      //if(datas2.values[0].timestamp === datas[ipaddr].timestamp[arLeng]){
-                        datas[ipaddr].cpu.shift()
-                        datas[ipaddr].cpu.push(datas2.values[1].cpu)
-                        datas[ipaddr].ram.shift()
-                        datas[ipaddr].ram.push(datas2.values[1].ram)
-                        datas[ipaddr].timestamp.shift()
-                        datas[ipaddr].timestamp.push(datas2.values[1].timestamp)
-                        datas[ipaddr].bit_rate_in.shift()
-                        datas[ipaddr].bit_rate_in.push(datas2.values[1].bit_rate_in)
-                        datas[ipaddr].bit_rate_out.shift()
-                        datas[ipaddr].bit_rate_out.push(datas2.values[1].bit_rate_out)
-                        datas[ipaddr].packet_rate_in.shift()
-                        datas[ipaddr].packet_rate_in.push(datas2.values[1].packet_rate_in)
-                        datas[ipaddr].packet_rate_out.shift()
-                        datas[ipaddr].packet_rate_out.push(datas2.values[1].packet_rate_out)
-                        datas[ipaddr].tcp_established.shift()
-                        datas[ipaddr].tcp_established.push(datas2.values[1].tcp_established)
-                   //} 
-              }
-
-    
-            } 
-      )
-          })
-          
-        const datesIPtemp = dates.map((date2) => {return date2.ip})
-        setoData(oData.filter((temp) => datesIPtemp.includes(temp.info.ip)))
-
         tempData.map((datas) => {
            response.data.data.map((datas2) => {
              var ipaddr = Object.keys(datas)
@@ -259,9 +199,7 @@ function getoDataUpdate () {
                datas[ipaddr].tcp_established.shift()
                datas[ipaddr].tcp_established.push(datas2.values[1].tcp_established)
              }
-            
-            
-        })
+            })
         })
         // const datesIP = dates.map((date2) => {return date2.ip})
         // setoData(oData.filter((temp) => datesIP.includes(temp.info.ip)))
@@ -278,93 +216,62 @@ function getoDataUpdate () {
       } 
       else  
       {
-        tempData.map((datas) => {
-          var ipaddr = Object.keys(datas)
-          datas[ipaddr].cpu.shift()
-          datas[ipaddr].cpu.push(null)
-          datas[ipaddr].ram.shift()
-          datas[ipaddr].ram.push(null)
-          datas[ipaddr].timestamp.shift()
-          datas[ipaddr].timestamp.push(null)
-          datas[ipaddr].bit_rate_in.shift()
-          datas[ipaddr].bit_rate_in.push(null)
-          datas[ipaddr].bit_rate_out.shift()
-          datas[ipaddr].bit_rate_out.push(null)
-          datas[ipaddr].packet_rate_in.shift()
-          datas[ipaddr].packet_rate_in.push(null)
-          datas[ipaddr].packet_rate_out.shift()
-          datas[ipaddr].packet_rate_out.push(null)
-          datas[ipaddr].tcp_established.shift()
-          datas[ipaddr].tcp_established.push(null)
-        })
-        setoData(0)
-        
+        setoData(0) 
+        setTempData(0)  
       }})
     .catch((error) =>{
       console.log("Server is unavailable")
       console.log(error)
+      setTempData(0)
       setoData(0)
-      // tempData2.map((datas) => {
-      //   var ipaddr = Object.keys(datas)
-      //   datas[ipaddr].cpu.shift()
-      //   datas[ipaddr].cpu.push(null)
-      //   datas[ipaddr].ram.shift()
-      //   datas[ipaddr].ram.push(null)
-      //   datas[ipaddr].timestamp.shift()
-      //   datas[ipaddr].timestamp.push(null)
-      //   datas[ipaddr].bit_rate_in.shift()
-      //   datas[ipaddr].bit_rate_in.push(null)
-      //   datas[ipaddr].bit_rate_out.shift()
-      //   datas[ipaddr].bit_rate_out.push(null)
-      //   datas[ipaddr].packet_rate_in.shift()
-      //   datas[ipaddr].packet_rate_in.push(null)
-      //   datas[ipaddr].packet_rate_out.shift()
-      //   datas[ipaddr].packet_rate_out.push(null)
-      //   datas[ipaddr].tcp_established.shift()
-      //   datas[ipaddr].tcp_established.push(null)
-      // })
     })}
 
 
 /////////////////////////////////////////////////////////////////
+// pro range values
+
   function getoData () {
     let postValues = 'all'
-    if(valuesPost == 'all'){
-      postValues = {type: "all"}
-    }
-    if(valuesPost == 'update_temp'){
-      postValues = {type: "update_temp"}
-    }
-    else if(valuesPost == 'range'){
+    // if(valuesPost == 'all'){
+    //   postValues = {type: "all"}
+    // }
+    // if(valuesPost == 'update_temp'){
+    //   postValues = {type: "update_temp"}
+    // }
+    if(valuesPost == 'range'){
       postValues = {type: "range", from: rangeValue.from, to: rangeValue.to}
       console.log(postValues)
     }
     else if(valuesPost == 'times') {
       postValues = {type: "times", times: ["2021-02-01 01:00:00", "2021-02-01 01:00:02", "2021-02-01 03:03:00", "2021-02-01 01:55:55"]}
     }
-    else if(valuesPost == 'update') {
-      console.log(format(new Date(), "yyyy-MM-dd HH:mm:ss"))
-      let time = format(new Date(), "yyyy-MM-dd HH:mm:ss")
-      postValues = {type: "update", last: time}
-    }
-    
+    // else if(valuesPost == 'update') {
+    //   console.log(format(new Date(), "yyyy-MM-dd HH:mm:ss"))
+    //   let time = format(new Date(), "yyyy-MM-dd HH:mm:ss")
+    //   postValues = {type: "update", last: time}
+    // }
       Axios.post( Config.server.getData, postValues, {headers: { 'Content-Type': 'application/json' }})
       .then((response) => 
         { if (!response.data.error && valuesPost == 'range') {
-          
 
-
-
-          setRangeData(response.data.data)
-          console.log(response.data.data)
-          console.log("ale jo")
-
-        } else if(!response.data.error){
-          setoData(response.data.data)
-          console.log("neco jo")
-        }   else  {
+          setRangeData(response.data.data.map((datas)=> {
+            {       return {[datas.info.ip]: {
+                     name: datas.info.name,
+                     os: datas.info.os,
+                     cpu: datas.values.map((datas2) => {return datas2.cpu}),
+                     ram: datas.values.map((datas2) => {return datas2.ram}),
+                     timestamp: datas.values.map((datas2) => {return datas2.timestamp}),
+                     bit_rate_in: datas.values.map((datas2) => {return datas2.bit_rate_in}),
+                     bit_rate_out: datas.values.map((datas2) => {return datas2.bit_rate_out}),
+                     packet_rate_in: datas.values.map((datas2) => {return datas2.packet_rate_in}),
+                     packet_rate_out: datas.values.map((datas2) => {return datas2.packet_rate_out}), 
+                     tcp_established: datas.values.map((datas2) => {return datas2.tcp_established}),
+                     
+                 }}}
+                 }))
+        }  else  {
           setoData(0)
-          console.log("nope")
+          setRangeData(0)
         }}
         )
       .catch((error) =>{
@@ -373,25 +280,20 @@ function getoDataUpdate () {
         setoData(0)
       })}
 
-    if(oData && ipAdd.length == 0){
-      setIpAdd(oData.map((device) => {return device.info.ip}))
-      setObjectKeys(Object.keys(oData[0].values[0]).slice(1))
-     }
+    // if(oData && ipAdd.length == 0){
+    //   setIpAdd(oData.map((device) => {return device.info.ip}))
+    //   setObjectKeys(Object.keys(oData[0].values[0]).slice(1))
+    //  }
+
+
 
   return (
     <div>
-      
       {children}
-
     </div>
   )
 }
-// function Utton({children}) {
-//   const context = React.useContext(CheckboxInt)
-//   const { setTestik } = context
-//   return <button onClick={() => setTestik(state => !state)}>{children}</button>
 
-// }
 
 
 
@@ -400,13 +302,12 @@ const App = () => {
 
 
   return(
-    <div>
-      {/* <TempGraf/> */}
+    <div>  
     <Hlavni>
-      <Druhy>          
+      <Druhy>
         <Template/>
       </Druhy>
-    </Hlavni>
+    </Hlavni>    
     </div>
   )
 }

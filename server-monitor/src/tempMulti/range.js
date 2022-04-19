@@ -47,16 +47,15 @@ const Range = () => {
   return (
         <div>
         <RangePicker ranges={{ Today: [moment(), moment()], 'This Month': [moment().startOf('month'), moment().endOf('month')],  }} showTime format="YYYY-MM-DD HH:mm:ss" onChange={onChange} />
+       
         {clickedServers.map((temp) => 
         rangeData ? rangeData.map((temp2) => {
-        if(temp2.info.ip == temp.split(" ")[0] && Object.keys(rangeData[0].values[0]).slice(1).includes(temp.split(" ")[1])){
-          return <GrafHodnot
-        info={temp2.info} 
-        values={temp2.values} 
-        zmackni={temp.split(" ")[1]}
-        height={500} 
-        width={2000} 
-    />
+          var ipaddr = Object.keys(temp2)
+        if(ipaddr == temp.split(" ")[0] && Object.keys(temp2[ipaddr]).slice(1).includes(temp.split(" ")[1]))
+        {
+          return <GraphRange 
+          data1={temp} data2={temp2} ipAddr={ipaddr}
+          />
         }}  
   ) : <AngryJOe />
 )   

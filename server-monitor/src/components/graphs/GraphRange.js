@@ -22,7 +22,7 @@ function callback(key) {
 
 
 
-const Grafy = () => {
+const GraphRange = (props) => {
 
     const context = React.useContext(CheckboxInt)
 
@@ -47,22 +47,79 @@ const Grafy = () => {
     console.log('From: ', dateStrings[0], ', to: ', dateStrings[1]);
   }
 
+  const data = {
+    labels: props.data2[props.ipAddr].timestamp.map((datas) => datas.split(".")[0].split("T")[1]),
+    datasets: [
+      {
+        title: props.ipAddr,
+        label: props.data1.split(" ")[1],
+        data: props.data2[props.ipAddr][props.data1.split(" ")[1]],
+        fill: false,
+        backgroundColor: "rgba(75,192,192,0.2)",
+        borderColor: "rgba(75,192,192,1)"
+      }
+    ]
+  }
+          
+  const options= {
+        animation: {
+          duration: 0
+        },
+        plugins: {
+          zoom: {
+            zoom: {
+              wheel: {
+                enabled: true
+              },
+              mode: "xy",
+              speed: 100
+            },
+            pan: {
+              enabled: true,
+              mode: "xy",
+              speed: 100
+            }
+          },
+          title: {
+            display: true,
+            text: props.ipAddr,
+            font: {
+              size: 18
+                  }
+                }
+        },
+        scales: {
+        y: {
+        type: 'linear',
+        display: true,
+        position: 'left',
+        }
+        }
+        }
+
+
+  const downloadImg = React.useRef(null);
+  const downloadImage = React.useCallback(() => {
+      var a = document.createElement('a');
+      a.download = 'chart';
+      a.href = downloadImg.current.toBase64Image();
+      a.click();
+    }, []);
 
 
   return (
-        <div>
-          <RangePicker ranges={{ Today: [moment(), moment()], 'This Month': [moment().startOf('month'), moment().endOf('month')],  }} showTime format="YYYY-MM-DD HH:mm:ss" onChange={onChange} />
-            { oData ? filteredHodnoty.map((da) => clickedValues.map((dat) =>
-            <GrafHodnot
-            info={da.info} 
-            values={da.values} 
-            zmackni={dat}
-            height={500} 
+        <div>  
+                    <button onClick={downloadImage} className="btn-download">Download</button>
+            <Line  
+            data={data}
+            height={500}
             width={2000} 
-          />)) : <AngryJOe />   
-          }
+            options= {options}
+            ref={downloadImg}
+            className="templateGraf"
+            />  
         </div>
   )
 }
 
-export default Grafy
+export default GraphRange

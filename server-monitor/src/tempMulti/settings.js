@@ -1,6 +1,4 @@
 import React from "react";
-import Grafy from "../components/Grafy"
-import Template from "../components/Template.js"
 import { Drawer, Button, Space, Radio, message, Form, Input, Checkbox } from 'antd';
 import { CheckboxInt } from '../components/App'
 

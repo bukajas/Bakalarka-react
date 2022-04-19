@@ -12,7 +12,7 @@ Chart.register(...registerables)
 
 const GrafHodnot = (props) => {
   const context = React.useContext(CheckboxInt)
-  const { seconds, setSeconds, startStop, oData } = context
+  const { startStop, oData } = context
 
   const [ singleValue, setSingleValue ] = React.useState([])
   const datasetss = {labels: props.values.map((datas) => datas.timestamp.split(".")[0].split("T")[1]),
@@ -51,7 +51,6 @@ const GrafHodnot = (props) => {
           else if(props.zmackni === 'tcp_established'){
             setSingleValue(props.values.map((datas) => datas.tcp_established))
           }
-          // console.log(data.datasets[0].data = props.values.map((datas) => datas.tcp_established))
         }, [oData])
         
         

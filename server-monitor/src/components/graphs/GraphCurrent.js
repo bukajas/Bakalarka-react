@@ -22,47 +22,88 @@ function callback(key) {
 
 
 
-const Grafy = () => {
+const GraphCurrent = (props) => {
 
     const context = React.useContext(CheckboxInt)
 
-    const { oData, setoData,
-      seconds, setSeconds,
-      startStop, setStartStop,
-      clickedServers, setClickedServers,
-      clickedValues, setClickedValues,
-      valuesPost, setValuesPost,
-      rangeValue, setRangeValue } = context
-
-
-   const filteredHodnoty = oData ? oData.filter((temp2) =>     
-      {const clickedArray = clickedServers
-        if(clickedArray.includes(temp2.info.ip)) {          return temp2.info.ip         }
-      }) : <Spin indicator={antIcon} />
-
-
+    const { rangeValue, setRangeValue } = context
 
   function onChange(dates, dateStrings) {
     setRangeValue({...rangeValue, from: dateStrings[0], to: dateStrings[1]})
     console.log('From: ', dateStrings[0], ', to: ', dateStrings[1]);
   }
 
+const data = {
+  labels: props.data2[props.ipAddr].timestamp.map((datas) => datas.split(".")[0].split("T")[1]),
+  datasets: [
+    {
+      title: props.ipAddr,
+      label: props.data1.split(" ")[1],
+      data: props.data2[props.ipAddr][props.data1.split(" ")[1]],
+      fill: false,
+      backgroundColor: "rgba(75,192,192,0.2)",
+      borderColor: "rgba(75,192,192,1)"
+    }
+  ]
+}
 
+const options = {
+            animation: {
+            duration: 0
+          },
+          plugins: {
+          zoom: {
+            zoom: {
+              wheel: {
+                enabled: true
+              },
+              mode: "xy",
+              speed: 100
+            },
+            pan: {
+              enabled: true,
+              mode: "xy",
+              speed: 100
+            }
+          },
+          title: {
+            display: true,
+            text: props.ipAddr,
+            font: {
+              size: 18
+                  }
+                }
+        },
+        scales: {
+        y: {
+        type: 'linear',
+        display: true,
+        position: 'left',
+        }
+        }
+          }
+
+
+  const downloadImg = React.useRef(null);
+  const downloadImage = React.useCallback(() => {
+      var a = document.createElement('a');
+      a.download = 'chart';
+      a.href = downloadImg.current.toBase64Image();
+      a.click();
+    }, []);
 
   return (
         <div>
-          <button onClick={() => setStartStop(prevState => !prevState)} className='btn-start-stop' >{startStop ? "Stop" : "Start"}</button>
-            { oData ? filteredHodnoty.map((da) => clickedValues.map((dat) =>
-            <GrafHodnot
-            info={da.info} 
-            values={da.values} 
-            zmackni={dat}
-            height={500} 
+          <button onClick={downloadImage} className="btn-download">Download</button>
+          <Line  
+            data={data}
+            height={500}
             width={2000} 
-          />)) : <AngryJOe />   
-          }
+            options= {options}
+            ref={downloadImg}
+            className="templateGraf"
+        />
         </div>
   )
 }
-
-export default Grafy
+export default GraphCurrent
