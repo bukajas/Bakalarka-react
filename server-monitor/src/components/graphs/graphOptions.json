@@ -1,0 +1,111 @@
+[   
+    {
+        "id": "bit_rate_in",
+        "data": {
+            "backgroundColor": "darkblue",
+            "borderColor": "darkblue"
+        },
+        "options": {        
+            "scales": {
+            "y": {
+            "type": "linear",
+            "display": true,
+            "position": "left"
+            }
+            }}
+    },
+        {
+        "id": "bit_rate_out",
+        "data": {
+            "backgroundColor": "red",
+            "borderColor": "red"
+        },
+        "options": {        
+            "scales": {
+            "y": {
+            "type": "linear",
+            "display": true,
+            "position": "left"
+            }
+            }}
+    },
+        {
+        "id": "cpu",
+        "data": {
+            "borderColor": "lightblue",
+            "backgroundColor": "lightblue"
+        },
+        "options": {        
+            "scales": {
+            "y": {
+            "min": 0,
+            "max": 100,
+            "display": true,
+            "position": "left"
+            }
+            }}
+    },
+        {
+        "id": "packet_rate_in",
+        "data": {
+            "backgroundColor": "pink",
+            "borderColor": "pink"
+        },
+        "options": {        
+            "scales": {
+            "y": {
+            "type": "linear",
+            "display": true,
+            "position": "left"
+            }
+            }}
+    },
+    {
+        "id": "packet_rate_out",
+        "data": {
+            "backgroundColor": "green",
+            "borderColor": "green"
+        },
+        "options": {        
+            "scales": {
+            "y": {
+            "type": "linear",
+            "display": true,
+            "position": "left"
+            }
+            }}
+    },   
+    {
+        "id": "ram",
+        "data": {
+                    "backgroundColor": "blue",
+                    "borderColor": "blue"
+                },
+                "options": {        
+                    "scales": {
+                    "y": {
+                    "min": 0,
+                    "max": 100,
+                    "type": "linear",
+                    "display": true,
+                    "position": "left"
+                    }
+                    }}
+    },
+    {
+        "id": "tcp_established",
+        "data": {
+            "backgroundColor": "purple",
+            "borderColor": "rgba(75,192,192,1)"
+        },
+        "options": {        
+            "scales": {
+            "y": {
+            "type": "linear",
+            "display": true,
+            "position": "left"
+            }
+            }}
+    }
+]
+

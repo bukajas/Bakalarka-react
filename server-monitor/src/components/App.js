@@ -30,13 +30,16 @@ const Hlavni = ({ children }) => {
     { name: 'Device 1',
       ip: '192.168.0.101',
       os: 'debian',
+      status: false
   }, { 
       name: 'Device 2',
       ip: '192.168.0.102',
       os: 'ubuntu',
+      status: false
 }])  // seznam vybranych serveru
 
-
+  const [graphOptions, setGraphOptions] = React.useState([])
+  const [graphData, setGraphData] = React.useState([])
   const [tempData, setTempData] = React.useState(null) //curent data
   const [rangeData, setRangeData] = React.useState(null) //range data
   const [timeLine, setTimeLine] = React.useState('')
@@ -64,7 +67,10 @@ const Hlavni = ({ children }) => {
         dates, setDates,
         valuesList,
         tempData, setTempData, 
-        timeLine, setTimeLine }}>
+        timeLine, setTimeLine,
+        graphOptions, setGraphOptions,
+        graphData, setGraphData
+         }}>
       {children}
       </CheckboxInt.Provider>)
 }
@@ -73,7 +79,7 @@ const Hlavni = ({ children }) => {
 
 function Druhy({ children }) {
   const context = React.useContext(CheckboxInt)
-  const { oData, setoData,
+  const { oData, setoData, dates, setDates,
     startStop,
     valuesPost, setValuesPost,
     rangeValue, setRangeValue,
@@ -94,6 +100,35 @@ function Druhy({ children }) {
       setTimeLine(timeArray)
   }
 
+  function serverStatus() {
+    // pokud v dates mam ip, a od ni bude chodit data, tak bude true jinak false
+    var tempDates = []
+    dates.map((date, index) => {
+      var liver = false 
+      var tempDate = [...dates]
+      let tempServer = {...date}
+      tempData.map((data, i) => {
+        var ipaddr  = Object.keys(data)
+         if(ipaddr == date.ip)
+        {
+           liver = true
+           tempServer.status = true
+           tempDate[index] = tempServer
+           if(!tempDates[index]) {  tempDates[index] = tempDate[index]  }
+        }
+           else if (!liver && ipaddr !== date.ip && i == tempData.length -1 ){
+            tempServer.status = false
+            tempDate[index] = tempServer
+              if(!tempDates[index]) {  tempDates[index] = tempDate[index]  }
+             }
+          })
+         // console.log(tempDates)
+        })
+        setDates(tempDates)
+  }
+
+
+
 
 
   const [seconds, setSeconds] = React.useState(0)
@@ -107,16 +142,16 @@ function Druhy({ children }) {
 // na zacatku a pak priapdne pri zmacknuti upate tlacitka.
   React.useEffect(() => {
     timeStamps()
-    getoDataStart()    
+    getoDataStart()
   }, [])
-  
-
 // pri prubehu pokud je zapnuty startstop tlacitko
   React.useEffect(() => 
   {
     if(startStop){
       timeStamps()
       getoDataUpdate()
+      if(tempData){serverStatus()  } 
+
     }
   }, [seconds])
 
@@ -126,6 +161,7 @@ function Druhy({ children }) {
   {
     timeStamps()
     getoData()
+    if(tempData){serverStatus()  }
   }, [rangeValue]) 
   
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -142,7 +178,7 @@ UPDATE_TEMP JE DOCASNA FUNKCE DO TE DOBY NEZ DOSTANU OD VEDOUCIHO SPRAVNOU FUNKC
         { if (!response.data.error) {
 
          setTempData(response.data.data.map((datas)=> {
-     {       return {[datas.info.ip]: {
+         {return {[datas.info.ip]: {
               name: datas.info.name,
               os: datas.info.os,
               cpu: datas.values.map((datas2) => {return datas2.cpu}),
@@ -151,9 +187,9 @@ UPDATE_TEMP JE DOCASNA FUNKCE DO TE DOBY NEZ DOSTANU OD VEDOUCIHO SPRAVNOU FUNKC
               bit_rate_in: datas.values.map((datas2) => {return datas2.bit_rate_in}),
               bit_rate_out: datas.values.map((datas2) => {return datas2.bit_rate_out}),
               packet_rate_in: datas.values.map((datas2) => {return datas2.packet_rate_in}),
-              packet_rate_out: datas.values.map((datas2) => {return datas2.packet_rate_out}), 
+              packet_rate_out: datas.values.map((datas2) => {return datas2.packet_rate_out}),
               tcp_established: datas.values.map((datas2) => {return datas2.tcp_established}),
-              
+
           }}}
           }))
           setoData(response.data.data)
@@ -201,18 +237,6 @@ function getoDataUpdate () {
              }
             })
         })
-        // const datesIP = dates.map((date2) => {return date2.ip})
-        // setoData(oData.filter((temp) => datesIP.includes(temp.info.ip)))
-
-        // oData.map((datas) => {
-        //   response.data.data.map((datas2) => {
-        //     if(datas.info.ip === datas2.info.ip){
-        //       datas.values.shift()
-        //       datas.values.push(datas2.values[1])
-        //     }
-        //   })
-
-        // })
       } 
       else  
       {
@@ -279,13 +303,6 @@ function getoDataUpdate () {
         console.log(error)
         setoData(0)
       })}
-
-    // if(oData && ipAdd.length == 0){
-    //   setIpAdd(oData.map((device) => {return device.info.ip}))
-    //   setObjectKeys(Object.keys(oData[0].values[0]).slice(1))
-    //  }
-
-
 
   return (
     <div>

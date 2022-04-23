@@ -11,10 +11,10 @@ const Navbar = () => {
     const context = React.useContext(CheckboxInt)
     const { setValuesPost, setStartStop } = context
 
-
+  
   return (
       <div>
-      <Menu theme="light" mode="horizontal" defaultSelectedKeys={['1']}>
+      <Menu theme="light" mode="horizontal" >
       <Menu.Item  key="1">
                <NavLink to="/dashboard" activeStyle>
                     Dashboard
@@ -31,7 +31,7 @@ const Navbar = () => {
                     Range
               </NavLink>
         </Menu.Item>  
-        <Menu.Item  key="4">
+        <Menu.Item onClick={() => {setValuesPost('range'); setStartStop(false)}} key="4">
                <NavLink to="/settings" activeStyle>
                     Settings
               </NavLink>

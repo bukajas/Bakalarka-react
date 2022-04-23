@@ -32,12 +32,6 @@ const Range = () => {
       rangeData, setRangeData } = context
 
 
-  //  const filteredHodnoty = rangeData ? rangeData.filter((temp2) =>     
-  //     {const clickedArray = clickedServers
-  //       if(clickedArray.includes(temp2.info.ip)) {          return temp2.info.ip         }
-  //     }) : <Spin indicator={antIcon} />
-
-
 
   function onChange(dates, dateStrings) {
     setRangeValue({...rangeValue, from: dateStrings[0], to: dateStrings[1]})
@@ -48,17 +42,17 @@ const Range = () => {
         <div>
         <RangePicker ranges={{ Today: [moment(), moment()], 'This Month': [moment().startOf('month'), moment().endOf('month')],  }} showTime format="YYYY-MM-DD HH:mm:ss" onChange={onChange} />
        
-        {clickedServers.map((temp) => 
+        { clickedServers.length > 0 ? clickedServers.map((temp) => 
         rangeData ? rangeData.map((temp2) => {
           var ipaddr = Object.keys(temp2)
         if(ipaddr == temp.split(" ")[0] && Object.keys(temp2[ipaddr]).slice(1).includes(temp.split(" ")[1]))
         {
           return <GraphRange 
-          data1={temp} data2={temp2} ipAddr={ipaddr}
+          data1={temp} data2={temp2} ipAddr={ipaddr} name={temp2[ipaddr].name}
           />
         }}  
   ) : <AngryJOe />
-)   
+)   : <AngryJOe />
 }
             {/* { rangeData ? filteredHodnoty.map((da) => clickedValues.map((dat) =>
             <GrafHodnot

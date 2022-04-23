@@ -1,7 +1,7 @@
 import React from "react";
 import { Drawer, Button, Space, Radio, message, Form, Input, Checkbox } from 'antd';
 import { CheckboxInt } from '../components/App'
-
+import { DownloadOutlined } from '@ant-design/icons';
 
 
 const Settings = () => {
@@ -12,17 +12,19 @@ const Settings = () => {
 
   const onFinish = (values) => {
     console.log('Success:', values);
-    setDates([...dates, {name: values.name,ip: values.ip, os: values.os } ])
+    setDates([...dates, {name: values.name,ip: values.ip, os: values.os, status: false } ])
     message.success('Server successfully added');
-  };
+  }
   
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
     message.error('Error with adding server');
-  };
+  }
   
   function removeServer(e){
-      const x = e.target.getAttribute("removeIPs")
+      const x = e.target.getAttribute("removeips")
+      console.log(e)
+      console.log(x)
       setDates(dates.filter((items) => items.ip !== x))
 
   }
@@ -52,7 +54,7 @@ const Settings = () => {
         ]}
         >
         <Input />
-      </Form.Item>\
+      </Form.Item>
 
       <Form.Item
         label="OS"
@@ -80,7 +82,7 @@ const Settings = () => {
     </Form>
 
     {
-     dates.map((dates) => <p>{dates.ip} <button removeIPs={dates.ip} onClick={removeServer}>click me</button></p>)
+    dates.map((dates) => <p>{dates.ip} <Button danger><p removeips={dates.ip} onClick={removeServer}>Remove Server</p> </Button></p>)
     }
 
 

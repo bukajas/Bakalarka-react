@@ -1,15 +1,14 @@
 import React from 'react'
 import { Bar, Line } from 'react-chartjs-2'
 import { Chart, registerables } from 'chart.js'
-import GrafHodnot from '../GrafHodnot'
 import AngryJOe from '../AngryJOe'
-import { Spin, DatePicker, TimePicker, Tabs } from 'antd';
+import { Spin, DatePicker, TimePicker, Tabs, Button } from 'antd';
+import { DownloadOutlined } from '@ant-design/icons';
 import {
   LoadingOutlined,
 } from '@ant-design/icons';
 import { CheckboxInt } from '../App'
-import moment from 'moment';
-
+import GraphOptions from './graphOptions.json'
 
 const { TabPane } = Tabs;
 const { RangePicker } = DatePicker;
@@ -20,82 +19,67 @@ function callback(key) {
   console.log(key);
 }
 
-
-
 const GraphRange = (props) => {
 
     const context = React.useContext(CheckboxInt)
 
-    const { oData, setoData,
-      seconds, setSeconds,
-      startStop, setStartStop,
-      clickedServers, setClickedServers,
-      clickedValues, setClickedValues,
-      valuesPost, setValuesPost,
-      rangeValue, setRangeValue } = context
+    const {  valuesList } = context
 
+      var indexOfValues = valuesList.indexOf(props.data1.split(" ")[1])
 
-   const filteredHodnoty = oData ? oData.filter((temp2) =>     
-      {const clickedArray = clickedServers
-        if(clickedArray.includes(temp2.info.ip)) {          return temp2.info.ip         }
-      }) : <Spin indicator={antIcon} />
-
-
-
-  function onChange(dates, dateStrings) {
-    setRangeValue({...rangeValue, from: dateStrings[0], to: dateStrings[1]})
-    console.log('From: ', dateStrings[0], ', to: ', dateStrings[1]);
-  }
-
-  const data = {
-    labels: props.data2[props.ipAddr].timestamp.map((datas) => datas.split(".")[0].split("T")[1]),
-    datasets: [
-      {
-        title: props.ipAddr,
-        label: props.data1.split(" ")[1],
-        data: props.data2[props.ipAddr][props.data1.split(" ")[1]],
-        fill: false,
-        backgroundColor: "rgba(75,192,192,0.2)",
-        borderColor: "rgba(75,192,192,1)"
-      }
-    ]
-  }
+      var dataJson = {
+        labels: props.data2[props.ipAddr].timestamp.map((datas) => datas.split(".")[0].split("T")[1]),
+      datasets: [
+        {
+          title: props.ipAddr,
+          label: props.data1.split(" ")[1],
+          data: props.data2[props.ipAddr][props.data1.split(" ")[1]],
+          fill: false,
+          backgroundColor:  GraphOptions[indexOfValues].data.backgroundColor      ,
+          borderColor: GraphOptions[indexOfValues].data.borderColor
+        }
+      ]
+    }
           
-  const options= {
-        animation: {
-          duration: 0
+    const optionsJson = {
+      animation: {
+      duration: 0
+    },
+    plugins: {
+    zoom: {
+      zoom: {
+        wheel: {
+          enabled: true,
+          modifierKey: 'ctrl'
         },
-        plugins: {
-          zoom: {
-            zoom: {
-              wheel: {
-                enabled: true
-              },
-              mode: "xy",
-              speed: 100
-            },
-            pan: {
-              enabled: true,
-              mode: "xy",
-              speed: 100
+        mode: "x",
+        speed: 100,
+        drag: {
+          enabled: true,
+          backgroundColor: 'lightblue',
+          borderColor: 'blue',
+          borderWidth: 1,
+
+        }
+      },
+      pan: {
+        enabled: true,
+        mode: "x",
+        speed: 100,
+        modifierKey: 'ctrl'
+      }
+    },
+    title: {
+      display: true,
+      text: props.ipAddr + " " + props.name,
+      font: {
+        size: 20
             }
-          },
-          title: {
-            display: true,
-            text: props.ipAddr,
-            font: {
-              size: 18
-                  }
-                }
-        },
-        scales: {
-        y: {
-        type: 'linear',
-        display: true,
-        position: 'left',
-        }
-        }
-        }
+          }
+  },
+  scales: GraphOptions[indexOfValues].options.scales
+    }
+
 
 
   const downloadImg = React.useRef(null);
@@ -107,14 +91,16 @@ const GraphRange = (props) => {
     }, []);
 
 
+
   return (
-        <div>  
-                    <button onClick={downloadImage} className="btn-download">Download</button>
+        <div> 
+
+          <Button icon={<DownloadOutlined/>} onClick={downloadImage} className="btn-download">Download</Button>
             <Line  
-            data={data}
+            data={dataJson}
             height={500}
             width={2000} 
-            options= {options}
+            options= {optionsJson}
             ref={downloadImg}
             className="templateGraf"
             />  

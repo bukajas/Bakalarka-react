@@ -3,11 +3,15 @@ import { Bar, Line } from 'react-chartjs-2'
 import { Chart, registerables } from 'chart.js'
 import GrafHodnot from '../GrafHodnot'
 import AngryJOe from '../AngryJOe'
-import { Spin, DatePicker, TimePicker, Tabs } from 'antd';
+import { Spin, DatePicker, TimePicker, Tabs, Button } from 'antd';
 import {
   LoadingOutlined,
 } from '@ant-design/icons';
 import { CheckboxInt } from '../App'
+import { DownloadOutlined } from '@ant-design/icons';
+import GraphOptions from './graphOptions.json'
+
+
 
 
 
@@ -16,38 +20,30 @@ const { RangePicker } = DatePicker;
 const antIcon = <LoadingOutlined style={{ fontSize: 240 }} spin />;
 Chart.register(...registerables)
 
-function callback(key) {
-  console.log(key);
-}
-
-
-
 const GraphCurrent = (props) => {
 
     const context = React.useContext(CheckboxInt)
 
-    const { rangeValue, setRangeValue } = context
+    const { valuesList } = context
 
-  function onChange(dates, dateStrings) {
-    setRangeValue({...rangeValue, from: dateStrings[0], to: dateStrings[1]})
-    console.log('From: ', dateStrings[0], ', to: ', dateStrings[1]);
-  }
 
-const data = {
-  labels: props.data2[props.ipAddr].timestamp.map((datas) => datas.split(".")[0].split("T")[1]),
+ var indexOfValues = valuesList.indexOf(props.data1.split(" ")[1])
+
+const dataJson = {
+    labels: props.data2[props.ipAddr].timestamp.map((datas) => datas.split(".")[0].split("T")[1]),
   datasets: [
     {
       title: props.ipAddr,
       label: props.data1.split(" ")[1],
       data: props.data2[props.ipAddr][props.data1.split(" ")[1]],
       fill: false,
-      backgroundColor: "rgba(75,192,192,0.2)",
-      borderColor: "rgba(75,192,192,1)"
+      backgroundColor:  GraphOptions[indexOfValues].data.backgroundColor      ,
+      borderColor: GraphOptions[indexOfValues].data.borderColor
     }
   ]
 }
 
-const options = {
+const optionsJson = {
             animation: {
             duration: 0
           },
@@ -55,33 +51,39 @@ const options = {
           zoom: {
             zoom: {
               wheel: {
-                enabled: true
+                enabled: true,
+                modifierKey: 'ctrl'
               },
-              mode: "xy",
-              speed: 100
+              mode: "x",
+              speed: 100,
+              drag: {
+                enabled: true,
+                backgroundColor: 'lightblue',
+                borderColor: 'blue',
+                borderWidth: 1,
+
+              }
             },
             pan: {
               enabled: true,
-              mode: "xy",
-              speed: 100
+              mode: "x",
+              speed: 100,
+              modifierKey: 'ctrl'
             }
           },
           title: {
             display: true,
-            text: props.ipAddr,
+            text: props.ipAddr + " " + props.name,
             font: {
-              size: 18
+              size: 20
                   }
                 }
         },
-        scales: {
-        y: {
-        type: 'linear',
-        display: true,
-        position: 'left',
-        }
-        }
+        scales: GraphOptions[indexOfValues].options.scales
           }
+
+
+
 
 
   const downloadImg = React.useRef(null);
@@ -93,13 +95,13 @@ const options = {
     }, []);
 
   return (
-        <div>
-          <button onClick={downloadImage} className="btn-download">Download</button>
+        <div >
+          <Button icon={<DownloadOutlined/>} onClick={downloadImage} className="btn-download">Download</Button>
           <Line  
-            data={data}
+            data={dataJson}
             height={500}
             width={2000} 
-            options= {options}
+            options= {optionsJson}
             ref={downloadImg}
             className="templateGraf"
         />
