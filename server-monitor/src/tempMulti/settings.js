@@ -8,7 +8,7 @@ const Settings = () => {
 
 
   const context = React.useContext(CheckboxInt)
-  const { dates, setDates } = context
+  const { dates, setDates, clickedServers, setClickedServers } = context
 
   const onFinish = (values) => {
     console.log('Success:', values);
@@ -26,8 +26,16 @@ const Settings = () => {
       console.log(e)
       console.log(x)
       setDates(dates.filter((items) => items.ip !== x))
+      var filterClicked = clickedServers.filter((value) => 
+      {
+      var tempString = value.split(" ")[0]
+      return tempString !== x
+      })
+      setClickedServers(filterClicked)
+      }
 
-  }
+
+  
   
   return (
     <>

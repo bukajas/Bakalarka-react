@@ -24,12 +24,10 @@ const Current = () =>  {
     clickedServers, setClickedServers,
     tempData } = context
 
-if(clickedServers){
-  console.log("hovno")
-}
 
 return (
       <div> 
+        <p>(for zoom and drag press "CTRL" key)</p>
       <Button onClick={() => setStartStop(prevState => !prevState)} type='primary'>{startStop ? "Stop" : "Start"}</Button>
       {}
 {

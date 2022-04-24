@@ -37,8 +37,18 @@ const dataJson = {
       label: props.data1.split(" ")[1],
       data: props.data2[props.ipAddr][props.data1.split(" ")[1]],
       fill: false,
-      backgroundColor:  GraphOptions[indexOfValues].data.backgroundColor      ,
-      borderColor: GraphOptions[indexOfValues].data.borderColor
+      backgroundColor:  GraphOptions[indexOfValues].data.backgroundColor,
+      borderColor: GraphOptions[indexOfValues].data.borderColor,
+      yAxisID: 'y'
+    },
+    {
+      title: 'error',
+      label: 'error',
+      data: [100,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      fill: true,
+      backgroundColor: 'red',
+      borderColor: 'red',
+      yAxisID: 'y1'
     }
   ]
 }
@@ -48,6 +58,21 @@ const optionsJson = {
             duration: 0
           },
           plugins: {
+            legend: {
+              labels:{
+                  filter: function(legentItem, chartData) {
+                    if(legentItem.datasetIndex == 1){
+                      return false;
+                    }
+                    return true;
+                  }
+              },
+              display: true,
+              position: 'top',
+            },
+            tooltips: {
+              enabled: false,
+            },
           zoom: {
             zoom: {
               wheel: {

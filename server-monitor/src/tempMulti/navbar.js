@@ -35,7 +35,7 @@ const Navbar = () => {
                <NavLink to="/settings" activeStyle>
                     Settings
               </NavLink>
-          </Menu.Item>   
+          </Menu.Item>
           </Menu>
       </div>
 

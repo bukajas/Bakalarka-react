@@ -30,7 +30,7 @@ const DashboardTab = (props) => {
 
   const context = React.useContext(CheckboxInt)
   const { tempData } = context
-  console.log(props.datas.ip)
+  //console.log(props.datas.ip)
   var lever = false
     
 

@@ -40,10 +40,10 @@ const Hlavni = ({ children }) => {
 
   const [graphOptions, setGraphOptions] = React.useState([])
   const [graphData, setGraphData] = React.useState([])
-  const [tempData, setTempData] = React.useState(null) //curent data
-  const [rangeData, setRangeData] = React.useState(null) //range data
+  const [tempData, setTempData] = React.useState('') //curent data
+  const [rangeData, setRangeData] = React.useState('') //range data
   const [timeLine, setTimeLine] = React.useState('')
-  const [oData, setoData] = React.useState(null)
+  const [oData, setoData] = React.useState('')
   const valuesList = ['bit_rate_in','bit_rate_out','cpu','packet_rate_in','packet_rate_out','ram','tcp_established']
   const [valuesPost, setValuesPost] = React.useState('all')
   const [rangeValue, setRangeValue] = React.useState({
@@ -84,7 +84,7 @@ function Druhy({ children }) {
     valuesPost, setValuesPost,
     rangeValue, setRangeValue,
     rangeData, setRangeData,
-    tempData, setTempData, timeLine, setTimeLine
+    tempData, setTempData, timeLine, setTimeLine,
    } = context
 
 
@@ -102,6 +102,7 @@ function Druhy({ children }) {
 
   function serverStatus() {
     // pokud v dates mam ip, a od ni bude chodit data, tak bude true jinak false
+    setDates()
     var tempDates = []
     dates.map((date, index) => {
       var liver = false 
@@ -122,13 +123,9 @@ function Druhy({ children }) {
               if(!tempDates[index]) {  tempDates[index] = tempDate[index]  }
              }
           })
-         // console.log(tempDates)
         })
         setDates(tempDates)
   }
-
-
-
 
 
   const [seconds, setSeconds] = React.useState(0)
@@ -144,15 +141,22 @@ function Druhy({ children }) {
     timeStamps()
     getoDataStart()
   }, [])
+
+React.useEffect(() => {
+ if(tempData){serverStatus()} 
+}, [tempData])
+
+
+
+
 // pri prubehu pokud je zapnuty startstop tlacitko
   React.useEffect(() => 
   {
     if(startStop){
       timeStamps()
       getoDataUpdate()
-      if(tempData){serverStatus()  } 
-
     }
+    if(tempData){serverStatus()}
   }, [seconds])
 
 
@@ -162,7 +166,7 @@ function Druhy({ children }) {
     timeStamps()
     getoData()
     if(tempData){serverStatus()  }
-  }, [rangeValue]) 
+  }, [valuesPost]) 
   
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*
@@ -189,12 +193,12 @@ UPDATE_TEMP JE DOCASNA FUNKCE DO TE DOBY NEZ DOSTANU OD VEDOUCIHO SPRAVNOU FUNKC
               packet_rate_in: datas.values.map((datas2) => {return datas2.packet_rate_in}),
               packet_rate_out: datas.values.map((datas2) => {return datas2.packet_rate_out}),
               tcp_established: datas.values.map((datas2) => {return datas2.tcp_established}),
-
           }}}
           }))
-          setoData(response.data.data)
+         // setoData(() => response.data.data)
+          //setoData(response.data.data)
         } else  {
-          setoData(0)
+         // setoData(() => response.data.data)
           setTempData(0)
         }})
       .catch((error) =>{
@@ -234,10 +238,8 @@ function getoDataUpdate () {
                datas[ipaddr].packet_rate_out.push(datas2.values[1].packet_rate_out)
                datas[ipaddr].tcp_established.shift()
                datas[ipaddr].tcp_established.push(datas2.values[1].tcp_established)
-             }
-            })
-        })
-      } 
+
+             }})})} 
       else  
       {
         setoData(0) 
@@ -294,7 +296,7 @@ function getoDataUpdate () {
                  }}}
                  }))
         }  else  {
-          setoData(0)
+       //   setoData((prevState) => response.data.data)
           setRangeData(0)
         }}
         )

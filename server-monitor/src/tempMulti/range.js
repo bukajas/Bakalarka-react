@@ -40,6 +40,7 @@ const Range = () => {
 
   return (
         <div>
+        <p>(for zoom and drag press "CTRL" key)</p>
         <RangePicker ranges={{ Today: [moment(), moment()], 'This Month': [moment().startOf('month'), moment().endOf('month')],  }} showTime format="YYYY-MM-DD HH:mm:ss" onChange={onChange} />
        
         { clickedServers.length > 0 ? clickedServers.map((temp) => 
