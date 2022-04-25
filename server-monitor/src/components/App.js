@@ -25,7 +25,13 @@ const antIcon = <LoadingOutlined style={{ fontSize: 2 }} spin />;
 const CheckboxInt =  createContext()
 
 
+
+
+
 const Hlavni = ({ children }) => {
+
+
+
   const [dates, setDates] = React.useState([ 
     { name: 'Device 1',
       ip: '192.168.0.101',
@@ -69,7 +75,7 @@ const Hlavni = ({ children }) => {
         tempData, setTempData, 
         timeLine, setTimeLine,
         graphOptions, setGraphOptions,
-        graphData, setGraphData
+        graphData, setGraphData,
          }}>
       {children}
       </CheckboxInt.Provider>)
@@ -100,9 +106,8 @@ function Druhy({ children }) {
       setTimeLine(timeArray)
   }
 
-  function serverStatus() {
-    // pokud v dates mam ip, a od ni bude chodit data, tak bude true jinak false
-    setDates()
+  function serverStatusF() {
+  //  pokud v dates mam ip, a od ni bude chodit data, tak bude true jinak false
     var tempDates = []
     dates.map((date, index) => {
       var liver = false 
@@ -125,9 +130,39 @@ function Druhy({ children }) {
           })
         })
         setDates(tempDates)
-  }
+        
+      }
+
+      function serem(responseData) {
+        //  pokud v dates mam ip, a od ni bude chodit data, tak bude true jinak false
+          var tempDates = []
+          dates.map((date, index) => {
+            var liver = false 
+            var tempDate = [...dates]
+            let tempServer = {...date}
+            responseData ? responseData.map((data, i) => {
+              var ipaddr  = data.info.ip
+              if(ipaddr == date.ip)
+             {
+                liver = true
+                tempServer.status = true
+                tempDate[index] = tempServer
+                if(!tempDates[index]) {  tempDates[index] = tempDate[index]  }
+             }
+                else if (!liver && ipaddr !== date.ip && i == tempData.length -1 ){
+                 tempServer.status = false
+                 tempDate[index] = tempServer
+                   if(!tempDates[index]) {  tempDates[index] = tempDate[index]  }
+                  }
+                }) : console.log('oj')
+              })
+              
+            }
 
 
+
+
+      
   const [seconds, setSeconds] = React.useState(0)
   React.useEffect(() =>
   {
@@ -143,10 +178,8 @@ function Druhy({ children }) {
   }, [])
 
 React.useEffect(() => {
- if(tempData){serverStatus()} 
+ if(tempData){serverStatusF()} 
 }, [tempData])
-
-
 
 
 // pri prubehu pokud je zapnuty startstop tlacitko
@@ -156,8 +189,14 @@ React.useEffect(() => {
       timeStamps()
       getoDataUpdate()
     }
-    if(tempData){serverStatus()}
   }, [seconds])
+
+  React.useEffect(() => 
+  {
+    if(tempData){serverStatusF()} 
+  }, [dates.length])
+
+
 
 
 //pokud se zmeni typ zobrazeni
@@ -165,8 +204,8 @@ React.useEffect(() => {
   {
     timeStamps()
     getoData()
-    if(tempData){serverStatus()  }
-  }, [valuesPost]) 
+    if(tempData){serverStatusF()  }
+  }, [rangeValue]) 
   
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*
@@ -218,6 +257,7 @@ function getoDataUpdate () {
       { 
         if (!response.data.error) 
         {
+          serem(response.data.data)
         tempData.map((datas) => {
            response.data.data.map((datas2) => {
              var ipaddr = Object.keys(datas)

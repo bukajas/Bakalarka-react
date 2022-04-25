@@ -8,11 +8,12 @@ const Settings = () => {
 
 
   const context = React.useContext(CheckboxInt)
-  const { dates, setDates, clickedServers, setClickedServers } = context
+  const { dates, setDates, clickedServers, setClickedServers, serverStatus, setServerStatus } = context
 
   const onFinish = (values) => {
     console.log('Success:', values);
     setDates([...dates, {name: values.name,ip: values.ip, os: values.os, status: false } ])
+    setServerStatus([...serverStatus, {ip: values.ip, status : false }])
     message.success('Server successfully added');
   }
   
@@ -26,6 +27,7 @@ const Settings = () => {
       console.log(e)
       console.log(x)
       setDates(dates.filter((items) => items.ip !== x))
+      setServerStatus(serverStatus.filter((items) => items.ip !== x))
       var filterClicked = clickedServers.filter((value) => 
       {
       var tempString = value.split(" ")[0]

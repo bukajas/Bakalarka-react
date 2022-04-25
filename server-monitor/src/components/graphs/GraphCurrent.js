@@ -55,24 +55,9 @@ const dataJson = {
 
 const optionsJson = {
             animation: {
-            duration: 0
+            duration: 100
           },
           plugins: {
-            legend: {
-              labels:{
-                  filter: function(legentItem, chartData) {
-                    if(legentItem.datasetIndex == 1){
-                      return false;
-                    }
-                    return true;
-                  }
-              },
-              display: true,
-              position: 'top',
-            },
-            tooltips: {
-              enabled: false,
-            },
           zoom: {
             zoom: {
               wheel: {
