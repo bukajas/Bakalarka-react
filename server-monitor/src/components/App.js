@@ -15,6 +15,7 @@ import {
 import Template from "./Template.js"
 import {format, set} from 'date-fns'
 import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+import TempGraf from './TempGraf'
 export { CheckboxInt }
 
 
