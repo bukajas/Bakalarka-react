@@ -26,10 +26,9 @@ const GraphCurrent = (props) => {
 
     const { valuesList } = context
 
-
- var indexOfValues = valuesList.indexOf(props.data1.split(" ")[1])
-
-const dataJson = {
+ var indexOfValues = valuesList.indexOf(props.data1.split(" ")[1]) +1
+ 
+ var dataJson = {
     labels: props.data2[props.ipAddr].timestamp.map((datas) => datas.split(".")[0].split("T")[1]),
   datasets: [
     {
@@ -44,13 +43,46 @@ const dataJson = {
     {
       title: 'error',
       label: 'error',
-      data: [100,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      data: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
       fill: true,
       backgroundColor: 'red',
       borderColor: 'red',
       yAxisID: 'y1'
     }
   ]
+}
+if(props.cpuram==true){
+  dataJson = {
+    labels: props.data2[props.ipAddr].timestamp.map((datas) => datas.split(".")[0].split("T")[1]),
+  datasets: [
+    {
+      title: props.ipAddr,
+      label: props.data1.split(" ")[1].split("_")[0],
+      data: props.data2[props.ipAddr][props.data1.split(" ")[1].split("_")[0]],
+      fill: false,
+      backgroundColor:  GraphOptions[0].data.backgroundColor,
+      borderColor: GraphOptions[0].data.borderColor,
+      yAxisID: 'y'
+    },
+    {
+      title: props.ipAddr,
+      label: props.data1.split(" ")[1].split("_")[1],
+      data: props.data2[props.ipAddr][props.data1.split(" ")[1].split("_")[1]],
+      fill: false,
+      backgroundColor:  GraphOptions[1].data.backgroundColor,
+      borderColor:  GraphOptions[1].data.backgroundColor,
+    },
+    {
+      title: 'error',
+      label: 'error',
+      data: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      fill: true,
+      backgroundColor: 'red',
+      borderColor: 'red',
+      yAxisID: 'y1'
+    }
+  ]
+}
 }
 
 const optionsJson = {

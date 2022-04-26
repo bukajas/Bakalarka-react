@@ -25,7 +25,7 @@ const GraphRange = (props) => {
 
     const {  valuesList } = context
 
-      var indexOfValues = valuesList.indexOf(props.data1.split(" ")[1])
+      var indexOfValues = valuesList.indexOf(props.data1.split(" ")[1]) +1
 
       var dataJson = {
         labels: props.data2[props.ipAddr].timestamp.map((datas) => datas.split(".")[0].split("T")[1]),
@@ -35,12 +35,38 @@ const GraphRange = (props) => {
           label: props.data1.split(" ")[1],
           data: props.data2[props.ipAddr][props.data1.split(" ")[1]],
           fill: false,
-          backgroundColor:  GraphOptions[indexOfValues].data.backgroundColor      ,
-          borderColor: GraphOptions[indexOfValues].data.borderColor
-        }
+          backgroundColor:  GraphOptions[indexOfValues].data.backgroundColor,
+          borderColor: GraphOptions[indexOfValues].data.borderColor,
+          yAxisID: 'y'
+        },
       ]
     }
-          
+    
+if(props.cpuram==true){
+      dataJson = {
+        labels: props.data2[props.ipAddr].timestamp.map((datas) => datas.split(".")[0].split("T")[1]),
+      datasets: [
+        {
+          title: props.ipAddr,
+          label: props.data1.split(" ")[1].split("_")[0],
+          data: props.data2[props.ipAddr][props.data1.split(" ")[1].split("_")[0]],
+          fill: false,
+          backgroundColor:  GraphOptions[0].data.backgroundColor,
+          borderColor: GraphOptions[0].data.borderColor,
+          yAxisID: 'y'
+        },
+        {
+          title: props.ipAddr,
+          label: props.data1.split(" ")[1].split("_")[1],
+          data: props.data2[props.ipAddr][props.data1.split(" ")[1].split("_")[1]],
+          fill: false,
+          backgroundColor:  GraphOptions[1].data.backgroundColor,
+          borderColor:  GraphOptions[1].data.backgroundColor,
+        },
+      ]
+    }
+    }   
+ 
     const optionsJson = {
       animation: {
       duration: 0

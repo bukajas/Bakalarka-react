@@ -30,7 +30,11 @@ const Navbar = () => {
                <NavLink to="/range" activeStyle>
                     Range
               </NavLink>
-        </Menu.Item>  
+        </Menu.Item>
+        <Menu.Item  
+        onClick={() => {setValuesPost('update'); setStartStop(false)}} key="5">
+Update
+        </Menu.Item>    
         <Menu.Item onClick={() => {setValuesPost('range'); setStartStop(false)}} key="4">
                <NavLink to="/settings" activeStyle>
                     Settings

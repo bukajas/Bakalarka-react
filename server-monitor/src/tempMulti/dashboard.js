@@ -46,13 +46,13 @@ const DashboardTab = (props) => {
             lever = true
             return (
             <div className='dashboard-container-child'>
-              <h2>{ipaddr} {d[ipaddr].name} {d[ipaddr].os} <StatusColor stat={props.datas.status}/></h2>
+              <h2>{ipaddr} {d[ipaddr].name} {d[ipaddr].description} <StatusColor stat={props.datas.status}/></h2>
               <p>cpu : {d[ipaddr].cpu[arLen]} %   (avg: {averageValue(d[ipaddr].cpu)} %) </p>
-              <p>ram: {d[ipaddr].ram[arLen]} %    (avg: {averageValue(d[ipaddr].ram)} %)        </p>
-              <p>bit_rate_in: {d[ipaddr].bit_rate_in[arLen]} bits/sec  (avg: {averageValue(d[ipaddr].bit_rate_in)} bits/sec)      </p>
-              <p>bit_rate_out: {d[ipaddr].bit_rate_out[arLen]} bits/sec   (avg: {averageValue(d[ipaddr].bit_rate_out)} bits/sec)        </p>
-              <p>packet_rate_out: {d[ipaddr].packet_rate_out[arLen]} packets/sec (avg: {averageValue(d[ipaddr].packet_rate_out)} packets/sec)        </p>
-              <p>tcp_established: {d[ipaddr].tcp_established[arLen]} packets/sec    (avg: {averageValue(d[ipaddr].tcp_established)} packets/sec)           </p>
+              <p>ram: {d[ipaddr].ram[arLen]} %    (avg: {averageValue(d[ipaddr].ram)} %)</p>
+              <p>bit_rate_in: {d[ipaddr].bit_rate_in[arLen]} bits/sec  (avg: {averageValue(d[ipaddr].bit_rate_in)} bits/sec)</p>
+              <p>bit_rate_out: {d[ipaddr].bit_rate_out[arLen]} bits/sec   (avg: {averageValue(d[ipaddr].bit_rate_out)} bits/sec</p>
+              <p>packet_rate_out: {d[ipaddr].packet_rate_out[arLen]} packets/sec (avg: {averageValue(d[ipaddr].packet_rate_out)} packets/sec)</p>
+              <p>tcp_established: {d[ipaddr].tcp_established[arLen]} packets/sec    (avg: {averageValue(d[ipaddr].tcp_established)} packets/sec)</p>
             </div>
           )
             
@@ -60,7 +60,7 @@ const DashboardTab = (props) => {
             return (
             <div className='dashboard-container-child'>
               <h3>No data from server</h3>
-                <h2>{props.datas.ip} {props.datas.name} {props.datas.os} <StatusColor stat={props.datas.status}/></h2>
+                <h2>{props.datas.ip} {props.datas.name} {props.datas.description} <StatusColor stat={props.datas.status}/></h2>
                 <p>cpu : NULL %   (avg: NULL %) </p>
                 <p>ram: NULL %    (avg: NULL %) </p>
                 <p>bit_rate_in: NULL bits/sec  (avg: NULL bits/sec) </p>

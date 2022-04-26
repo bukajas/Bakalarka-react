@@ -15,7 +15,6 @@ import {
 import Template from "./Template.js"
 import {format, set} from 'date-fns'
 import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
-import TempGraf from './TempGraf'
 export { CheckboxInt }
 
 
@@ -35,12 +34,17 @@ const Hlavni = ({ children }) => {
   const [dates, setDates] = React.useState([ 
     { name: 'Device 1',
       ip: '192.168.0.101',
-      os: 'debian',
+      description: 'debian',
+      status: false
+  },
+  { name: 'Device 2',
+      ip: '192.168.0.102',
+      description: 'debian',
       status: false
   }, { 
-      name: 'Device 2',
-      ip: '192.168.0.102',
-      os: 'ubuntu',
+      name: 'Device 3',
+      ip: '192.168.0.103',
+      description: 'ubuntu',
       status: false
 }])  // seznam vybranych serveru
 
@@ -50,7 +54,7 @@ const Hlavni = ({ children }) => {
   const [rangeData, setRangeData] = React.useState('') //range data
   const [timeLine, setTimeLine] = React.useState('')
   const [oData, setoData] = React.useState('')
-  const valuesList = ['bit_rate_in','bit_rate_out','cpu','packet_rate_in','packet_rate_out','ram','tcp_established']
+  const valuesList = ['cpu_ram','bit_rate_in','bit_rate_out','packet_rate_in','packet_rate_out','tcp_established']
   const [valuesPost, setValuesPost] = React.useState('all')
   const [rangeValue, setRangeValue] = React.useState({
     from: "2021-02-01 01:00:00",
@@ -156,7 +160,7 @@ function Druhy({ children }) {
                   }
                 }) : console.log('oj')
               })
-              
+              setDates(tempDates)
             }
 
 
@@ -207,6 +211,14 @@ React.useEffect(() => {
     if(tempData){serverStatusF()  }
   }, [rangeValue]) 
   
+  React.useEffect(() => 
+  {
+    timeStamps()
+    getoData()
+    if(tempData){serverStatusF()  }
+  }, [valuesPost]) 
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*
 UPDATE_TEMP JE DOCASNA FUNKCE DO TE DOBY NEZ DOSTANU OD VEDOUCIHO SPRAVNOU FUNKCI UPDATE, ZATIM MI TA FUNKCE POSILA SICE ARRAY ALE S ZADNOU HODNOTOU
@@ -223,7 +235,7 @@ UPDATE_TEMP JE DOCASNA FUNKCE DO TE DOBY NEZ DOSTANU OD VEDOUCIHO SPRAVNOU FUNKC
          setTempData(response.data.data.map((datas)=> {
          {return {[datas.info.ip]: {
               name: datas.info.name,
-              os: datas.info.os,
+              description: datas.info.os,
               cpu: datas.values.map((datas2) => {return datas2.cpu}),
               ram: datas.values.map((datas2) => {return datas2.ram}),
               timestamp: datas.values.map((datas2) => {return datas2.timestamp}),
@@ -311,11 +323,14 @@ function getoDataUpdate () {
     else if(valuesPost == 'times') {
       postValues = {type: "times", times: ["2021-02-01 01:00:00", "2021-02-01 01:00:02", "2021-02-01 03:03:00", "2021-02-01 01:55:55"]}
     }
-    // else if(valuesPost == 'update') {
-    //   console.log(format(new Date(), "yyyy-MM-dd HH:mm:ss"))
-    //   let time = format(new Date(), "yyyy-MM-dd HH:mm:ss")
-    //   postValues = {type: "update", last: time}
-    // }
+    else if(valuesPost == 'update') {
+    
+      var tim = new Date()
+      var newTime = new Date(tim.getTime() - 1 * 1000)
+      console.log(format(newTime, 'yyyy-MM-dd kk:mm:ss'))
+      let time = format(newTime, 'yyyy-MM-dd kk:mm:ss')
+      postValues = {type: "update", last: time}
+    }
       Axios.post( Config.server.getData, postValues, {headers: { 'Content-Type': 'application/json' }})
       .then((response) => 
         { if (!response.data.error && valuesPost == 'range') {
@@ -323,7 +338,7 @@ function getoDataUpdate () {
           setRangeData(response.data.data.map((datas)=> {
             {       return {[datas.info.ip]: {
                      name: datas.info.name,
-                     os: datas.info.os,
+                     description: datas.info.os,
                      cpu: datas.values.map((datas2) => {return datas2.cpu}),
                      ram: datas.values.map((datas2) => {return datas2.ram}),
                      timestamp: datas.values.map((datas2) => {return datas2.timestamp}),
@@ -335,7 +350,38 @@ function getoDataUpdate () {
                      
                  }}}
                  }))
-        }  else  {
+        }
+        if (!response.data.error && valuesPost == 'update') {
+
+          {
+          tempData.map((datas) => {
+             response.data.data.map((datas2) => {
+               var ipaddr = Object.keys(datas)
+               if(ipaddr == datas2.info.ip){
+                 datas[ipaddr].cpu.shift()
+                 datas[ipaddr].cpu.push(datas2.values[0].cpu)
+                 datas[ipaddr].ram.shift()
+                 datas[ipaddr].ram.push(datas2.values[0].ram)
+                 datas[ipaddr].timestamp.shift()
+                 datas[ipaddr].timestamp.push(datas2.values[0].timestamp)
+                 datas[ipaddr].bit_rate_in.shift()
+                 datas[ipaddr].bit_rate_in.push(datas2.values[0].bit_rate_in)
+                 datas[ipaddr].bit_rate_out.shift()
+                 datas[ipaddr].bit_rate_out.push(datas2.values[0].bit_rate_out)
+                 datas[ipaddr].packet_rate_in.shift()
+                 datas[ipaddr].packet_rate_in.push(datas2.values[0].packet_rate_in)
+                 datas[ipaddr].packet_rate_out.shift()
+                 datas[ipaddr].packet_rate_out.push(datas2.values[0].packet_rate_out)
+                 datas[ipaddr].tcp_established.shift()
+                 datas[ipaddr].tcp_established.push(datas2.values[0].tcp_established)
+  
+               }})})} 
+
+
+
+
+        }
+        else  {
        //   setoData((prevState) => response.data.data)
           setRangeData(0)
         }}

@@ -20,6 +20,11 @@ import Range from '../tempMulti/range';
 import Dashboard from '../tempMulti/dashboard';
 import Settings from '../tempMulti/settings';
 import Navbar from '../tempMulti/navbar';
+import 'chartjs-plugin-zoom';
+import zoomPlugin from "chartjs-plugin-zoom";
+import { Chart } from 'chart.js'
+
+Chart.register(zoomPlugin); // REGISTER PLUGIN
 
 
 
@@ -45,7 +50,7 @@ const StatusColor = (props) => {
 const Template = ({children}) => {
 
 
-  const valuesList2 = ['bit rate in','bit rate out','cpu','packet rate in','packet rate out','ram','tcp established']
+  const valuesList2 = ['Cpu/Ram','Bit rate in','Bit rate out','Packet rate in','Packet rate out','Tcp established']
 
     const context = React.useContext(CheckboxInt)
     const { tempData, clickedServers, setClickedServers,

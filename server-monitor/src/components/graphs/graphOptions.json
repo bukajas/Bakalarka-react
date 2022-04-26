@@ -1,4 +1,48 @@
-[   
+[   {
+        "id": "cpu",
+        "data": {
+            "borderColor": "lightblue",
+            "backgroundColor": "lightblue"
+        },
+        "options": {        
+            "scales": {
+            "y": {
+            "min": 0,
+            "max": 100,
+            "display": true,
+            "position": "left"
+            },
+            "y1": {
+                "min": 0,
+                "max": 100,
+                "display": false,
+                "position": "right"              
+            }
+            }}
+    },
+    {
+        "id": "ram",
+        "data": {
+                    "backgroundColor": "blue",
+                    "borderColor": "blue"
+                },
+                "options": {        
+                    "scales": {
+                    "y": {
+                    "min": 0,
+                    "max": 100,
+                    "type": "linear",
+                    "display": true,
+                    "position": "left"
+                    },
+                    "y1": {
+                        "min": 0,
+                        "max": 100,
+                        "display": false,
+                        "position": "right"              
+                    }
+                    }}
+    },
     {
         "id": "bit_rate_in",
         "data": {
@@ -41,28 +85,7 @@
             }
             }}
     },
-        {
-        "id": "cpu",
-        "data": {
-            "borderColor": "lightblue",
-            "backgroundColor": "lightblue"
-        },
-        "options": {        
-            "scales": {
-            "y": {
-            "min": 0,
-            "max": 100,
-            "display": true,
-            "position": "left"
-            },
-            "y1": {
-                "min": 0,
-                "max": 100,
-                "display": false,
-                "position": "right"              
-            }
-            }}
-    },
+        
         {
         "id": "packet_rate_in",
         "data": {
@@ -105,29 +128,7 @@
             }
             }}
     },   
-    {
-        "id": "ram",
-        "data": {
-                    "backgroundColor": "blue",
-                    "borderColor": "blue"
-                },
-                "options": {        
-                    "scales": {
-                    "y": {
-                    "min": 0,
-                    "max": 100,
-                    "type": "linear",
-                    "display": true,
-                    "position": "left"
-                    },
-                    "y1": {
-                        "min": 0,
-                        "max": 100,
-                        "display": false,
-                        "position": "right"              
-                    }
-                    }}
-    },
+    
     {
         "id": "tcp_established",
         "data": {
