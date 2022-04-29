@@ -29,15 +29,17 @@ const CheckboxInt =  createContext()
 
 const Hlavni = ({ children }) => {
 
+    var time = new Date()
+    var newTime = new Date(time.getTime() - 60 * 1000)
+    var tempObj = {from: format(newTime, 'yyyy-MM-dd kk:mm:ss'), to: format(time, 'yyyy-MM-dd kk:mm:ss')}
 
-
+  const [timeInterval, setTimeInterval] = React.useState(tempObj)
   const [dates, setDates] = React.useState([ 
     { name: 'Device 1',
       ip: '192.168.0.101',
       description: 'debian',
       status: false
-  },
-  { name: 'Device 2',
+  },  { name: 'Device 2',
       ip: '192.168.0.102',
       description: 'debian',
       status: false
@@ -45,9 +47,7 @@ const Hlavni = ({ children }) => {
       name: 'Device 3',
       ip: '192.168.0.103',
       description: 'ubuntu',
-      status: false
-}])  // seznam vybranych serveru
-
+      status: false}])  // seznam vybranych serveru
   const [graphOptions, setGraphOptions] = React.useState([])
   const [graphData, setGraphData] = React.useState([])
   const [tempData, setTempData] = React.useState('') //curent data
@@ -65,7 +65,6 @@ const Hlavni = ({ children }) => {
   const [clickedServers, setClickedServers] = React.useState([])
   
 
-
   return ( <CheckboxInt.Provider value={{
         oData, setoData,
         startStop, setStartStop,
@@ -80,6 +79,7 @@ const Hlavni = ({ children }) => {
         timeLine, setTimeLine,
         graphOptions, setGraphOptions,
         graphData, setGraphData,
+        timeInterval, setTimeInterval
          }}>
       {children}
       </CheckboxInt.Provider>)
@@ -94,7 +94,7 @@ function Druhy({ children }) {
     valuesPost, setValuesPost,
     rangeValue, setRangeValue,
     rangeData, setRangeData,
-    tempData, setTempData, timeLine, setTimeLine,
+    tempData, setTempData, timeLine, setTimeLine,timeInterval
    } = context
 
 
@@ -181,6 +181,12 @@ function Druhy({ children }) {
     getoDataStart()
   }, [])
 
+
+  React.useEffect(() => {
+    timeStamps()
+    getoDataStart()
+  }, [timeInterval])
+
 React.useEffect(() => {
  if(tempData){serverStatusF()} 
 }, [tempData])
@@ -227,29 +233,42 @@ UPDATE_TEMP JE DOCASNA FUNKCE DO TE DOBY NEZ DOSTANU OD VEDOUCIHO SPRAVNOU FUNKC
   // funkce pro získání naměřených dat ze serveru
 
   function getoDataStart () {
-    let postValues = {type: "all"}
+    let postValues = {type: "range", from: timeInterval.from, to: timeInterval.to}
+
       Axios.post( Config.server.getData, postValues, {headers: { 'Content-Type': 'application/json' }})
       .then((response) => 
         { if (!response.data.error) {
 
-         setTempData(response.data.data.map((datas)=> {
-         {return {[datas.info.ip]: {
-              name: datas.info.name,
-              description: datas.info.os,
-              cpu: datas.values.map((datas2) => {return datas2.cpu}),
-              ram: datas.values.map((datas2) => {return datas2.ram}),
-              timestamp: datas.values.map((datas2) => {return datas2.timestamp}),
-              bit_rate_in: datas.values.map((datas2) => {return datas2.bit_rate_in}),
-              bit_rate_out: datas.values.map((datas2) => {return datas2.bit_rate_out}),
-              packet_rate_in: datas.values.map((datas2) => {return datas2.packet_rate_in}),
-              packet_rate_out: datas.values.map((datas2) => {return datas2.packet_rate_out}),
-              tcp_established: datas.values.map((datas2) => {return datas2.tcp_established}),
-          }}}
-          }))
-         // setoData(() => response.data.data)
-          //setoData(response.data.data)
+        //  setTempData(response.data.data.map((datas)=> {
+        //  {return {[datas.info.ip]: {
+        //       name: datas.info.name,
+        //       description: datas.info.os,
+        //       cpu: datas.values.map((datas2) => {return datas2.cpu}),
+        //       ram: datas.values.map((datas2) => {return datas2.ram}),
+        //       timestamp: datas.values.map((datas2) => {return datas2.timestamp}),
+        //       bit_rate_in: datas.values.map((datas2) => {return datas2.bit_rate_in}),
+        //       bit_rate_out: datas.values.map((datas2) => {return datas2.bit_rate_out}),
+        //       packet_rate_in: datas.values.map((datas2) => {return datas2.packet_rate_in}),
+        //       packet_rate_out: datas.values.map((datas2) => {return datas2.packet_rate_out}),
+        //       tcp_established: datas.values.map((datas2) => {return datas2.tcp_established}),
+        //   }}}
+        //   }))
+          setTempData(response.data.data.map((datas)=> {
+            {return {[datas.info.ip]: {
+                 name: datas.info.name,
+                 description: datas.info.os,
+                 cpu: datas.values.map((datas2) => {return datas2.cpu}),
+                 ram: datas.values.map((datas2) => {return datas2.ram}),
+                 timestamp: datas.values.map((datas2) => {return datas2.timestamp}),
+                 bit_rate_in: datas.values.map((datas2) => {return datas2.bit_rate_in}),
+                 bit_rate_out: datas.values.map((datas2) => {return datas2.bit_rate_out}),
+                 packet_rate_in: datas.values.map((datas2) => {return datas2.packet_rate_in}),
+                 packet_rate_out: datas.values.map((datas2) => {return datas2.packet_rate_out}),
+                 tcp_established: datas.values.map((datas2) => {return datas2.tcp_established}),
+             }}}
+             }))
         } else  {
-         // setoData(() => response.data.data)
+
           setTempData(0)
         }})
       .catch((error) =>{
@@ -261,39 +280,77 @@ UPDATE_TEMP JE DOCASNA FUNKCE DO TE DOBY NEZ DOSTANU OD VEDOUCIHO SPRAVNOU FUNKC
 
 
 /////////////////////////////////////////////////////////////////
-
 function getoDataUpdate () {
-  let postValues = {type: "update_temp"}
+      var time = new Date()
+      var newTime = new Date(time.getTime() - 1 * 1000)
+
+  //    console.log(format(newTime, 'yyyy-MM-dd kk:mm:ss'),tempData[0]['192.168.0.101'].timestamp[tempData[0]['192.168.0.101'].timestamp.length - 1].split(".")[0].replace("T", " "))
+    var ipadr = Object.keys(tempData[0])
+    console.log(ipadr)
+      var tempTime = tempData[0][ipadr].timestamp[tempData[0][ipadr].timestamp.length - 1].split(".")[0].replace("T", " ")
+
+     // let postValues  = {type: "update", last: format(newTime, 'yyyy-MM-dd kk:mm:ss')}
+      let postValues  = {type: "update", last: tempTime}
+
     Axios.post( Config.server.getData, postValues, {headers: { 'Content-Type': 'application/json' }})
     .then((response) => 
       { 
         if (!response.data.error) 
         {
+           
+          const tempOBJ = response.data.data.map((datas)=> {
+            {return {[datas.info.ip]: {
+                 name: datas.info.name,
+                 description: datas.info.os,
+                 cpu: datas.values.map((datas2) => {return datas2.cpu}),
+                 ram: datas.values.map((datas2) => {return datas2.ram}),
+                 timestamp: datas.values.map((datas2) => {return datas2.timestamp}),
+                 bit_rate_in: datas.values.map((datas2) => {return datas2.bit_rate_in}),
+                 bit_rate_out: datas.values.map((datas2) => {return datas2.bit_rate_out}),
+                 packet_rate_in: datas.values.map((datas2) => {return datas2.packet_rate_in}),
+                 packet_rate_out: datas.values.map((datas2) => {return datas2.packet_rate_out}),
+                 tcp_established: datas.values.map((datas2) => {return datas2.tcp_established}),
+             }}}
+             })
+
+
+
+          
           serem(response.data.data)
-        tempData.map((datas) => {
+         tempData.map((datas, i) => {
            response.data.data.map((datas2) => {
              var ipaddr = Object.keys(datas)
+             var tempDataLen = datas[ipaddr].timestamp.length
+             var arrayLength = tempOBJ[i][ipaddr].timestamp.length
              if(ipaddr == datas2.info.ip){
-               datas[ipaddr].cpu.shift()
-               datas[ipaddr].cpu.push(datas2.values[1].cpu)
+               var da = [...datas[ipaddr].timestamp, ...tempOBJ[i][ipaddr].timestamp]
+               console.log(da.slice(arrayLength))
+               
+              //  datas[ipaddr].cpu.shift()
+              //  datas[ipaddr].cpu.push(datas2.values[0].cpu)
+               datas[ipaddr].cpu = [...datas[ipaddr].cpu, ...tempOBJ[i][ipaddr].cpu]
+               datas[ipaddr].cpu = datas[ipaddr].cpu.slice(arrayLength)
                datas[ipaddr].ram.shift()
-               datas[ipaddr].ram.push(datas2.values[1].ram)
+               datas[ipaddr].ram.push(datas2.values[0].ram)
                datas[ipaddr].timestamp.shift()
-               datas[ipaddr].timestamp.push(datas2.values[1].timestamp)
+               datas[ipaddr].timestamp.push(datas2.values[0].timestamp)
                datas[ipaddr].bit_rate_in.shift()
-               datas[ipaddr].bit_rate_in.push(datas2.values[1].bit_rate_in)
+               datas[ipaddr].bit_rate_in.push(datas2.values[0].bit_rate_in)
                datas[ipaddr].bit_rate_out.shift()
-               datas[ipaddr].bit_rate_out.push(datas2.values[1].bit_rate_out)
+               datas[ipaddr].bit_rate_out.push(datas2.values[0].bit_rate_out)
                datas[ipaddr].packet_rate_in.shift()
-               datas[ipaddr].packet_rate_in.push(datas2.values[1].packet_rate_in)
+               datas[ipaddr].packet_rate_in.push(datas2.values[0].packet_rate_in)
                datas[ipaddr].packet_rate_out.shift()
-               datas[ipaddr].packet_rate_out.push(datas2.values[1].packet_rate_out)
+               datas[ipaddr].packet_rate_out.push(datas2.values[0].packet_rate_out)
                datas[ipaddr].tcp_established.shift()
-               datas[ipaddr].tcp_established.push(datas2.values[1].tcp_established)
+               datas[ipaddr].tcp_established.push(datas2.values[0].tcp_established)
+
+            
 
              }})})} 
       else  
       {
+        console.log('error') 
         setoData(0) 
         setTempData(0)  
       }})

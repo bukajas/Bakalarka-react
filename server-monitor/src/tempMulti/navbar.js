@@ -20,7 +20,7 @@ const Navbar = () => {
                     Dashboard
               </NavLink>
           </Menu.Item>
-        <Menu.Item  onClick={() => {setValuesPost('all'); }} key="2">
+        <Menu.Item  onClick={() => {setValuesPost('range'); }} key="2">
                <NavLink to="/current" activeStyle>
                     Current
               </NavLink>
