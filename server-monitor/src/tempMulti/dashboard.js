@@ -83,10 +83,35 @@ const DashboardTab = (props) => {
 
 const Dashboard = () => {
 
+//   const [count, setCount] = React.useState(0);
+//   const mutationRef = React.useRef(count);
+
+//   React.useEffect(() =>{
+//     setCount(count + 1);
+//  }, [])
+
+
+  
+  
+//   console.log('count after', count)
+  
+//   const handleClick = () => {
+//     setCount(count + 1);
+//     console.log("Count before update", count);
+//   };
+
+//   React.useEffect(() =>{
+//      mutationRef.current = count
+//   }, [count])
+
+
+
+
   const context = React.useContext(CheckboxInt)
   const { startStop, setStartStop, dates } = context 
   return (
     <div>
+       {/* <button onClick={handleClick}>Increment</button> */}
       <Button onClick={() => setStartStop(prevState => !prevState)} type='primary'>{startStop ? "Stop" : "Start"}</Button>
       <h1>Dashboard</h1><hr/>
       <div>

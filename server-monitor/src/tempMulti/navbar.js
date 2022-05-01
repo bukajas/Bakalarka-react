@@ -15,12 +15,12 @@ const Navbar = () => {
   return (
       <div>
       <Menu theme="light" mode="horizontal" >
-      <Menu.Item  key="1">
+      <Menu.Item onClick={() => {setValuesPost('current'); }} key="1">
                <NavLink to="/dashboard" activeStyle>
                     Dashboard
               </NavLink>
           </Menu.Item>
-        <Menu.Item  onClick={() => {setValuesPost('range'); }} key="2">
+        <Menu.Item  onClick={() => {setValuesPost('current'); }} key="2">
                <NavLink to="/current" activeStyle>
                     Current
               </NavLink>
@@ -31,10 +31,6 @@ const Navbar = () => {
                     Range
               </NavLink>
         </Menu.Item>
-        <Menu.Item  
-        onClick={() => {setValuesPost('update'); setStartStop(false)}} key="5">
-Update
-        </Menu.Item>    
         <Menu.Item onClick={() => {setValuesPost('range'); setStartStop(false)}} key="4">
                <NavLink to="/settings" activeStyle>
                     Settings
