@@ -3,7 +3,6 @@ import {Config} from '../config.js'
 import Axios from 'axios'
 import "antd/dist/antd.css";
 import "../index.css";
-import DataFetcher from "./DataFetcher.js";
 import { Layout, Menu, Breadcrumb, Spin, Button, Space  } from 'antd';
 import { 
   DesktopOutlined,
@@ -16,6 +15,7 @@ import {
 import Template from "./Template.js"
 import {format, set} from 'date-fns'
 import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+import DataCurrent from './dataFormat/dataCurrent.js'
 export { CheckboxInt }
 
 
@@ -30,7 +30,9 @@ const CheckboxInt =  createContext()
 
 const Hlavni = ({ children }) => {
 
-  const [globalData, setGlobalData] = React.useState('')
+
+  const [globalData, setGlobalData] = React.useState([
+  ])
   const [fetchedData, setFetchedData] = React.useState('')
   const mutationRef = React.useRef(fetchedData)
 
@@ -143,8 +145,7 @@ function Druhy({ children }) {
               if(!tempDates[index]) {  tempDates[index] = tempDate[index]  }
              }
           }) : console.log('oj')
-        })
-        console.log(tempDates) 
+        }) 
     setDates(tempDates)
         
       }
@@ -163,12 +164,12 @@ function Druhy({ children }) {
   React.useEffect(() => {
     timeStamps()
     getoDataStart()
-   // getDataFromServer({type: "range", from: timeInterval.from, to: timeInterval.to})
+    getDataFromServer({type: "range", from: timeInterval.from, to: timeInterval.to}, 'first')
   }, [])
 
   React.useEffect(() => {
     timeStamps()
-    getoDataStart()
+    getDataFromServer({type: 'range', from: timeInterval.from, to: timeInterval.to}, 'before')
   }, [timeInterval])
 
 React.useEffect(() => {
@@ -180,7 +181,8 @@ React.useEffect(() => {
   {
     if(startStop){
       timeStamps()
-      getDataUpdate()
+
+      getDataFromServer({type: "update"}, 'update')
     }
   }, [seconds])
 
@@ -197,32 +199,143 @@ React.useEffect(() => {
     if(tempData){serverStatus(tempData, 1)  }
   }, [valuesPost, rangeValue]) 
      
-  
-  function getDataFromServer(postValues){
+  function getDataFromServer(postValues, type){
+
+    var timeLast
+    var timeFirst
+    if(globalData.length > 1){
+      globalData.map((data, key) =>{
+        var ipadr1 = Object.keys(data)[0]
+        var timeLast1 = globalData[key][ipadr1].timestamp.at(-1)
+        var timeFirst1 = globalData[key][ipadr1].timestamp.at(1)
+        if((key + 1) <= globalData.length - 1){
+          var ipadr2 = Object.keys(globalData[key+1])[0]
+          var timeLast2 = globalData[key+1][ipadr2].timestamp.at(-1)
+          var timeFirst2 = globalData[key+1][ipadr2].timestamp.at(1)
+        }
+        if(timeLast1 == timeLast2){
+          timeLast = timeLast1
+          } if(timeLast1 > timeLast2){
+            timeLast = timeLast1
+          } if(timeLast2 > timeLast1){
+            timeLast = timeLast2
+          }
+          if(timeFirst1 == timeFirst2){
+            timeFirst = timeFirst1
+          } if(timeFirst1 > timeFirst2){
+            timeFirst = timeFirst1
+          } if(timeFirst1 < timeFirst2){
+            timeFirst = timeFirst2
+          }
+        })
+      }
+      if(globalData.length == 1){
+        var ipadr = Object.keys(globalData[0])[0]
+        timeLast = globalData[0][ipadr].timestamp.at(-1).split(".")[0].replace("T", " ")
+        timeFirst = globalData[0][ipadr].timestamp.at(1).split(".")[0].replace("T", " ")
+      }
+      if(type == 'update'){
+        var tempTime = timeLast.split(".")[0].replace("T", " ")
+        postValues = {type: "update", last: tempTime}
+      }
+      console.log(timeFirst)
+      if(type == 'before' && timeFirst == true){
+      var tempTime = timeFirst.split(".")[0].replace("T", " ")
+      console.log(timeInterval, type, timeFirst)
+      if(timeFirst < timeInterval.from){
+        console.log('hovno')
+      postValues = {type: "update", last: tempTime}
+      }
+      }
+      
+      
+
+
+    var tempGlobal = [...globalData]  //saved data
     var tempOBJ = []
+    let tempServer
+    var globalIps  = []
+    var fetchedIps = []
+    tempGlobal.map((data) => { var globalKey = Object.keys(data)[0]; globalIps.push(globalKey) })
+
+
+
     Axios.post( Config.server.getData, postValues, {headers: { 'Content-Type': 'application/json' }})
     .then((response) => {
       if (!response.data.error) 
       {
-        var tempServer 
-        var newServer
-        response.data.data.map((datas, i) => {
-            tempServer = {...datas}
-            newServer = {[datas.info.ip]: {
-              name: datas.info.name,
-              description: datas.info.os,
-              cpu: datas.values.map((datas2) => {return datas2.cpu}),
-              ram: datas.values.map((datas2) => {return datas2.ram}),
-              timestamp: datas.values.map((datas2) => {return datas2.timestamp}),
-              bit_rate_in: datas.values.map((datas2) => {return datas2.bit_rate_in}),
-              bit_rate_out: datas.values.map((datas2) => {return datas2.bit_rate_out}),
-              packet_rate_in: datas.values.map((datas2) => {return datas2.packet_rate_in}),
-              packet_rate_out: datas.values.map((datas2) => {return datas2.packet_rate_out}),
-              tcp_established: datas.values.map((datas2) => {return datas2.tcp_established}),
-            }}
-            tempOBJ[i] = newServer
+          response.data.data.map((datas, i) => {
+          var fetchedKey = datas.info.ip; 
+          fetchedIps.push(fetchedKey)
+           var newServer = {[datas.info.ip]: {
+            name: datas.info.name,
+            description: datas.info.os,
+            cpu: datas.values.map((datas2) => {return datas2.cpu}),
+            ram: datas.values.map((datas2) => {return datas2.ram}),
+            timestamp: datas.values.map((datas2) => {return datas2.timestamp}),
+            bit_rate_in: datas.values.map((datas2) => {return datas2.bit_rate_in}),
+            bit_rate_out: datas.values.map((datas2) => {return datas2.bit_rate_out}),
+            packet_rate_in: datas.values.map((datas2) => {return datas2.packet_rate_in}),
+            packet_rate_out: datas.values.map((datas2) => {return datas2.packet_rate_out}),
+            tcp_established: datas.values.map((datas2) => {return datas2.tcp_established}),
+           }}
+           tempOBJ[i] = newServer
           })
-          setFetchedData([...tempOBJ])
+            tempOBJ.map((datas, i) => {  //fetched data
+              var OBJIp = Object.keys(datas)[0] // ipadresa objektu
+              if(globalIps.includes(OBJIp)) {
+                var globalIndex = globalIps.indexOf(OBJIp)
+                tempServer = {...tempGlobal[globalIndex]}
+                var arrayLength = datas[OBJIp].timestamp.length  //delka ziskanych dat
+                var globalLength = tempGlobal[i][OBJIp].timestamp.length
+                console.log(globalLength, arrayLength)
+                tempServer[OBJIp].cpu = [...tempServer[OBJIp].cpu, ...datas[OBJIp].cpu]
+                tempServer[OBJIp].ram = [...tempServer[OBJIp].ram, ...datas[OBJIp].ram]
+                tempServer[OBJIp].timestamp = [...tempServer[OBJIp].timestamp, ...datas[OBJIp].timestamp]
+                tempServer[OBJIp].bit_rate_in = [...tempServer[OBJIp].bit_rate_in, ...datas[OBJIp].bit_rate_in]
+                tempServer[OBJIp].bit_rate_out = [...tempServer[OBJIp].bit_rate_out, ...datas[OBJIp].bit_rate_out]
+                tempServer[OBJIp].packet_rate_in = [...tempServer[OBJIp].packet_rate_in, ...datas[OBJIp].packet_rate_in]
+                tempServer[OBJIp].packet_rate_out = [...tempServer[OBJIp].packet_rate_out, ...datas[OBJIp].packet_rate_out]
+                tempServer[OBJIp].tcp_established = [...tempServer[OBJIp].tcp_established, ...datas[OBJIp].tcp_established]
+              }
+              if(globalLength > 1000) {
+                console.log('bigger')
+                var diference = globalLength - 1000
+                console.log(diference)
+                tempServer[OBJIp].cpu = tempServer[OBJIp].cpu.slice(diference)
+                tempServer[OBJIp].ram = tempServer[OBJIp].ram.slice(diference)
+                tempServer[OBJIp].timestamp = tempServer[OBJIp].timestamp.slice(diference)
+                tempServer[OBJIp].bit_rate_in = tempServer[OBJIp].bit_rate_in.slice(diference)
+                tempServer[OBJIp].bit_rate_out = tempServer[OBJIp].bit_rate_out.slice(diference)
+                tempServer[OBJIp].packet_rate_in = tempServer[OBJIp].packet_rate_in.slice(diference)
+                tempServer[OBJIp].packet_rate_out = tempServer[OBJIp].packet_rate_out.slice(diference)
+                tempServer[OBJIp].tcp_established = tempServer[OBJIp].tcp_established.slice(diference)
+                console.log(tempServer[OBJIp].cpu)
+              }
+              if(!globalIps.includes(OBJIp)){
+                tempServer = {...datas}
+                tempGlobal[tempGlobal.length] = tempServer
+              }
+              tempGlobal.map((datas2, i2) => {
+                var tempIPglob = Object.keys(datas2)[0]
+                if(!fetchedIps.includes(tempIPglob)){
+                  tempServer = {...datas2}
+                  const tempArr = Array(arrayLength).fill(null)
+                  console.log(datas)
+                  tempServer[tempIPglob].cpu = [...tempServer[tempIPglob].cpu, ...tempArr]
+                  tempServer[tempIPglob].ram = [...tempServer[tempIPglob].ram, ...tempArr]
+                  tempServer[tempIPglob].bit_rate_in = [...tempServer[tempIPglob].bit_rate_in, ...tempArr]
+                  tempServer[tempIPglob].bit_rate_out = [...tempServer[tempIPglob].bit_rate_out, ...tempArr]
+                  tempServer[tempIPglob].packet_rate_in = [...tempServer[tempIPglob].packet_rate_in, ...tempArr]
+                  tempServer[tempIPglob].packet_rate_out = [...tempServer[tempIPglob].packet_rate_out, ...tempArr]
+                  tempServer[tempIPglob].tcp_established = [...tempServer[tempIPglob].tcp_established, ...tempArr]
+                  tempServer[tempIPglob].timestamp = [...tempServer[tempIPglob].timestamp, ...datas[OBJIp].timestamp]
+                }
+            })
+            })
+
+            console.log(tempGlobal)
+            setGlobalData(tempGlobal)
         } 
         else {
           console.log(response.data.message)
@@ -235,51 +348,6 @@ React.useEffect(() => {
       return tempOBJ
     }
 
-function getDataByUpdate(tempData,tempOBJ1){
-  
-   //ziskana data z serveru, napr jedna vterina
-  // var numberOfServers = tempOBJ1.length  // pocet servery od kterych chodi data
-  // var numberOfLoaded = tempData.length  //pocet serveru ktere byly ulozene
-  // var numberOfWanted  //pocet kolik serveru bych mel mit ulozenych.
-  // if(numberOfServers > numberOfLoaded){numberOfWanted = numberOfServers}
-  // if(numberOfServers < numberOfLoaded){numberOfWanted = numberOfLoaded }
-  console.log(tempOBJ1)
-  var listOfServers = tempData.map((datas3) => {return Object.keys(datas3)})
-  tempData.map((datas, i) => {
-    tempOBJ1.map((datas2, i) => {
-      var ipaddr = Object.keys(datas)
-      var tempDataLen = datas[ipaddr].timestamp.length //delka dat
-      var arrayLength = tempOBJ1[i][ipaddr].timestamp.length  //delka ziskanych dat
-
-      console.log(Object.keys(datas2))
-      if(ipaddr == Object.keys(datas2) && tempOBJ1[i])
-      {
-        datas[ipaddr].cpu = [...datas[ipaddr].cpu, ...tempOBJ1[i][ipaddr].cpu]
-        datas[ipaddr].cpu = datas[ipaddr].cpu.slice(arrayLength)
-        datas[ipaddr].ram = [...datas[ipaddr].ram, ...tempOBJ1[i][ipaddr].ram]
-        datas[ipaddr].ram = datas[ipaddr].ram.slice(arrayLength)
-        datas[ipaddr].timestamp = [...datas[ipaddr].timestamp, ...tempOBJ1[i][ipaddr].timestamp]
-        datas[ipaddr].timestamp = datas[ipaddr].timestamp.slice(arrayLength)
-        datas[ipaddr].bit_rate_in = [...datas[ipaddr].bit_rate_in, ...tempOBJ1[i][ipaddr].bit_rate_in]
-        datas[ipaddr].bit_rate_in = datas[ipaddr].bit_rate_in.slice(arrayLength)
-        datas[ipaddr].bit_rate_out = [...datas[ipaddr].bit_rate_out, ...tempOBJ1[i][ipaddr].bit_rate_out]
-        datas[ipaddr].bit_rate_out = datas[ipaddr].bit_rate_out.slice(arrayLength)
-        datas[ipaddr].packet_rate_in = [...datas[ipaddr].packet_rate_in, ...tempOBJ1[i][ipaddr].packet_rate_in]
-        datas[ipaddr].packet_rate_in = datas[ipaddr].packet_rate_in.slice(arrayLength)
-        datas[ipaddr].packet_rate_out = [...datas[ipaddr].packet_rate_out, ...tempOBJ1[i][ipaddr].packet_rate_out]
-        datas[ipaddr].packet_rate_out = datas[ipaddr].packet_rate_out.slice(arrayLength)
-        datas[ipaddr].tcp_established = [...datas[ipaddr].tcp_established, ...tempOBJ1[i][ipaddr].tcp_established]
-        datas[ipaddr].tcp_established = datas[ipaddr].tcp_established.slice(arrayLength)
-      }
-      if(ipaddr !== Object.keys(datas2) && !arrayLength.includes(Object.keys(datas2))){
-        console.log('heeee')
-      }
-    })
-
-
-  })
-}
-    
 React.useEffect(() =>{
   mutationRef.current = fetchedData
 }, [fetchedData])
@@ -290,28 +358,9 @@ React.useEffect(() =>{
   // funkce pro získání naměřených dat ze serveru
   function getoDataStart () {
     let postValues = {type: "range", from: timeInterval.from, to: timeInterval.to}
-      setGlobalData([...fetchedData])
       setTempData([...fetchedData])
       }
 
-
-
-/////////////////////////////////////////////////////////////////
-// when startstop button is pushed
-function getDataUpdate () {
-  var tempOBJ1
-      var ipadr = Object.keys(tempData[0])
-      var tempTime = tempData[0][ipadr].timestamp[tempData[0][ipadr].timestamp.length - 1].split(".")[0].replace("T", " ")
-
-
-      let postValues  = {type: "update", last: tempTime}
-      tempOBJ1 = getDataFromServer(postValues)
-      console.log(getDataFromServer(postValues))
-      console.log(tempOBJ1)
-      getDataByUpdate(tempData,tempOBJ1)
-
-
-}
 
 /////////////////////////////////////////////////////////////////
 // pro range values
@@ -391,7 +440,6 @@ const App = () => {
 
   return(
     <div>  
-      
     <Hlavni>
       <Druhy>
         <Template/>

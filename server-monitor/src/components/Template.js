@@ -23,6 +23,7 @@ import Navbar from '../tempMulti/navbar';
 import 'chartjs-plugin-zoom';
 import zoomPlugin from "chartjs-plugin-zoom";
 import { Chart } from 'chart.js'
+import DataCurrent from './dataFormat/dataCurrent'
 
 Chart.register(zoomPlugin); // REGISTER PLUGIN
 
@@ -138,7 +139,7 @@ const Template = ({children}) => {
               <Routes>
                 <Route exact path='/' element={<Dashboard />} />
                 <Route path='/dashboard' element={<Dashboard/>} />
-                <Route path='/current' element={<Current/>} />
+                <Route path='/current' element={<DataCurrent/>} />
                 <Route path='/settings' element={<Settings/>} />
                 <Route path='/range' element={<Range/>} />
               </Routes>

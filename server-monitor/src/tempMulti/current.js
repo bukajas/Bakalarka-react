@@ -20,12 +20,11 @@ Chart.register(...registerables)
 
 const Current = () =>  {
 
-
   const context = React.useContext(CheckboxInt)
 
   const { startStop, setStartStop,
     clickedServers, setClickedServers,
-    tempData, timeInterval, setTimeInterval } = context
+    tempData, timeInterval, setTimeInterval, globalData } = context
 
     const selectAfter = (
       <Select defaultValue="Sec" style={{ width: 60 }}>
@@ -66,9 +65,6 @@ return (
       <div> 
         <p>(for zoom and drag press "CTRL" key)</p>
 
-        <Space direction="vertical">
-    <InputNumber min={0} max={3600} addonAfter={selectAfter} defaultValue={60} onPressEnter={(e)=>changeInterval(e, selectAfter.props.defaultValue)}/>
-  </Space>
 <hr></hr>
       <Button onClick={() => setStartStop(prevState => !prevState)} type='primary'>{startStop ? "Stop" : "Start"}</Button>
 {
