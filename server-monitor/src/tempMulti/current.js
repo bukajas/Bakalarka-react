@@ -18,13 +18,13 @@ const antIcon = <LoadingOutlined style={{ fontSize: 240 }} spin />;
 Chart.register(...registerables)
 
 
-const Current = () =>  {
+const Current = (props) =>  {
 
   const context = React.useContext(CheckboxInt)
 
   const { startStop, setStartStop,
     clickedServers, setClickedServers,
-    tempData, timeInterval, setTimeInterval, globalData } = context
+    timeInterval, setTimeInterval, globalData } = context
 
     const selectAfter = (
       <Select defaultValue="Sec" style={{ width: 60 }}>
@@ -61,6 +61,9 @@ const Current = () =>  {
       setTimeInterval(tempObj)
     }
     
+//console.log(props.tempData)
+
+
 return (
       <div> 
         <p>(for zoom and drag press "CTRL" key)</p>
@@ -69,7 +72,7 @@ return (
       <Button onClick={() => setStartStop(prevState => !prevState)} type='primary'>{startStop ? "Stop" : "Start"}</Button>
 {
       clickedServers.length > 0 ? clickedServers.map((temp) => 
-      tempData?tempData.map((temp2) => {
+      props. tempData? props.tempData.map((temp2) => {
         var ipaddr = Object.keys(temp2)
         
         if(ipaddr == temp.split(" ")[0] && temp.split(" ")[1] == 'cpu_ram'){

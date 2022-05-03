@@ -59,7 +59,6 @@ const Template = ({children}) => {
         valuesList, setValuesList} = context
 
         function handleClickedServers(e) {
-     //     console.log('click ', e);
           setClickedServers(e.selectedKeys)
         };
 
@@ -75,11 +74,6 @@ const Template = ({children}) => {
           })
           setClickedServers(tempClicked)
         }
-
-
-
-
-
 
         function unSelectAllValues(ip) {
           var filterClicked = clickedServers.filter((value) => {
