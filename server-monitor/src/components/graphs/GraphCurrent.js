@@ -87,7 +87,7 @@ if(props.cpuram==true){
 
 const optionsJson = {
             animation: {
-            duration: 0
+            duration: 100
           },
           plugins: {
           zoom: {

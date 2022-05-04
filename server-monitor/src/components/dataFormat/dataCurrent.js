@@ -10,8 +10,7 @@ const { Option } = Select;
 const DataCurrent = () => {
 
     const context = React.useContext(CheckboxInt)
-    const { startStop, timeInterval, setTimeInterval, globalData } = context
-    const [tempCurrentData, setTempCurrentData] = React.useState([])
+    const { startStop, timeInterval, setTimeInterval, globalData, tempCurrentData, setTempCurrentData } = context
     const mutationRef = React.useRef(tempCurrentData)
     const [secsToSub, setSecsToSub] = React.useState(60)
     const [seconds, setSeconds] = React.useState(0)
@@ -29,20 +28,19 @@ const DataCurrent = () => {
           <Option value="Sec">Sec</Option>
           <Option value="Min">Min</Option>
           <Option value="Hour">Hour</Option>
-
         </Select>
       )
+//jeste dodelat vice jak sekundy
 
 
 
 
 //console.log(secsToSub)  
 var newTime, toTime
-var time
-var getIndexFirst
-    function changeInterval(secsSub) {
+var time, tempObj
+var getIndexFirst, getIndexLast, getGlobalFirst
 
-        var tempSecsSub = secsSub
+    function changeInterval(secsSub) {
         time = new Date()
         toTime = new Date(time.getTime() - 1 * 1000)
         var fromTime
@@ -51,30 +49,39 @@ var getIndexFirst
             fromTime = data[objKey].timestamp.at(-secsSub)
           })
         newTime = new Date(time.getTime() - secsSub * 1000)
-        var tempObj = {from: format(newTime, "yyyy-MM-dd kk:mm:ss"), to: format(time, "yyyy-MM-dd kk:mm:ss")
+        tempObj = {from: format(newTime, "yyyy-MM-dd kk:mm:ss"), to: format(time, "yyyy-MM-dd kk:mm:ss")
       }
-          setTimeInterval(tempObj)
+          return [tempObj, newTime, toTime]
         }
 
-
 React.useEffect(() =>{
-  if(startStop){
-    changeInterval(secsToSub)
-    console.log(timeInterval)
+    if(startStop){
+     let interval = changeInterval(secsToSub)
+
+  //  console.log(timeInterval)
     globalData.map((data, i) =>{
-      var fromFormat = format(newTime, "yyyy-MM-dd'T'kk:mm:ss.'000000+0200'")
-      var toFormat = format(toTime, "yyyy-MM-dd'T'kk:mm:ss.'000000+0200'")
+      var fromFormat = format(interval[1], "yyyy-MM-dd'T'kk:mm:ss.'000000+0200'")
+      var toFormat = format(interval[2], "yyyy-MM-dd'T'kk:mm:ss.'000000+0200'")
       var ipadr = Object.keys(data)[0]
-      console.log(fromFormat, toFormat)
-
+      
       getIndexFirst = data[ipadr].timestamp.indexOf(fromFormat)
-      var getIndexLast = data[ipadr].timestamp.indexOf(toFormat)
+      getIndexLast = data[ipadr].timestamp.indexOf(toFormat)
 
-      console.log(toFormat, getIndexLast, data[ipadr].timestamp )
+      getGlobalFirst = data[ipadr].timestamp.at(0).split(".")[0].replace("T", " ")
+      var minusSec
+      if(getGlobalFirst.at(-1) == 0){
+        minusSec = getGlobalFirst.slice(-2) - 1
+        getGlobalFirst = getGlobalFirst.slice(0, -1) + minusSec
+      } else{
+        minusSec = getGlobalFirst.at(-1) - 1
+        getGlobalFirst = getGlobalFirst.slice(0, -1) + minusSec
+      } if(getIndexFirst == -1){
+        tempObj = {from:  format(interval[1], "yyyy-MM-dd kk:mm:ss"), to: getGlobalFirst}
+        setTimeInterval(tempObj)
+      }
     })
   getIndexFirst ? setTempCurrentData(globalData.map((datas, i)=> {
     var ipaddr =Object.keys(datas)[0] 
-    console.log(datas[ipaddr].timestamp.slice(43), getIndexFirst)
   {return {[ipaddr]: {
        name: datas[ipaddr].name,
        description: datas[ipaddr].description,
@@ -91,25 +98,16 @@ React.useEffect(() =>{
   }
 }, [seconds])
 
-
 React.useEffect(() =>{
   mutationRef.current = tempCurrentData
 }, [tempCurrentData])
 
-
-//if neni tak pak spustit tu funkci znova
-
-
-
-
-
   return (
     <div>
    <Space direction="vertical">
-    <InputNumber min={0} max={3600} addonAfter={selectAfter} defaultValue={60} onPressEnter={(e) => setSecsToSub(parseInt(e.target.defaultValue))}/>
+      <InputNumber min={0} max={3600} addonAfter={selectAfter} defaultValue={60} onPressEnter={(e) => setSecsToSub(parseInt(e.target.defaultValue))}/>
    </Space>
-
-        <Current tempData={tempCurrentData}/>
+      <Current tempData={tempCurrentData}/>
     </div>
   )
 }

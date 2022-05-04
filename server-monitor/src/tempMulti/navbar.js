@@ -26,7 +26,7 @@ const Navbar = () => {
               </NavLink>
           </Menu.Item>
         <Menu.Item  
-        onClick={() => {setValuesPost('range'); setStartStop(false)}} key="3">
+        onClick={() => {setValuesPost('rangee'); setStartStop(false)}} key="3">
                <NavLink to="/range" activeStyle>
                     Range
               </NavLink>

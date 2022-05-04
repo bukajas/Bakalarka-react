@@ -18,7 +18,7 @@ const antIcon = <LoadingOutlined style={{ fontSize: 240 }} spin />;
 Chart.register(...registerables)
 
 
-const Range = () => {
+const Range = (props) => {
 
     const context = React.useContext(CheckboxInt)
 
@@ -41,10 +41,9 @@ const Range = () => {
   return (
         <div>
         <p>(for zoom and drag press "CTRL" key)</p>
-        <RangePicker ranges={{ Today: [moment(), moment()], 'This Month': [moment().startOf('month'), moment().endOf('month')],  }} showTime format="YYYY-MM-DD HH:mm:ss" onChange={onChange} />
        
         { clickedServers.length > 0 ? clickedServers.map((temp) => 
-        rangeData ? rangeData.map((temp2) => {
+        props.rangeData ? props.rangeData.map((temp2) => {
           var ipaddr = Object.keys(temp2)
           if(ipaddr == temp.split(" ")[0] && temp.split(" ")[1] == 'cpu_ram'){
             return <GraphRange  

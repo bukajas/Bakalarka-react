@@ -35,34 +35,6 @@ const Current = (props) =>  {
       </Select>
     )
 
-  //  console.log(selectAfter.props.defaultValue)
-
-  //   function timeStamps(secsSub) {
-  //     
-
-  //  }
-
-   function changeInterval(secsSub, inter) {
-    var tempSecsSub = parseInt(secsSub.target.defaultValue)
-     //var secsToSub
-    //  if(inter == 'Sec'){
-    //    secsToSub = tempSecsSub
-    //  }
-    //  if(inter == 'Mins'){
-    //    secsToSub = tempSecsSub * 60
-    //  }
-    //  if(inter == 'Hour'){
-    //    secsToSub = tempSecsSub * 3600
-    //  }
-    var time = new Date()
-    var newTime = new Date(time.getTime() - tempSecsSub * 1000)
-    var tempObj = {from: format(newTime, 'yyyy-MM-dd kk:mm:ss'), to: format(time, 'yyyy-MM-dd kk:mm:ss')
-  }
-      setTimeInterval(tempObj)
-    }
-    
-//console.log(props.tempData)
-
 
 return (
       <div> 
@@ -72,7 +44,7 @@ return (
       <Button onClick={() => setStartStop(prevState => !prevState)} type='primary'>{startStop ? "Stop" : "Start"}</Button>
 {
       clickedServers.length > 0 ? clickedServers.map((temp) => 
-      props. tempData? props.tempData.map((temp2) => {
+      props.tempData? props.tempData.map((temp2) => {
         var ipaddr = Object.keys(temp2)
         
         if(ipaddr == temp.split(" ")[0] && temp.split(" ")[1] == 'cpu_ram'){
