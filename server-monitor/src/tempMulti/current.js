@@ -41,7 +41,7 @@ return (
         <p>(for zoom and drag press "CTRL" key)</p>
 
 <hr></hr>
-  {props.tempData ? console.log(props.tempData):console.log('props.tempData')}
+  {/* {props.tempData ? console.log(props.tempData):console.log('props.tempData')} */}
       <Button onClick={() => setStartStop(prevState => !prevState)} type='primary'>{startStop ? "Stop" : "Start"}</Button>
 {
       clickedServers.length > 0 ? clickedServers.map((temp) => 

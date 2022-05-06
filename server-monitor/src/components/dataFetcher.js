@@ -1,63 +1,76 @@
 import React, {createContext} from "react"
 import {Config} from '../config.js'
 import Axios from 'axios'
-import "antd/dist/antd.css";
-import "../index.css";
-import { Layout, Menu, Breadcrumb, Spin, Button, Space  } from 'antd';
-
-import Template from "./Template.js"
-import {format, set} from 'date-fns'
-import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 
 
 
-export const dataFetcher = function(postValuess, type, globalData, timeInterval){
-    console.log(postValuess, type, globalData, timeInterval)
+
+export const DataFetcher = (postValuess, type, globalData, timeInterval) => {
+
+//postvalues je typ a casovy usek
+//type je rozliseni
+//globalData jsou globalData
+
+// 1. prvni stazeni dat ? to muze byt asi jen v current, 
+// 2. update novych dat ? to muze v current/dashboard
+// 3. stazeni starsich dat, jak v current (tam se zvetsi rozsah)
+// 4. v range stazeni starsich dat
+//5 v range stazeni novych dataFetcher
+// 6. stazeni stejnych dat, udelat se replace
+
+
     var postValues
     var timeLast
     var timeFirst
-    var tempGlobal = [...globalData]
-    console.log(tempGlobal, 457)
-
-        if(globalData.length > 0){
-          var ipadr = Object.keys(globalData[0])[0]
-          timeLast = globalData[0][ipadr].timestamp.at(-1).split(".")[0].replace("T", " ")
-          timeFirst = globalData[0][ipadr].timestamp.at(1).split(".")[0].replace("T", " ")
-     //     console.log(timeLast, timeFirst)
-        }
 
 
-
-
-        if(type == 'first'){
+      if(type == 'first')  //prvni stazeni
+        {
           postValues = postValuess
         }
-        if(type == 'before'){ // = range
-        var tempTimeBefore = timeFirst.split(".")[0].replace("T", " ")
-   //     console.log(timeFirst > timeInterval.from)
-        if(timeFirst > timeInterval.from){
-          postValues = {type: "range",  from: timeInterval.from, to: timeInterval.to}
-     //     console.log('timeFirst, timeInterval.from')
-        }
-        else{
-          return
-        }
-        }
-        if(type == 'update'){
-        var tempTime = timeLast.split(".")[0].replace("T", " ")
+      else
+        {
+          if(globalData.length > 0)
+          {
+            var ipadr = Object.keys(globalData[0])[0]
+            timeLast = globalData[0][ipadr].timestamp.at(-1).split(".")[0].replace("T", " ")
+            timeFirst = globalData[0][ipadr].timestamp.at(1).split(".")[0].replace("T", " ")
+          }
+          if(type == 'before'){ // = range, curent
+            if(timeFirst > timeInterval.from){
+              postValues = {type: "range",  from: timeInterval.from, to: timeInterval.to}
+            }
+            else{
+              console.log('stale v rozmezi')
+              return
+            }
+          }
+          if(type == 'update'){
+            var tempTime = timeLast.split(".")[0].replace("T", " ")
         postValues = {type: "update", last: tempTime}
-         }
-
-
-         
-      //saved data
+      }
+    }
+    
+    
+    
+    
+    
+    //saved data
     var tempOBJ = []
     let tempServer
+    var tempGlobal = [...globalData]
     var globalIps  = []
     var fetchedIps = []
+    var aga = []
     tempGlobal.map((data) => { var globalKey = Object.keys(data)[0]; globalIps.push(globalKey) })
 
-//console.log(postValuess, postValues, type)
+
+
+
+
+
+
+
 
     Axios.post( Config.server.getData, postValues, {headers: { 'Content-Type': 'application/json' }})
     .then((response) => {
@@ -81,6 +94,7 @@ export const dataFetcher = function(postValuess, type, globalData, timeInterval)
            tempOBJ[i] = newServer // formatovane data ze serveru
 
           })
+
             tempOBJ.map((datas, i) => {  //fetched data
               var OBJIp = Object.keys(datas)[0] // ipadresa objektu
               if(globalIps.includes(OBJIp))
@@ -89,11 +103,8 @@ export const dataFetcher = function(postValuess, type, globalData, timeInterval)
                 var globalIndex = globalIps.indexOf(OBJIp)
                 tempServer = {...tempGlobal[globalIndex]}
 
-
-
                 //replace data from server to avoid duplacates, and to replace the nulls
                 if(type == 'before'){
-                  console.log('blablalblkajsdlfkjsakldjlk')
                   var arrayLength = datas[OBJIp].timestamp.length  //delka ziskanych dat
                   tempServer[OBJIp].cpu = [...datas[OBJIp].cpu, ...tempServer[OBJIp].cpu]
                   tempServer[OBJIp].ram = [...datas[OBJIp].ram, ...tempServer[OBJIp].ram]
@@ -116,8 +127,8 @@ export const dataFetcher = function(postValuess, type, globalData, timeInterval)
                   tempServer[OBJIp].tcp_established = [...tempServer[OBJIp].tcp_established, ...datas[OBJIp].tcp_established]
               }
               }
-              if(globalLength > 1000) {
-                var diference = globalLength - 1000
+              if(globalLength > 4000) {
+                var diference = globalLength - 4000
                 tempServer[OBJIp].cpu = tempServer[OBJIp].cpu.slice(diference)
                 tempServer[OBJIp].ram = tempServer[OBJIp].ram.slice(diference)
                 tempServer[OBJIp].timestamp = tempServer[OBJIp].timestamp.slice(diference)
@@ -127,7 +138,7 @@ export const dataFetcher = function(postValuess, type, globalData, timeInterval)
                 tempServer[OBJIp].packet_rate_out = tempServer[OBJIp].packet_rate_out.slice(diference)
                 tempServer[OBJIp].tcp_established = tempServer[OBJIp].tcp_established.slice(diference)
               }
-              
+
               if(!globalIps.includes(OBJIp)){  //pokud v global neni tento server
                 if(tempGlobal.length >= 1 && !(tempGlobal[0][Object.keys(tempGlobal[0])].timestamp.at(0) == datas[Object.keys(datas)].timestamp.at(0))){ //pokud uz tam neco je, ale pridam na zacatek null, aby vse bylo stejne dlouhe.
                   tempServer = {...datas}
@@ -142,12 +153,14 @@ export const dataFetcher = function(postValuess, type, globalData, timeInterval)
                   tempServer[OBJIp].tcp_established = [ ...tempArrPre,...tempServer[OBJIp].tcp_established]
                   tempServer[OBJIp].timestamp = [...tempGlobal[0][Object.keys(tempGlobal[0])].timestamp, ...tempServer[OBJIp].timestamp, ]
                   tempGlobal[tempGlobal.length] = tempServer
+                  aga = [...aga, tempGlobal] 
                 }
                 else{
-                  tempServer = {...datas}
-                  tempGlobal[tempGlobal.length] = tempServer
+                  tempGlobal[tempGlobal.length] = {...datas}
+                  aga = [...aga, tempGlobal]
                 }
               }
+              tempGlobal[i] = tempServer
 
               tempGlobal.map((datas2, i2) => {
                 var tempIPglob = Object.keys(datas2)[0]
@@ -164,11 +177,9 @@ export const dataFetcher = function(postValuess, type, globalData, timeInterval)
                   tempServer[tempIPglob].timestamp = [...tempServer[tempIPglob].timestamp, ...datas[OBJIp].timestamp]
                 }
             })
-            
-            })
-        //    console.log(tempGlobal)
-          //  setGlobalData(tempGlobal)
-       //     console.log(globalData,1222)
+          })
+
+          aga = tempGlobal
         } 
         else {
           console.log(response.data.message)
@@ -178,8 +189,7 @@ export const dataFetcher = function(postValuess, type, globalData, timeInterval)
         console.log("Server is unavailable")
         console.log(error)
       })
-      
       return tempGlobal
     }
 
-export default dataFetcher
+export default DataFetcher

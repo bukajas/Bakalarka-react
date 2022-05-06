@@ -19,12 +19,33 @@ const { TabPane } = Tabs;
 const { RangePicker } = DatePicker;
 const antIcon = <LoadingOutlined style={{ fontSize: 240 }} spin />;
 Chart.register(...registerables)
-
+var errors = [] 
 const GraphCurrent = (props) => {
 
     const context = React.useContext(CheckboxInt)
-
     const { valuesList } = context
+
+
+ 
+ 
+
+React.useEffect(() =>{
+  var lenghtOfData = props.data2[props.ipAddr].timestamp.length
+  errors = []
+  for(var i=0; i<lenghtOfData; i++){
+    if(props.data2[props.ipAddr].cpu[i] == null){   
+      errors = [...errors, 100]
+    }
+    else{
+      errors = [...errors, 0]
+    }
+  }
+
+  
+
+}, [props.data2[props.ipAddr].timestamp.at(0)])
+
+
 
  var indexOfValues = valuesList.indexOf(props.data1.split(" ")[1]) +1
  
@@ -43,7 +64,7 @@ const GraphCurrent = (props) => {
     {
       title: 'error',
       label: 'error',
-      data: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      data: errors,
       fill: true,
       backgroundColor: 'red',
       borderColor: 'red',
@@ -75,7 +96,7 @@ if(props.cpuram==true){
     {
       title: 'error',
       label: 'error',
-      data: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      data: errors,
       fill: true,
       backgroundColor: 'red',
       borderColor: 'red',

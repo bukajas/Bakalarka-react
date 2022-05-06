@@ -4,7 +4,7 @@ import Axios from 'axios'
 import "antd/dist/antd.css";
 import "../index.css";
 import { Layout, Menu, Breadcrumb, Spin, Button, Space  } from 'antd';
-import { 
+import {
   DesktopOutlined,
   PieChartOutlined,
   FileOutlined,
@@ -31,17 +31,21 @@ const CheckboxInt =  createContext()
 const Hlavni = ({ children }) => {
 
 
-  const [globalData, setGlobalData] = React.useState([
-  ])
+  const [globalData, setGlobalData] = React.useState([])
   const [fetchedData, setFetchedData] = React.useState('')
   const mutationRef = React.useRef(globalData)
 
     var time = new Date()
     var newTime = new Date(time.getTime() - 60 * 1000)
-    var tempObj = {from: format(newTime, 'yyyy-MM-dd kk:mm:ss'), to: format(time, 'yyyy-MM-dd kk:mm:ss')}
+    var tempObj =
+    {
+      from: format(newTime, 'yyyy-MM-dd kk:mm:ss'),
+     to: format(time, 'yyyy-MM-dd kk:mm:ss')
+    }
 
-    const [timeInterval, setTimeInterval] = React.useState(tempObj)
-  const [dates, setDates] = React.useState([ 
+    const [timeInterval, setTimeInterval] = React.useState(tempObj) // casovy usek ktery se posle pro stazeni
+
+    const [dates, setDates] = React.useState([
     { name: 'Device 1',
       ip: '192.168.0.101',
       description: 'debian',
@@ -50,7 +54,7 @@ const Hlavni = ({ children }) => {
       ip: '192.168.0.102',
       description: 'debian',
       status: false
-  }, { 
+  }, {
       name: 'Device 3',
       ip: '192.168.0.103',
       description: 'ubuntu',
@@ -76,7 +80,7 @@ const Hlavni = ({ children }) => {
   const mutationRefRange = React.useRef(tempRangeData)
 
 
-  
+
 
   return ( <CheckboxInt.Provider value={{
         oData, setoData,
@@ -88,7 +92,7 @@ const Hlavni = ({ children }) => {
         rangeData, setRangeData,
         dates, setDates,
         valuesList,
-        tempData, setTempData, 
+        tempData, setTempData,
         timeLine, setTimeLine,
         graphOptions, setGraphOptions,
         graphData, setGraphData,
@@ -136,7 +140,7 @@ function Druhy({ children }) {
   //  pokud v dates mam ip, a od ni bude chodit data, tak bude true jinak false
     var tempDates = []
     dates.map((date, index) => {
-      var liver = false 
+      var liver = false
       var tempDate = [...dates]
       let tempServer = {...date}
 
@@ -156,13 +160,13 @@ function Druhy({ children }) {
               if(!tempDates[index]) {  tempDates[index] = tempDate[index]  }
              }
           }) : console.log('oj')
-        }) 
+        })
     setDates(tempDates)
-        
+
       }
 
 
-      
+
   const [seconds, setSeconds] = React.useState(0)
   React.useEffect(() =>
   {
@@ -171,42 +175,50 @@ function Druhy({ children }) {
   }, [])
 
 
+
 // na zacatku a pak priapdne pri zmacknuti upate tlacitka.
   React.useEffect(() => {
     timeStamps()
-    getDataFromServer({type: "range", from: timeInterval.from, to: timeInterval.to}, 'first')
+    getDataFromServer( //stazeni prvnich dat
+    {
+     type: "range",
+     from: timeInterval.from,
+     to: timeInterval.to
+    }
+     , 'first')
   }, [])
+
 
   React.useEffect(() => {
     timeStamps()
      if(globalData.length >=1)
      {
-       getDataFromServer({type: 'range', from: timeInterval.from, to: timeInterval.to}, 'before')
-       getDataFromServer({type: "update"}, 'update')
-       console.log('timeInt')
+    //   getDataFromServer({type: 'range', from: timeInterval.from, to: timeInterval.to}, 'before')
+   //    getDataFromServer({type: "update"}, 'update')
+  //     console.log('timeInt')
      }
   }, [timeInterval])
 
 // pri prubehu pokud je zapnuty startstop tlacitko
-  React.useEffect(() => 
-  {
-    if(startStop){
-      getDataFromServer({type: "update"}, 'update')
-    }
-  }, [seconds])
+  // React.useEffect(() =>
+  // {
+  //   if(startStop){
+  //     getDataFromServer({type: "update"}, 'update')
+  //   }
+  // }, [seconds])
 
 
-  // React.useEffect(() => 
+  // React.useEffect(() =>
   // {
   //   if(valuesPost == 'rangee'){
   //     getDataFromServer({type: 'range', from: timeInterval.from, to: timeInterval.to}, 'range')
-  //     
+  //
   //   }
   //   if(valuesPost == 'current') {
   //     getDataFromServer({type: 'range', from: timeInterval.from, to: timeInterval.to}, 'range')
   //   }
-  // }, [timeInterval]) 
-     
+  // }, [timeInterval])
+
 
 //REPLACE NULL DATA
 
@@ -235,10 +247,10 @@ function Druhy({ children }) {
         }
         if(type == 'before'){ // = range
         var tempTimeBefore = timeFirst.split(".")[0].replace("T", " ")
-        console.log(timeFirst > timeInterval.from)
+    //le.log(timeFirst > timeInterval.from)
         if(timeFirst > timeInterval.from){
           postValues = {type: "range",  from: timeInterval.from, to: timeInterval.to}
-          console.log('timeFirst, timeInterval.from')
+    //      console.log('timeFirst, timeInterval.from')
         }
         else{
           return
@@ -258,14 +270,14 @@ function Druhy({ children }) {
     var fetchedIps = []
     tempGlobal.map((data) => { var globalKey = Object.keys(data)[0]; globalIps.push(globalKey) })
 
-console.log(postValuess, postValues, type)
+//console.log(postValuess, postValues, type)
 
     Axios.post( Config.server.getData, postValues, {headers: { 'Content-Type': 'application/json' }})
     .then((response) => {
-      if (!response.data.error) 
+      if (!response.data.error)
       {
           response.data.data.map((datas, i) => {
-          var fetchedKey = datas.info.ip; 
+          var fetchedKey = datas.info.ip;
           fetchedIps.push(fetchedKey)
            var newServer = {[datas.info.ip]: {
             name: datas.info.name,
@@ -294,7 +306,7 @@ console.log(postValuess, postValues, type)
 
                 //replace data from server to avoid duplacates, and to replace the nulls
                 if(type == 'before'){
-                  console.log('blablalblkajsdlfkjsakldjlk')
+     //             console.log('blablalblkajsdlfkjsakldjlk')
                   var arrayLength = datas[OBJIp].timestamp.length  //delka ziskanych dat
                   tempServer[OBJIp].cpu = [...datas[OBJIp].cpu, ...tempServer[OBJIp].cpu]
                   tempServer[OBJIp].ram = [...datas[OBJIp].ram, ...tempServer[OBJIp].ram]
@@ -328,7 +340,7 @@ console.log(postValuess, postValues, type)
                 tempServer[OBJIp].packet_rate_out = tempServer[OBJIp].packet_rate_out.slice(diference)
                 tempServer[OBJIp].tcp_established = tempServer[OBJIp].tcp_established.slice(diference)
               }
-              
+
               if(!globalIps.includes(OBJIp)){  //pokud v global neni tento server
                 if(tempGlobal.length >= 1 && !(tempGlobal[0][Object.keys(tempGlobal[0])].timestamp.at(0) == datas[Object.keys(datas)].timestamp.at(0))){ //pokud uz tam neco je, ale pridam na zacatek null, aby vse bylo stejne dlouhe.
                   tempServer = {...datas}
@@ -365,12 +377,12 @@ console.log(postValuess, postValues, type)
                   tempServer[tempIPglob].timestamp = [...tempServer[tempIPglob].timestamp, ...datas[OBJIp].timestamp]
                 }
             })
-            
+
             })
-            console.log(tempGlobal)
+    //        console.log(tempGlobal)
             setGlobalData(tempGlobal)
-            console.log(globalData,1222)
-        } 
+  //          console.log(globalData,1222)
+        }
         else {
           console.log(response.data.message)
         }
@@ -400,7 +412,7 @@ React.useEffect(() =>{
     // else if(valuesPost == 'times') {
     //   postValues = {type: "times", times: ["2021-02-01 01:00:00", "2021-02-01 01:00:02", "2021-02-01 03:03:00", "2021-02-01 01:55:55"]}
     // }
-    
+
 
   return (
 
@@ -418,12 +430,12 @@ const App = () => {
 
 
   return(
-    <div>  
+    <div>
     <Hlavni>
       <Druhy>
         <Template/>
       </Druhy>
-    </Hlavni>    
+    </Hlavni>
     </div>
   )
 }
