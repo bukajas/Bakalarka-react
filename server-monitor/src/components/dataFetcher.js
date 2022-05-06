@@ -4,221 +4,20 @@ import Axios from 'axios'
 import "antd/dist/antd.css";
 import "../index.css";
 import { Layout, Menu, Breadcrumb, Spin, Button, Space  } from 'antd';
-import { 
-  DesktopOutlined,
-  PieChartOutlined,
-  FileOutlined,
-  TeamOutlined,
-  UserOutlined,
-  LoadingOutlined,
-} from '@ant-design/icons';
+
 import Template from "./Template.js"
 import {format, set} from 'date-fns'
 import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
-import DataCurrent from './dataFormat/dataCurrent.js'
-export { CheckboxInt }
-
-
-const { Header, Content, Footer, Sider } = Layout;
-const { SubMenu } = Menu;
-const antIcon = <LoadingOutlined style={{ fontSize: 2 }} spin />;
-const CheckboxInt =  createContext()
 
 
 
-
-
-const Hlavni = ({ children }) => {
-
-
-  const [globalData, setGlobalData] = React.useState([
-  ])
-  const [fetchedData, setFetchedData] = React.useState('')
-  const mutationRef = React.useRef(globalData)
-
-    var time = new Date()
-    var newTime = new Date(time.getTime() - 60 * 1000)
-    var tempObj = {from: format(newTime, 'yyyy-MM-dd kk:mm:ss'), to: format(time, 'yyyy-MM-dd kk:mm:ss')}
-
-    const [timeInterval, setTimeInterval] = React.useState(tempObj)
-  const [dates, setDates] = React.useState([ 
-    { name: 'Device 1',
-      ip: '192.168.0.101',
-      description: 'debian',
-      status: false
-  },  { name: 'Device 2',
-      ip: '192.168.0.102',
-      description: 'debian',
-      status: false
-  }, { 
-      name: 'Device 3',
-      ip: '192.168.0.103',
-      description: 'ubuntu',
-      status: false}])  // seznam vybranych serveru
-  const [graphOptions, setGraphOptions] = React.useState([])
-  const [graphData, setGraphData] = React.useState([])
-  const [tempData, setTempData] = React.useState(null) //curent data
-  const [rangeData, setRangeData] = React.useState('') //range data
-  const [timeLine, setTimeLine] = React.useState('')
-  const [oData, setoData] = React.useState('')
-  const valuesList = ['cpu_ram','bit_rate_in','bit_rate_out','packet_rate_in','packet_rate_out','tcp_established']
-  const [valuesPost, setValuesPost] = React.useState('range')
-  const [rangeValue, setRangeValue] = React.useState({
-    from: "2021-02-01 01:00:00",
-    to: "2021-02-01 01:01:00"
-  })
-  const [startStop, setStartStop] = React.useState(false)
-  const [ipAdd, setIpAdd] = React.useState([])
-  const [clickedServers, setClickedServers] = React.useState([])
-  const [tempCurrentData, setTempCurrentData] = React.useState([])
-  const mutationRefCurrent = React.useRef(tempCurrentData)
-  const [tempRangeData, setTempRangeData] = React.useState([])
-  const mutationRefRange = React.useRef(tempRangeData)
-
-
-  
-
-  return ( <CheckboxInt.Provider value={{
-        oData, setoData,
-        startStop, setStartStop,
-        ipAdd, setIpAdd,
-        clickedServers, setClickedServers,
-        valuesPost, setValuesPost,
-        rangeValue, setRangeValue,
-        rangeData, setRangeData,
-        dates, setDates,
-        valuesList,
-        tempData, setTempData, 
-        timeLine, setTimeLine,
-        graphOptions, setGraphOptions,
-        graphData, setGraphData,
-        timeInterval, setTimeInterval,
-        globalData, setGlobalData,
-        mutationRef, mutationRefRange, mutationRefCurrent,
-        fetchedData, setFetchedData,
-        tempCurrentData, setTempCurrentData,
-        tempRangeData, setTempRangeData
-         }}>
-      {children}
-      </CheckboxInt.Provider>)
-}
-
-
-
-function Druhy({ children }) {
-  const context = React.useContext(CheckboxInt)
-  const { oData, setoData, dates, setDates,
-    startStop,
-    valuesPost, setValuesPost,
-    rangeValue, setRangeValue,
-    rangeData, setRangeData,
-    tempData, setTempData, timeLine, setTimeLine,timeInterval,
-     globalData, setGlobalData, fetchedData, setFetchedData,
-       mutationRefRange, mutationRefCurrent, tempRangeData, tempCurrentData,
-       setTempRangeData,
-    mutationRef
-   } = context
-
-
-   function timeStamps() {
-     var timeArray = [];
-     for (var i = 60; i  > -1; i--) {
-       var secsToSub = i;
-       var time = new Date()
-      var newTime = new Date(time.getTime() - secsToSub * 1000)
-      format(newTime, 'yyyy-MM-dd kk:mm:ss')
-      timeArray.push(format(newTime, 'yyyy-MM-dd kk:mm:ss'));
-      }
-      setTimeLine(timeArray)
-  }
-
-  function serverStatus(responseData, ver) {
-  //  pokud v dates mam ip, a od ni bude chodit data, tak bude true jinak false
-    var tempDates = []
-    dates.map((date, index) => {
-      var liver = false 
-      var tempDate = [...dates]
-      let tempServer = {...date}
-
-      responseData ? responseData.map((data, i) => {
-      if(ver == 1){var ipaddr  = Object.keys(data)}
-      if(ver == 2) {var ipaddr  = data.info.ip}
-         if(ipaddr == date.ip)
-        {
-           liver = true
-           tempServer.status = true
-           tempDate[index] = tempServer
-           if(!tempDates[index]) {  tempDates[index] = tempDate[index]  }
-        }
-           else if (!liver && ipaddr !== date.ip && i == tempData.length -1 ){
-            tempServer.status = false
-            tempDate[index] = tempServer
-              if(!tempDates[index]) {  tempDates[index] = tempDate[index]  }
-             }
-          }) : console.log('oj')
-        }) 
-    setDates(tempDates)
-        
-      }
-
-
-      
-  const [seconds, setSeconds] = React.useState(0)
-  React.useEffect(() =>
-  {
-    const interval = setInterval(() => {setSeconds(seconds => seconds + 1)}, 1000)
-    return () => clearInterval(interval)
-  }, [])
-
-
-// na zacatku a pak priapdne pri zmacknuti upate tlacitka.
-  React.useEffect(() => {
-    timeStamps()
-    getDataFromServer({type: "range", from: timeInterval.from, to: timeInterval.to}, 'first')
-  }, [])
-
-  React.useEffect(() => {
-    timeStamps()
-     if(globalData.length >=1)
-     {
-       getDataFromServer({type: 'range', from: timeInterval.from, to: timeInterval.to}, 'before')
-       getDataFromServer({type: "update"}, 'update')
-       console.log('timeInt')
-     }
-  }, [timeInterval])
-
-// pri prubehu pokud je zapnuty startstop tlacitko
-  React.useEffect(() => 
-  {
-    if(startStop){
-      getDataFromServer({type: "update"}, 'update')
-    }
-  }, [seconds])
-
-
-  // React.useEffect(() => 
-  // {
-  //   if(valuesPost == 'rangee'){
-  //     getDataFromServer({type: 'range', from: timeInterval.from, to: timeInterval.to}, 'range')
-  //     
-  //   }
-  //   if(valuesPost == 'current') {
-  //     getDataFromServer({type: 'range', from: timeInterval.from, to: timeInterval.to}, 'range')
-  //   }
-  // }, [timeInterval]) 
-     
-
-//REPLACE NULL DATA
-
-
-
-
-
-  function getDataFromServer(postValuess, type){
+export const dataFetcher = function(postValuess, type, globalData, timeInterval){
+    console.log(postValuess, type, globalData, timeInterval)
     var postValues
     var timeLast
     var timeFirst
-
+    var tempGlobal = [...globalData]
+    console.log(tempGlobal, 457)
 
         if(globalData.length > 0){
           var ipadr = Object.keys(globalData[0])[0]
@@ -235,10 +34,10 @@ function Druhy({ children }) {
         }
         if(type == 'before'){ // = range
         var tempTimeBefore = timeFirst.split(".")[0].replace("T", " ")
-        console.log(timeFirst > timeInterval.from)
+   //     console.log(timeFirst > timeInterval.from)
         if(timeFirst > timeInterval.from){
           postValues = {type: "range",  from: timeInterval.from, to: timeInterval.to}
-          console.log('timeFirst, timeInterval.from')
+     //     console.log('timeFirst, timeInterval.from')
         }
         else{
           return
@@ -250,15 +49,15 @@ function Druhy({ children }) {
          }
 
 
-
-    var tempGlobal = [...globalData]  //saved data
+         
+      //saved data
     var tempOBJ = []
     let tempServer
     var globalIps  = []
     var fetchedIps = []
     tempGlobal.map((data) => { var globalKey = Object.keys(data)[0]; globalIps.push(globalKey) })
 
-console.log(postValuess, postValues, type)
+//console.log(postValuess, postValues, type)
 
     Axios.post( Config.server.getData, postValues, {headers: { 'Content-Type': 'application/json' }})
     .then((response) => {
@@ -367,9 +166,9 @@ console.log(postValuess, postValues, type)
             })
             
             })
-            console.log(tempGlobal)
-            setGlobalData(tempGlobal)
-            console.log(globalData,1222)
+        //    console.log(tempGlobal)
+          //  setGlobalData(tempGlobal)
+       //     console.log(globalData,1222)
         } 
         else {
           console.log(response.data.message)
@@ -379,54 +178,8 @@ console.log(postValuess, postValues, type)
         console.log("Server is unavailable")
         console.log(error)
       })
-      return tempOBJ
+      
+      return tempGlobal
     }
 
-React.useEffect(() =>{
-  mutationRef.current = globalData
-  //console.log(mutationRef.current,1231)
-}, [globalData])
-
-React.useEffect(() =>{
-  mutationRefCurrent.current = tempCurrentData
-}, [tempCurrentData])
-
-React.useEffect(() =>{
-  mutationRefRange.current = tempRangeData
-}, [tempRangeData])
-
-
-
-    // else if(valuesPost == 'times') {
-    //   postValues = {type: "times", times: ["2021-02-01 01:00:00", "2021-02-01 01:00:02", "2021-02-01 03:03:00", "2021-02-01 01:55:55"]}
-    // }
-    
-
-  return (
-
-    <div>
-      {children}
-    </div>
-  )
-}
-
-
-
-
-
-const App = () => {
-
-
-  return(
-    <div>  
-    <Hlavni>
-      <Druhy>
-        <Template/>
-      </Druhy>
-    </Hlavni>    
-    </div>
-  )
-}
-
-
-export default App
+export default dataFetcher
