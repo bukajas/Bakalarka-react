@@ -107,6 +107,8 @@ if(props.cpuram==true){
 }
 
 const optionsJson = {
+            responsive: true,
+            maintainAspectRatio: false,
             animation: {
             duration: 100
           },
@@ -159,8 +161,10 @@ const optionsJson = {
 
   return (
         <div >
+          <div className='whole-graph'>
           <Button icon={<DownloadOutlined/>} onClick={downloadImage} className="btn-download">Download</Button>
-          <Line  
+          
+            <Line  
             data={dataJson}
             height={500}
             width={2000} 
@@ -168,6 +172,8 @@ const optionsJson = {
             ref={downloadImg}
             className="templateGraf"
         />
+          </div>
+          
         </div>
   )
 }

@@ -12,7 +12,7 @@ const Settings = () => {
 
   const onFinish = (values) => {
     console.log('Success:', values);
-    setDates([...dates, {name: values.name,ip: values.ip, description: values.description, status: false } ])
+    setDates([...dates, {name: values.name,ip: values.ip, description: values.description, status: 'CRITICAL' } ])
     message.success('Server successfully added');
   }
   

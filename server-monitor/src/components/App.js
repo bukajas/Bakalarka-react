@@ -48,17 +48,24 @@ const Hlavni = ({ children }) => {
     const [dates, setDates] = React.useState([
     { name: 'Device 1',
       ip: '192.168.0.101',
-      description: 'debian',
-      status: false
+      description: 'well Hello there',
+      status: 'CRITICAL'
+
   },  { name: 'Device 2',
       ip: '192.168.0.102',
-      description: 'debian',
-      status: false
-  }, {
+      description: 'How are you',
+      status: 'CRITICAL'
+  },
+   { name: 'Device 4',
+  ip: '192.168.0.104',
+  description: 'What the hell',
+  status: 'CRITICAL'
+}
+  , {
       name: 'Device 3',
       ip: '192.168.0.103',
       description: 'ubuntu',
-      status: false}])  // seznam vybranych serveru
+      status: 'CRITICAL'}])  // seznam vybranych serveru
   const [graphOptions, setGraphOptions] = React.useState([])
   const [graphData, setGraphData] = React.useState([])
   const [tempData, setTempData] = React.useState(null) //curent data
@@ -137,32 +144,40 @@ function Druhy({ children }) {
   }
 
   function serverStatus(responseData, ver) {
+    var tempIp = dates.map((data) => {return data.ip })
+    var golb
   //  pokud v dates mam ip, a od ni bude chodit data, tak bude true jinak false
-    var tempDates = []
-    dates.map((date, index) => {
-      var liver = false
-      var tempDate = [...dates]
-      let tempServer = {...date}
-
-      responseData ? responseData.map((data, i) => {
-      if(ver == 1){var ipaddr  = Object.keys(data)}
-      if(ver == 2) {var ipaddr  = data.info.ip}
-         if(ipaddr == date.ip)
-        {
-           liver = true
-           tempServer.status = true
-           tempDate[index] = tempServer
-           if(!tempDates[index]) {  tempDates[index] = tempDate[index]  }
-        }
-           else if (!liver && ipaddr !== date.ip && i == tempData.length -1 ){
-            tempServer.status = false
-            tempDate[index] = tempServer
-              if(!tempDates[index]) {  tempDates[index] = tempDate[index]  }
-             }
-          }) : console.log('oj')
+      dates.map((data, i) => {
+        var tempIPs = data.ip
+        golb = globalData.map((globData, i) => {
+          var stat = 0
+          var ipaddr = Object.keys(globData)[0]
+          if(tempIp.includes(ipaddr)){
+            for(var i = 1; i < 6; i++){
+              if(globData[ipaddr].cpu.at(0 - i) == null){
+                stat = stat + 1
+                console.log('hovno123')
+            } else{
+              if(stat >= 2 && stat <5){ return {[ipaddr]: 2} }
+              stat = 0
+              return {[ipaddr]: stat}
+            }
+            } 
+            if(stat >= 5){ return {[ipaddr]: stat} } 
+            if(stat >= 2){  return {[ipaddr]: stat} }
+          }
         })
-    setDates(tempDates)
-
+      })
+      var status = Array(tempIp.length).fill(0)
+      golb.map((datas,i) => {
+        var ip = Object.keys(datas)[0]
+        if(tempIp.includes(ip)){
+          status[tempIp.indexOf(ip)] = datas[ip]
+          if(status[tempIp.indexOf(ip)] == 0){ dates[tempIp.indexOf(ip)].status = 'OK' }
+          if(status[tempIp.indexOf(ip)] == 2){ dates[tempIp.indexOf(ip)].status = 'WARNING' }
+          if(status[tempIp.indexOf(ip)] == 5){ dates[tempIp.indexOf(ip)].status = 'CRITICAL' }
+        }
+      })
       }
 
 
@@ -189,23 +204,26 @@ function Druhy({ children }) {
   }, [])
 
 
-  React.useEffect(() => {
-    timeStamps()
-     if(globalData.length >=1)
-     {
-    //   getDataFromServer({type: 'range', from: timeInterval.from, to: timeInterval.to}, 'before')
-   //    getDataFromServer({type: "update"}, 'update')
-  //     console.log('timeInt')
-     }
-  }, [timeInterval])
+  // React.useEffect(() => {
+  //   timeStamps()
+  //    if(globalData.length >=1)
+  //    {
+  //   //   getDataFromServer({type: 'range', from: timeInterval.from, to: timeInterval.to}, 'before')
+  //  //    getDataFromServer({type: "update"}, 'update')
+  // //     console.log('timeInt')
+  //    }
+  // }, [timeInterval])
 
-// pri prubehu pokud je zapnuty startstop tlacitko
-  // React.useEffect(() =>
-  // {
-  //   if(startStop){
-  //     getDataFromServer({type: "update"}, 'update')
-  //   }
-  // }, [seconds])
+//consolepri prubehu pokud je zapnuty startstop tlacitko
+  React.useEffect(() =>
+  {
+    if(startStop){
+      //status serveru
+      serverStatus()
+
+
+    }
+  }, [seconds])
 
 
   // React.useEffect(() =>

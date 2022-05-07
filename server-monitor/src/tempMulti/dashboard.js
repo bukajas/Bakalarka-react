@@ -4,30 +4,48 @@ import { Chart, registerables } from 'chart.js'
 import { CheckboxInt } from '../components/App'
 import AngryJOe from '../components/AngryJOe'
 import { format } from 'date-fns'
-import { Row, Col, Button } from 'antd';
+import 'antd/dist/antd.css';
+import { Row, Col, Menu, Button, Dropdown, Space, Card} from 'antd';
 import {DataFetcher} from '../components/dataFetcher'
 import {every_nth} from '../components/every_nth'
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import StatusSign from '../components/StatusSign'
+
 
 
 Chart.register(...registerables)
 
-  const StatusColor = (props) => {
-    if(props.stat == true)
-    return <p className="statusDotGreen"></p>
-    if (props.stat == false) {
-      return <p className="statusDotRed"></p>
-    }
+  // const StatusColor = (props) => {
+  //   if(props.stat == true)
+  //   return <p className="statusDotOk">h</p>
+  //   if (props.stat == false) {
+  //     return <p className="statusDotCritical">h</p>
+  //   }
+    
+  //     return <p>no</p>
+    
   
-  }
+  // }
+
+
 
 var secsToSub = 60
+
+
 const DashboardTab = (props) => {
 
 
+
+  const context = React.useContext(CheckboxInt)
+  const { startStop, tempCurrentData, setGlobalData, globalData, setTempCurrentData} = context
   const [seconds, setSeconds] = React.useState(0)
+  const [run, setRun]= React.useState([1])
+
+ 
   React.useEffect(() =>
   {
-    //    console.log(startStop)
     const waitInterval = setInterval(() => {setSeconds(seconds => seconds + 1)}, 1000)
     return () => clearInterval(waitInterval)
   }, [])
@@ -38,8 +56,7 @@ const DashboardTab = (props) => {
     const avg = Math.floor(sum / valueArray.length) || 0
     return avg
   }
-  const context = React.useContext(CheckboxInt)
-  const { startStop, tempCurrentData, setGlobalData, globalData, setTempCurrentData} = context
+
 
   var lever = false
 
@@ -82,7 +99,67 @@ const DashboardTab = (props) => {
     }
   }, [seconds])
 
-const [run, setRun]= React.useState([1])
+
+function IsAvailable(props){
+  var index = props.tempIp.indexOf(props.datas.ip)
+  var ipaddr = Object.keys(globalData[index])[0]
+  var arLen = globalData[index][ipaddr].cpu.length - 1
+  return (
+    <div>
+      <div className='dashboard-values'>
+            <p>cpu : {globalData[index][ipaddr].cpu[arLen]} %   (avg: {averageValue(globalData[index][ipaddr].cpu)} %) </p>
+            <p>ram: {globalData[index][ipaddr].ram[arLen]} %    (avg: {averageValue(globalData[index][ipaddr].ram)} %)</p>
+            <p>bit rate in: {globalData[index][ipaddr].bit_rate_in[arLen]} bits/sec  (avg: {averageValue(globalData[index][ipaddr].bit_rate_in)} bits/sec)</p>
+            <p>bit rate out: {globalData[index][ipaddr].bit_rate_out[arLen]} bits/sec   (avg: {averageValue(globalData[index][ipaddr].bit_rate_out)} bits/sec</p>
+            <p>packet rate out: {globalData[index][ipaddr].packet_rate_out[arLen]} packets/sec (avg: {averageValue(globalData[index][ipaddr].packet_rate_out)} packets/sec)</p>
+            <p>tcp established: {globalData[index][ipaddr].tcp_established[arLen]} packets/sec    (avg: {averageValue(globalData[index][ipaddr].tcp_established)} packets/sec)</p>
+
+        </div>
+        <Dropdown overlay={
+            <Card size="small">
+              <p>{props.datas.description}</p>
+            </Card>}>
+              <p className='dashboard-description'>
+                  <Space>
+                    Description
+                  </Space>
+                    </p>
+       </Dropdown>
+    </div>
+        
+  )
+
+  
+}
+function IsNotAvailable(){
+  console.log('hovno')
+  return (
+    <div>
+                  <div className='dashboard-values'>
+              <p>cpu : NULL %   (avg: NULL %) </p>
+              <p>ram: NULL %    (avg: NULL %) </p>
+              <p>bit rate_in: NULL bits/sec  (avg: NULL bits/sec) </p>
+              <p>bit rate out: NULL bits/sec   (avg: NULL bits/sec) </p>
+              <p>packet rate_out: NULL packets/sec (avg: NULL packets/sec) </p>
+              <p>tcp established: NULL packets/sec    (avg: NULL packets/sec) </p>
+            </div>
+            
+            <Dropdown overlay={
+              <Card size="small">
+                  <p>{props.datas.description}</p>
+              </Card>}>
+                <p className='dashboard-description'>
+                  <Space>
+                    Description
+                  </Space>
+                </p>
+            </Dropdown>
+    </div>
+
+  )
+}
+
+
 
      return (
     <div className='dashboard-container'>
@@ -93,19 +170,17 @@ const [run, setRun]= React.useState([1])
 
             if(tempIp.includes(props.datas.ip))
             {
-              var index = tempIp.indexOf(props.datas.ip)
-
+                var index = tempIp.indexOf(props.datas.ip)
                 var ipaddr = Object.keys(globalData[index])[0]
                 var arLen = globalData[index][ipaddr].cpu.length - 1
                  return (
                     <div className='dashboard-container-child'>
-                      <h2>{ipaddr} {globalData[index][ipaddr].name} {globalData[index][ipaddr].description} <StatusColor stat={props.datas.status}/></h2>
-                      <p>cpu : {globalData[index][ipaddr].cpu[arLen]} %   (avg: {averageValue(globalData[index][ipaddr].cpu)} %) </p>
-                      <p>ram: {globalData[index][ipaddr].ram[arLen]} %    (avg: {averageValue(globalData[index][ipaddr].ram)} %)</p>
-                      <p>bit_rate_in: {globalData[index][ipaddr].bit_rate_in[arLen]} bits/sec  (avg: {averageValue(globalData[index][ipaddr].bit_rate_in)} bits/sec)</p>
-                      <p>bit_rate_out: {globalData[index][ipaddr].bit_rate_out[arLen]} bits/sec   (avg: {averageValue(globalData[index][ipaddr].bit_rate_out)} bits/sec</p>
-                      <p>packet_rate_out: {globalData[index][ipaddr].packet_rate_out[arLen]} packets/sec (avg: {averageValue(globalData[index][ipaddr].packet_rate_out)} packets/sec)</p>
-                      <p>tcp_established: {globalData[index][ipaddr].tcp_established[arLen]} packets/sec    (avg: {averageValue(globalData[index][ipaddr].tcp_established)} packets/sec)</p>
+                      <div>
+                         <p className='dashboard-status'>Available: <StatusSign stat={props.datas.status}/></p>
+                      <h2>{props.datas.ip} {props.datas.name}</h2>
+                      </div>
+                     <IsAvailable tempIp={tempIp} datas={props.datas}/>
+
                     </div>
                   )
               
@@ -113,41 +188,47 @@ const [run, setRun]= React.useState([1])
             else {
               return (
                     <div className='dashboard-container-child'>
-                      <h3>No data from server</h3>
-                        <h2>{props.datas.ip} {props.datas.name} {props.datas.description} <StatusColor stat={props.datas.status}/></h2>
-                        <p>cpu : NULL %   (avg: NULL %) </p>
-                        <p>ram: NULL %    (avg: NULL %) </p>
-                        <p>bit_rate_in: NULL bits/sec  (avg: NULL bits/sec) </p>
-                        <p>bit_rate_out: NULL bits/sec   (avg: NULL bits/sec) </p>
-                        <p>packet_rate_out: NULL packets/sec (avg: NULL packets/sec) </p>
-                        <p>tcp_established: NULL packets/sec    (avg: NULL packets/sec) </p>
+                      <div>
+                      <h2 className='dashboard-title'>{props.datas.ip} {props.datas.name}</h2>
+                       <p className='dashboard-status'>Available: <StatusSign stat={props.datas.status}/></p>
+                      </div>
+                     <IsNotAvailable datas={props.datas}/>
+                      
                     </div>
                  )
             }
           })
       }
+      
     </div>
   ) 
     }
 
 
 const Dashboard = () => {
-  var globalIp = []
 
   const context = React.useContext(CheckboxInt)
   const { startStop, setStartStop, dates } = context 
+
+
+
+  var globalIp = []
+
   return (
     <div>
       <Button onClick={() => setStartStop(prevState => !prevState)} type='primary'>{startStop ? "Stop" : "Start"}</Button>
       <h1>Dashboard</h1><hr/>
       <div>
+        <Box xs={{flexGrow: 1}}><Grid container spacing={2}>
           {
             dates.map((datas, i) => 
-            { 
-              return <DashboardTab  datas={datas} i={i} globalIp={globalIp}/>
+            {
+              return (<Grid xs={0} md={1} lg={2} xl={3}><DashboardTab datas={datas} i={i} globalIp={globalIp}/></Grid>)
+              
             })
+          
           }
-
+        </Grid></Box>
       </div>
 
 </div>

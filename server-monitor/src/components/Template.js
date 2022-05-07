@@ -3,7 +3,7 @@ import {Config} from '../config.js'
 import Axios from 'axios'
 import "antd/dist/antd.css";
 import "../index.css";
-import { Layout, Menu, Breadcrumb, Spin, Button, Row, Col } from 'antd';
+import { Layout, Menu, Breadcrumb, Spin, Button, Row, Col,  } from 'antd';
 import {
   DesktopOutlined,
   PieChartOutlined,
@@ -11,6 +11,8 @@ import {
   TeamOutlined,
   UserOutlined,
   LoadingOutlined,
+  DatabaseOutlined,
+  LineChartOutlined
 } from '@ant-design/icons';
 import {CheckboxInt} from './App'
 import { NavLink } from "react-router-dom";
@@ -25,8 +27,10 @@ import zoomPlugin from "chartjs-plugin-zoom";
 import { Chart } from 'chart.js'
 import DataCurrent from './dataFormat/dataCurrent'
 import DataRange from './dataFormat/dataRange'
+import StatusSign from '../components/StatusSign'
 
-Chart.register(zoomPlugin); // REGISTER PLUGIN
+
+Chart.register(zoomPlugin);
 
 
 
@@ -37,14 +41,6 @@ const antIcon = <LoadingOutlined style={{ fontSize: 2 }} spin />;
 
 
 
-const StatusColor = (props) => {
-  if(props.stat == true)
-  return <p className="statusDotGreen"></p>
-  if (props.stat == false) {
-    return <p className="statusDotRed"></p>
-  }
-
-}
 
 
 
@@ -102,7 +98,10 @@ const Template = ({children}) => {
         { dates.map((dattes) => { return (
           
           <Menu selectedKeys={clickedServers} onSelect={handleClickedServers} onDeselect={handleClickedServers} multiple={true} theme="dark" mode="inline">
-            <SubMenu disabled={false} multiple={true} key={dattes.ip} icon={<UserOutlined />} title={<p>{dattes.ip} <StatusColor stat={dattes.status}/></p>} >
+            <SubMenu disabled={false} multiple={true} key={dattes.ip} icon={<DatabaseOutlined />} title={<p>{dattes.ip} 
+            <StatusSign stat={dattes.status}/>
+            
+            </p>} >
             <Row align="middle">
     <Col xs={{ span: 7, offset: 5 }} lg={{ span: 6, offset: 5 }}>
     <Button key={dattes.ip} className='but-menu' onClick={()=> selectAllValues(dattes.ip)}>all</Button>
