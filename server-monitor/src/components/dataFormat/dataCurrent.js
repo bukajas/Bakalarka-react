@@ -1,13 +1,13 @@
 import React from 'react'
 import { CheckboxInt } from '../App'
 import Current from '../../tempMulti/current'
-import { InputNumber, Select, Space } from 'antd';
+import { InputNumber, Select, Space} from 'antd';
 import {format, set, sub, isBefore} from 'date-fns'
 import AngryJOe from '../AngryJOe'
 import te from 'date-fns/esm/locale/te/index.js';
 import {DataFetcher} from '../dataFetcher'
 import {every_nth} from '../every_nth'
-
+import Button from '@mui/material/Button';
 
 var spacing = 1
 const { Option } = Select;
@@ -17,7 +17,7 @@ const DataCurrent = () => {
 
 
   const context = React.useContext(CheckboxInt)
-  const { startStop, timeInterval, setTimeInterval, globalData, setGlobalData, tempCurrentData, setTempCurrentData, rangeValue, setRangeValue } = context
+  const { startStop, setStartStop, timeInterval, setTimeInterval, globalData, setGlobalData, tempCurrentData, setTempCurrentData, rangeValue, setRangeValue } = context
   const mutationReff = React.useRef(tempCurrentData)
   const mutationRefff = React.useRef(globalData)
 
@@ -29,10 +29,12 @@ const DataCurrent = () => {
   
   React.useEffect(() =>
   {
-    //    console.log(startStop)
-    const waitInterval = setInterval(() => {setSeconds(seconds => seconds + 1)}, 1000)
+    if(startStop){
+       const waitInterval = setInterval(() => {setSeconds(seconds => seconds + 1)}, 1000)
     return () => clearInterval(waitInterval)
-  }, [])
+    }
+   
+  })
   
   var lastTime, firstTime
   var time, tempObj
@@ -142,11 +144,6 @@ const DataCurrent = () => {
 
           }          
         }
-        
-
-
-
-
 
 React.useEffect(() =>{
   
@@ -159,11 +156,7 @@ React.useEffect(() =>{
     var ever_NTH = every_nth(tempik, spacing)
     setTempCurrentData(ever_NTH)
     setGlobalData(tempGlob)
-
   }
-
-
-
 }, [seconds])
 
 
@@ -176,17 +169,34 @@ React.useEffect(() => {
 
 
 
+
+
+
   return (
+    <div >
+      <div>
+        {startStop ? 
+        <Button onClick={() => setStartStop(prevState => !prevState)} color="error" variant="contained" >STOP</Button>
+        : 
+        <Button onClick={() => setStartStop(prevState => !prevState)} variant="contained" >START</Button>
+        }
+      </div>
     <div>
-   <Space direction="vertical">
-      <InputNumber min={1} max={3600}  defaultValue={60} onPressEnter={(e) => onChange(parseInt(e.target.defaultValue), 1)} addonAfter={'S'}/>
-      <InputNumber min={1} max={240}  defaultValue={1} onPressEnter={(e) => onChange(parseInt(e.target.defaultValue) * 60, 2)} addonAfter={'M'}/>
-      <InputNumber min={1} max={24}  defaultValue={0} onPressEnter={(e) => onChange(parseInt(e.target.defaultValue) * 3600, 3)} addonAfter={'H'}/>
+   <Space>
+      <InputNumber min={1} max={3600}  defaultValue={60} onPressEnter={(e) => onChange(parseInt(e.target.defaultValue), 1)} addonAfter={'Sec'}/>
+      <InputNumber min={1} max={240}  defaultValue={1} onPressEnter={(e) => onChange(parseInt(e.target.defaultValue) * 60, 2)} addonAfter={'Min'}/>
+      <InputNumber min={1} max={24}  defaultValue={0} onPressEnter={(e) => onChange(parseInt(e.target.defaultValue) * 3600, 3)} addonAfter={'Hour'}/>
    </Space>
+
+    </div>
+
+      <p>(for zoom and drag press "CTRL" key)</p>
    <Current tempData={tempCurrentData.length > 0 ? tempCurrentData : globalData}/>
     </div>
   )
 }
+
+
 
 export default DataCurrent
 

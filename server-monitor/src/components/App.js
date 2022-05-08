@@ -51,21 +51,20 @@ const Hlavni = ({ children }) => {
       description: 'well Hello there',
       status: 'CRITICAL'
 
-  },  { name: 'Device 2',
+  }, { name: 'Device 2',
       ip: '192.168.0.102',
       description: 'How are you',
       status: 'CRITICAL'
-  },
-   { name: 'Device 4',
-  ip: '192.168.0.104',
-  description: 'What the hell',
-  status: 'CRITICAL'
-}
-  , {
+  }, { name: 'Device 4',
+    ip: '192.168.0.104',
+    description: 'What the hell',
+    status: 'CRITICAL'
+  }, {
       name: 'Device 3',
       ip: '192.168.0.103',
       description: 'ubuntu',
-      status: 'CRITICAL'}])  // seznam vybranych serveru
+      status: 'CRITICAL'
+    }])  // seznam vybranych serveru
   const [graphOptions, setGraphOptions] = React.useState([])
   const [graphData, setGraphData] = React.useState([])
   const [tempData, setTempData] = React.useState(null) //curent data
@@ -181,7 +180,6 @@ function Druhy({ children }) {
       }
 
 
-
   const [seconds, setSeconds] = React.useState(0)
   React.useEffect(() =>
   {
@@ -204,38 +202,11 @@ function Druhy({ children }) {
   }, [])
 
 
-  // React.useEffect(() => {
-  //   timeStamps()
-  //    if(globalData.length >=1)
-  //    {
-  //   //   getDataFromServer({type: 'range', from: timeInterval.from, to: timeInterval.to}, 'before')
-  //  //    getDataFromServer({type: "update"}, 'update')
-  // //     console.log('timeInt')
-  //    }
-  // }, [timeInterval])
-
 //consolepri prubehu pokud je zapnuty startstop tlacitko
   React.useEffect(() =>
   {
-    if(startStop){
-      //status serveru
-      serverStatus()
-
-
-    }
+    if(startStop){serverStatus()}
   }, [seconds])
-
-
-  // React.useEffect(() =>
-  // {
-  //   if(valuesPost == 'rangee'){
-  //     getDataFromServer({type: 'range', from: timeInterval.from, to: timeInterval.to}, 'range')
-  //
-  //   }
-  //   if(valuesPost == 'current') {
-  //     getDataFromServer({type: 'range', from: timeInterval.from, to: timeInterval.to}, 'range')
-  //   }
-  // }, [timeInterval])
 
 
 //REPLACE NULL DATA

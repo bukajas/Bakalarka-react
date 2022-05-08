@@ -1,24 +1,15 @@
 import React, {createContext} from "react"
-import {Config} from '../config.js'
-import Axios from 'axios'
 import "antd/dist/antd.css";
 import "../index.css";
 import { Layout, Menu, Breadcrumb, Spin, Button, Row, Col,  } from 'antd';
 import {
-  DesktopOutlined,
-  PieChartOutlined,
-  FileOutlined,
-  TeamOutlined,
-  UserOutlined,
   LoadingOutlined,
   DatabaseOutlined,
-  LineChartOutlined
+  ClusterOutlined,
+
 } from '@ant-design/icons';
 import {CheckboxInt} from './App'
-import { NavLink } from "react-router-dom";
 import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
-import Current from '../tempMulti/current';
-import Range from '../tempMulti/range';
 import Dashboard from '../tempMulti/dashboard';
 import Settings from '../tempMulti/settings';
 import Navbar from '../tempMulti/navbar';
@@ -39,46 +30,43 @@ const { SubMenu } = Menu;
 const antIcon = <LoadingOutlined style={{ fontSize: 2 }} spin />;
 
 
-
-
-
-
-
-
 const Template = ({children}) => {
-
 
   const valuesList2 = ['Cpu/Ram','Bit rate in','Bit rate out','Packet rate in','Packet rate out','Tcp established']
 
     const context = React.useContext(CheckboxInt)
-    const { tempData, clickedServers, setClickedServers,
-        dates, setDates,
-        valuesList, setValuesList} = context
+    const { globalData, clickedServers, setClickedServers, dates, valuesList,} = context
 
-        function handleClickedServers(e) {
+        function handleClickedServers(e) 
+        {
           setClickedServers(e.selectedKeys)
         };
-
-
-        function selectAllValues(ip) {
-          var filterClicked = clickedServers.filter((value) => {
+      
+        function selectAllValues(ip) 
+        {
+            var filterClicked = clickedServers.filter((value) => 
+            {
             var tempString = value.split(" ")[0]
             return tempString !== ip
-          })
-          var tempClicked = [...filterClicked]
-          valuesList.map((value) => {
-            tempClicked.push(ip + " " + value)
-          })
+            })
+            var tempClicked = [...filterClicked]
+            valuesList.map((value) => 
+            {
+              tempClicked.push(ip + " " + value)
+            })
           setClickedServers(tempClicked)
         }
 
-        function unSelectAllValues(ip) {
-          var filterClicked = clickedServers.filter((value) => {
+        function unSelectAllValues(ip) 
+        {
+            var filterClicked = clickedServers.filter((value) => 
+            {
             var tempString = value.split(" ")[0]
             return tempString !== ip
-          })
+            })
           setClickedServers(filterClicked)
         }
+
 
   return (
     <div>
@@ -86,30 +74,28 @@ const Template = ({children}) => {
 <Layout>
   <Sider 
       style={{
-        overflow: 'auto',
-        height: '100vh',
         width: '1000px',
+        height: '100vh',
+        overflow: 'auto',
         position: 'fixed',
-        left: 0,
-        top: 0,
-        bottom: 0,
+
     }}>
-      <div className="logo" />
+      <div className="logo" ><ClusterOutlined />Monitoring webApp</div>
+      <div className="servers" ><ClusterOutlined />List of servers </div>
         { dates.map((dattes) => { return (
           
           <Menu selectedKeys={clickedServers} onSelect={handleClickedServers} onDeselect={handleClickedServers} multiple={true} theme="dark" mode="inline">
             <SubMenu disabled={false} multiple={true} key={dattes.ip} icon={<DatabaseOutlined />} title={<p>{dattes.ip} 
-            <StatusSign stat={dattes.status}/>
-            
-            </p>} >
-            <Row align="middle">
-    <Col xs={{ span: 7, offset: 5 }} lg={{ span: 6, offset: 5 }}>
-    <Button key={dattes.ip} className='but-menu' onClick={()=> selectAllValues(dattes.ip)}>all</Button>
-    </Col>
-    <Col xs={{ span: 6, offset: 1 }} lg={{ span: 6, offset: 2 }}>
-      <Button key={dattes.ip} className='but-menu' onClick={()=> unSelectAllValues(dattes.ip)}>none</Button>
-    </Col>
-  </Row>
+            <StatusSign stat={dattes.status}/></p>} >
+
+            <Row align="left">
+              <Col xs={{ span: 7, offset: 5 }} lg={{ span: 8, offset: 3 }}>
+              <Button ghost key={dattes.ip} className='but-menu' onClick={()=> selectAllValues(dattes.ip)}>All</Button>
+              </Col>
+              <Col xs={{ span: 7, offset: 5 }} lg={{ span: 8, offset: 3 }}>
+                <Button ghost key={dattes.ip} className='but-menu' onClick={()=> unSelectAllValues(dattes.ip)}>None</Button>
+              </Col>
+          </Row>
               {valuesList.map((values, i) => {
                 return <Menu.Item disabled={dattes.stat} key={dattes.ip +" "+ values}>{valuesList2[i]}</Menu.Item>})}
             </SubMenu>
@@ -118,28 +104,26 @@ const Template = ({children}) => {
         }
         )
         }
-
+  
   </Sider>
       <Layout className="site-layout" style={{ marginLeft: 200 }}>
         <Router>
           <Header className="header">
-              <Navbar />
+              <Navbar  className="header"/>
           </Header> 
-          <div>
-              {tempData === null ? <h4>Empty oData</h4> : (
-              tempData === 0 ? <h4>Server error</h4> : (
-              <h5>Some oData was received from the server, see the console.</h5>))}
-          </div>
-              <Routes>
+          <div className='whole-content'>
+             <Routes>
                 <Route exact path='/' element={<Dashboard />} />
-                <Route path='/dashboard' element={<Dashboard/>} />
+                <Route  path='/dashboard' element={<Dashboard/>} />
                 <Route path='/current' element={<DataCurrent/>} />
-                <Route path='/settings' element={<Settings/>} />
                 <Route path='/range' element={<DataRange/>} />
+                <Route path='/settings' element={<Settings/>} />
               </Routes>
+          </div>
+             
         </Router>
-
       </Layout>
+      
 </Layout>
 
 </div>

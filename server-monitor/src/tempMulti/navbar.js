@@ -6,7 +6,8 @@ import {
   LineChartOutlined,
   SettingOutlined,
   ColumnWidthOutlined,
-  ClusterOutlined
+  ClusterOutlined,
+  RightOutlined ,
 } from '@ant-design/icons';
 
 
@@ -18,8 +19,9 @@ const Navbar = () => {
 
   
   return (
-      <div>
-      <Menu theme="light" mode="horizontal" >
+      <div >
+
+      <Menu className="headerr"theme="dark" mode="horizontal">
       <Menu.Item onClick={() => {setValuesPost('current'); }} key="1" icon={<ClusterOutlined />} >
                <NavLink to="/dashboard" activeStyle >
                     Dashboard

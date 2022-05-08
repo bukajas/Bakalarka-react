@@ -5,14 +5,14 @@ import { CheckboxInt } from '../components/App'
 import AngryJOe from '../components/AngryJOe'
 import { format } from 'date-fns'
 import 'antd/dist/antd.css';
-import { Row, Col, Menu, Button, Dropdown, Space, Card} from 'antd';
+import { Row, Col, Menu, Dropdown, Space, Card} from 'antd';
 import {DataFetcher} from '../components/dataFetcher'
 import {every_nth} from '../components/every_nth'
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import StatusSign from '../components/StatusSign'
-
+import Button from '@mui/material/Button';
 
 
 Chart.register(...registerables)
@@ -39,16 +39,19 @@ const DashboardTab = (props) => {
 
 
   const context = React.useContext(CheckboxInt)
-  const { startStop, tempCurrentData, setGlobalData, globalData, setTempCurrentData} = context
+  const { startStop, tempCurrentData, setGlobalData, globalData, setTempCurrentData, dates} = context
   const [seconds, setSeconds] = React.useState(0)
   const [run, setRun]= React.useState([1])
 
  
   React.useEffect(() =>
   {
-    const waitInterval = setInterval(() => {setSeconds(seconds => seconds + 1)}, 1000)
+    if(startStop){
+      const waitInterval = setInterval(() => {setSeconds(seconds => seconds + 1)}, 1000)
     return () => clearInterval(waitInterval)
-  }, [])
+    }
+    
+  })
 
 
   function averageValue(valueArray) {
@@ -92,10 +95,12 @@ const DashboardTab = (props) => {
 
   React.useEffect(() =>{
     if(startStop){
+
       var tempGlob = DataFetcher({type: 'update'}, 'update', globalData)
       var tempik = setTempData() 
       setTempCurrentData(tempik)
       setGlobalData(tempGlob)
+
     }
   }, [seconds])
 
@@ -132,7 +137,7 @@ function IsAvailable(props){
   
 }
 function IsNotAvailable(){
-  console.log('hovno')
+
   return (
     <div>
                   <div className='dashboard-values'>
@@ -208,31 +213,96 @@ function IsNotAvailable(){
 const Dashboard = () => {
 
   const context = React.useContext(CheckboxInt)
-  const { startStop, setStartStop, dates } = context 
+  const { startStop, setStartStop, dates, globalData } = context 
 
 
 
   var globalIp = []
 
   return (
-    <div>
-      <Button onClick={() => setStartStop(prevState => !prevState)} type='primary'>{startStop ? "Stop" : "Start"}</Button>
-      <h1>Dashboard</h1><hr/>
+    <div><p className='dashboard-topInfo-item'>{startStop ? 
+        <Button onClick={() => setStartStop(prevState => !prevState)} color="error" variant="contained" >STOP</Button>
+        : 
+        <Button onClick={() => setStartStop(prevState => !prevState)} variant="contained" >START</Button>
+        }</p>
+      <div className='dashboard-topInfo'>
+        
+        <p className='dashboard-topInfo-item'><NumberOfAvailableServers dates={dates}/></p>
+        <p className='dashboard-topInfo-item'><LastValue globalData={globalData} startStop={startStop}/></p>
+        <p className='dashboard-topInfo-item'><Clock/></p>
+      </div>
+      
+      <div>
+        
+      </div>      <hr/>
       <div>
         <Box xs={{flexGrow: 1}}><Grid container spacing={2}>
           {
             dates.map((datas, i) => 
             {
-              return (<Grid xs={0} md={1} lg={2} xl={3}><DashboardTab datas={datas} i={i} globalIp={globalIp}/></Grid>)
+              return (<Grid xs={7} md={7} lg={5} xl={4}><Card><DashboardTab datas={datas} i={i} globalIp={globalIp}/></Card></Grid>)
               
             })
           
           }
         </Grid></Box>
+
       </div>
 
 </div>
   );
 };
   
+
+function NumberOfAvailableServers(props){
+   var numberOf = props.dates.filter((datas, i) =>{
+      return datas.status == 'OK'
+    })
+    var lenghtOf= props.dates.length
+    console.log(props.dates.length)
+
+
+
+  return (
+    <div className="clock">
+      Available servers: <p>{numberOf.length}/{props.dates.length}</p>
+    </div>
+  )
+}
+
+function LastValue(props){
+  var lastValue=props.globalData.map((datas) =>{
+    var ip = Object.keys(datas)[0]
+    return datas[ip].timestamp.at(-1).split(".")[0].replace("T", " ")
+  })
+
+return (
+  <div className='clock'>Last Downloaded Time <p>{lastValue[0]}</p></div>
+)
+
+}
+
+function Clock(props){
+  const [date, setDate] = React.useState(new Date());
+React.useEffect(() => {
+    var timerID = setInterval( () => tick(), 1000 );
+    return function cleanup() {
+        clearInterval(timerID);
+      };
+   });
+
+   function tick() {
+    setDate(new Date());
+   }
+   return (
+    <div>
+      <h2 className="clock">It is {date.toLocaleTimeString()}.</h2>
+    </div>
+  );
+}
+
+
+
+
+
 export default Dashboard;

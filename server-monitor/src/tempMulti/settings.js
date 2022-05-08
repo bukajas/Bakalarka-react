@@ -65,10 +65,11 @@ const Settings = () => {
       </Form.Item>
 
       <Form.Item
+       className='input'
         label="Description"
         name="description"
         >
-        <Input />
+        <Input/>
       </Form.Item>
 
       <Form.Item
