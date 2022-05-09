@@ -80,7 +80,7 @@ if(props.cpuram==true){
       title: props.ipAddr,
       label: props.data1.split(" ")[1].split("_")[0],
       data: props.data2[props.ipAddr][props.data1.split(" ")[1].split("_")[0]],
-      fill: false,
+      fill: true,
       backgroundColor:  GraphOptions[0].data.backgroundColor,
       borderColor: GraphOptions[0].data.borderColor,
       yAxisID: 'y'
@@ -89,7 +89,7 @@ if(props.cpuram==true){
       title: props.ipAddr,
       label: props.data1.split(" ")[1].split("_")[1],
       data: props.data2[props.ipAddr][props.data1.split(" ")[1].split("_")[1]],
-      fill: false,
+      fill: true,
       backgroundColor:  GraphOptions[1].data.backgroundColor,
       borderColor:  GraphOptions[1].data.backgroundColor,
     },
@@ -98,8 +98,8 @@ if(props.cpuram==true){
       label: 'error',
       data: errors,
       fill: true,
-      backgroundColor: 'red',
-      borderColor: 'red',
+      backgroundColor: 'rgba(255, 0, 0, .2)',
+      borderColor: 'rgba(255, 0, 0, 1)',
       yAxisID: 'y1'
     }
   ]
@@ -107,6 +107,11 @@ if(props.cpuram==true){
 }
 
 const optionsJson = {
+            elements: {
+              point: {
+                radius: 0
+              }
+            },
             responsive: true,
             maintainAspectRatio: false,
             animation: {

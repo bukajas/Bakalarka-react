@@ -39,6 +39,7 @@ const Settings = () => {
   
   return (
     <>
+    <div className="settings-form-whole">
     <Form name="basic" labelCol={{ span: 8,}} wrapperCol={{  span: 16,}} onFinish={onFinish} onFinishFailed={onFinishFailed} autoComplete="off">
       <Form.Item label="Device Name" name="name"        
       rules={[
@@ -83,10 +84,12 @@ const Settings = () => {
         </Button>
       </Form.Item>
     </Form>
-
+    </div>
+<div className="settings-remove-whole">
     {
-    dates.map((dates) => <p>{dates.ip} <Button danger><p removeips={dates.ip} onClick={removeServer}>Remove Server</p> </Button></p>)
+    dates.map((dates) => <p>{dates.ip} <Button danger><div removeips={dates.ip} onClick={removeServer}>Remove Server</div> </Button></p>)
     }
+</div>
 
 
     </>

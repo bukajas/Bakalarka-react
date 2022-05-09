@@ -217,13 +217,6 @@
   width: 100%;
 }
 
-.ant-form{
-  text-align: left;
-}
-.ant-form-item-label{
-  text-align: left;
-  width: 100px;
-}
 
 
 .ant-layout-sider-children {
@@ -297,3 +290,19 @@
   width: 100px;
 }
 
+.settings-form-whole{
+  color: pink;
+  width: 50%;
+  flex: left;
+  display: inline-block;
+}
+.settings-remove-whole{
+  display: inline-block;
+  flex: right;
+  width:50%
+}
+
+.ant-form .ant-form-horizontal{
+  color: pink;
+  height: 10px;
+}
