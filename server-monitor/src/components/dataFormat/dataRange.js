@@ -294,11 +294,7 @@ React.useEffect(() =>{
 }, [tempGlobalData])
 
 
-
-
-
-
-
+console.log(globalData)
 
   return (
     <div>

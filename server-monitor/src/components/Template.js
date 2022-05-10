@@ -1,12 +1,11 @@
-import React, {createContext} from "react"
+import React from "react"
 import "antd/dist/antd.css";
 import "../index.css";
-import { Layout, Menu, Breadcrumb, Spin, Button, Row, Col,  } from 'antd';
+import { Layout, Menu, Spin, Button, Row, Col} from 'antd';
 import {
   LoadingOutlined,
   DatabaseOutlined,
   ClusterOutlined,
-
 } from '@ant-design/icons';
 import {CheckboxInt} from './App'
 import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
@@ -35,7 +34,7 @@ const Template = ({children}) => {
   const valuesList2 = ['Cpu/Ram','Bit rate in','Bit rate out','Packet rate in','Packet rate out','Tcp established']
 
     const context = React.useContext(CheckboxInt)
-    const { globalData, clickedServers, setClickedServers, dates, valuesList,} = context
+    const { clickedServers, setClickedServers, dates, valuesList} = context
 
         function handleClickedServers(e) 
         {

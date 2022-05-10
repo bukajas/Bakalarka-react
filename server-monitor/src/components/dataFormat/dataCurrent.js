@@ -8,21 +8,26 @@ import te from 'date-fns/esm/locale/te/index.js';
 import {DataFetcher} from '../dataFetcher'
 import {every_nth} from '../every_nth'
 import Button from '@mui/material/Button';
+import {DateFormater} from '../dateFormater'
+import {Config} from '../../config.js'
+import Axios from 'axios'
 
-var spacing = 1
 const { Option } = Select;
 
+var spacing = 1
 var secsToSub = 60
+
 const DataCurrent = () => {
 
 
   const context = React.useContext(CheckboxInt)
-  const { startStop, setStartStop, timeInterval, setTimeInterval, globalData, setGlobalData, tempCurrentData, setTempCurrentData, rangeValue, setRangeValue } = context
+  const { startStop, setStartStop, timeInterval, globalData, setGlobalData, tempCurrentData, setTempCurrentData } = context
   const mutationReff = React.useRef(tempCurrentData)
   const mutationRefff = React.useRef(globalData)
 
   const [seconds, setSeconds] = React.useState(0)
-  const [tempGlobalData, setTempGlobalData] = React.useState([...globalData])
+  const [tempGlobalData, setTempGlobalData] = React.useState(globalData)
+  const [returned, setReturned] = React.useState(false)
   
   
 
@@ -33,25 +38,23 @@ const DataCurrent = () => {
        const waitInterval = setInterval(() => {setSeconds(seconds => seconds + 1)}, 1000)
     return () => clearInterval(waitInterval)
     }
-   
   })
   
   var lastTime, firstTime
-  var time, tempObj
-  var getIndexFirst, getIndexLast, getGlobalFirst
+  var time
+  var getIndexFirst, getIndexLast
   
   
-  function setTempData(){
-    let intervall = changeInterval(secsToSub)
-    var tempData = tempGlobalData.map((datas, i)=> {
+  function setTempData(tempGlobi, globalDates){ // nastavi docasnou promenou
+
+     var tempData = tempGlobi.map((datas, i)=> {
       var ipaddr = Object.keys(datas)[0] 
-      var fromTime = format(intervall[0], "yyyy-MM-dd'T'kk:mm:ss.'000000+0200'")
+      var fromTime = format(globalDates[2], "yyyy-MM-dd'T'kk:mm:ss.'000000+0200'")
       var ind
       if(datas[ipaddr].timestamp.includes(fromTime)){
         ind = datas[ipaddr].timestamp.indexOf(fromTime)
       }
       else{
-        console.log("hovno")
         ind = 0 - secsToSub
       }
       {return {[ipaddr]: {
@@ -67,21 +70,38 @@ const DataCurrent = () => {
         tcp_established: datas[ipaddr].tcp_established.slice(ind),
       }}}
     })
-    console.log(tempData, 789, tempGlobalData)
     return tempData
   }
   
-  function changeInterval(secsSub)  // vrati dva casy prvni a posledni ktery se ma ukazat
+  function changeInterval(secsSub, globalDates)  // vrati dva casy prvni a posledni ktery se ma ukazat
   {
     time = new Date()
+
     lastTime = new Date(time.getTime() - 1 * 1000)
     firstTime = new Date(time.getTime() - secsSub * 1000)
         return [firstTime, lastTime]
   }
       
+function globalFirstLast(){
+  var getGlobalFirst, getGlobalLast
+  globalData.map((data, i) =>{
+    var ipadr = Object.keys(data)[0]
+    getGlobalFirst = data[ipadr].timestamp.at(0).split(".")[0].replace("T", " ") // prvni global cas
+    getGlobalLast = data[ipadr].timestamp.at(-1).split(".")[0].replace("T", " ")
+  })
+
+    var first = DateFormater(getGlobalFirst)
+    var last = DateFormater(getGlobalLast)
+    var globalFirst = new Date(first.year, first.month, first.day, first.hour, first.minute, first.second)
+    var globalLast = new Date(last.year, last.month, last.day, last.hour, last.minute, last.second)
+    let interval = sub(globalLast, {seconds: secsToSub}) 
+
+  return [globalFirst, globalLast, interval]
+}
+
       
-      
-      
+    
+
       function onChange(e, f) {
         if(f == 1){
           spacing = 1
@@ -92,80 +112,137 @@ const DataCurrent = () => {
         if(f == 3){
           spacing = 120
         }
-        
         secsToSub = e
-        let interval = changeInterval(secsToSub)
-        
-        globalData.map((data, i) =>{
-          var fromFormat = format(interval[0], "yyyy-MM-dd'T'kk:mm:ss.'000000+0200'")
-          var toFormat = format(interval[1], "yyyy-MM-dd'T'kk:mm:ss.'000000+0200'")
-          var ipadr = Object.keys(data)[0]
-          
-          getIndexFirst = data[ipadr].timestamp.indexOf(fromFormat)
-          getIndexLast = data[ipadr].timestamp.indexOf(toFormat)
-          
-          getGlobalFirst = data[ipadr].timestamp.at(0).split(".")[0].replace("T", " ")
-        })
 
-        const fromObj = {
-          year: Number(getGlobalFirst.split('-')[0]),
-          month: Number(getGlobalFirst.split('-')[1]) -1,
-          day: Number(getGlobalFirst.split('-')[2].split(' ')[0]),
-          hour: Number(getGlobalFirst.split(':')[0].split(' ')[1]),
-          minute: Number(getGlobalFirst.split(' ')[1].split(':')[1]),
-          second: Number(getGlobalFirst.split(' ')[1].split(':')[2])}
-          
-          var globalFirst = new Date(fromObj.year, fromObj.month, fromObj.day, fromObj.hour, fromObj.minute, fromObj.second)
-          var GlobalminusSec = sub(globalFirst, {seconds: 1})
-                  
+        var globalDates = globalFirstLast() //prvni a posledni global dat
+        var globalminusSec = sub(globalDates[0], {seconds: 1})  // odectene jedne vteriny aby to navazovalo
+        let interval = sub(globalDates[1], {seconds: secsToSub}) 
           var tempInterval
 
-          if(isBefore(interval[0], globalFirst)){
-            console.log('yesss')
-            console.log(interval[0], GlobalminusSec)
-            tempInterval = {type: 'range', from:  format(interval[0], "yyyy-MM-dd kk:mm:ss"), to: GlobalminusSec}
-            var tempGlobi = DataFetcher(tempInterval, 'before', globalData, tempInterval)
-            setTempGlobalData([...tempGlobi])
-            console.log(tempGlobalData)
-            var tempikk = setTempData(secsToSub)
-            var ever_NTH = tempCurrentData ? every_nth(tempikk, spacing) : tempikk
-            setTempCurrentData(ever_NTH)
-            console.log(tempCurrentData, tempGlobi, 123)
+          if(isBefore(interval, globalDates[0])){
+            tempInterval = {type: 'range', from:  format(interval, "yyyy-MM-dd kk:mm:ss"), to: format(globalminusSec, "yyyy-MM-dd kk:mm:ss")}
+
+            var tempGlobi = DataFetcher(tempInterval, 'before', globalData, globalDates, globalDates[2]) // tu je ten problem
+            console.log(tempGlobi[0]['192.168.0.101'],tempGlobi)
+            var tempikk = setTempData(tempGlobi, globalDates)
+            if(spacing !== 1){
+              var ever_NTH = tempCurrentData ? every_nth(tempikk, spacing) : tempikk
+              setTempCurrentData(ever_NTH)
+            }
+            else{
+              setTempCurrentData(tempikk)
+            }
             setGlobalData(tempGlobi)
           }
-          else{
-            console.log(globalData)
-            setTempGlobalData([...globalData])
-            var tempikkk = setTempData(secsToSub)
-            var ever_NTH = tempCurrentData ? every_nth(tempikkk, spacing) : tempikkk
-            console.log(tempCurrentData)
-            console.log(tempCurrentData, tempGlobi, 456)
-            setTempCurrentData(ever_NTH)
-
-          }          
+          else {
+  //          console.log('notbefore')
+            var tempikkk = setTempData(globalData, globalDates)
+            if(spacing !== 1){
+              var ever_NTH = tempCurrentData ? every_nth(tempikkk, spacing) : tempikkk
+              setTempCurrentData(ever_NTH)
+            }
+            else{
+              setTempCurrentData(tempikkk)
+            }
+          } 
+          setReturned(tempGlobi)
+          
         }
 
 React.useEffect(() =>{
   
   if(startStop){
-    var tempGlob = DataFetcher({type: 'update'}, 'update', globalData, timeInterval)
-    
-    setTempGlobalData([...tempGlob])
-    var tempik = setTempData(secsToSub) // ???? jeslt hodit globalData nebo tyto upraveny g
-    console.log(tempCurrentData, tempGlob)
+    var dattes = globalFirstLast()
+
+    var tempGlob = DataFetcher({type: 'update'}, 'update', globalData, dattes)
+    var tempik = setTempData(globalData, dattes)
     var ever_NTH = every_nth(tempik, spacing)
     setTempCurrentData(ever_NTH)
     setGlobalData(tempGlob)
   }
 }, [seconds])
 
+function retur(){
+  setReturned(prev => !prev)
+  console.log('blalbla')
+}
+
 
 React.useEffect(() => {
   mutationReff.current = tempGlobalData
 }, [tempGlobalData])
+
 React.useEffect(() => {
   mutationRefff.current = globalData
+  console.log(globalData, 'wooooo')
 }, [globalData])
+
+React.useEffect(() => {
+
+  console.log('whjkgjghj')
+  retur()
+}, [tempCurrentData])
+
+
+
+
+
+
+function hovno(){
+  var postt = {type: "range",  from: "2021-02-01 01:00:00", to: "2021-02-01 01:01:00"}
+  var tempOBJ =[]
+  Axios.post( Config.server.getData, postt, {headers: { 'Content-Type': 'application/json' }})
+        .then((response) => {
+          if (!response.data.error) 
+          {
+              response.data.data.map((datas, i) => {
+              var fetchedKey = datas.info.ip; 
+              
+               var newServer = {[datas.info.ip]: {
+                name: datas.info.name,
+                description: datas.info.os,
+                cpu: datas.values.map((datas2) => {return datas2.cpu}),
+                ram: datas.values.map((datas2) => {return datas2.ram}),
+                timestamp: datas.values.map((datas2) => {return datas2.timestamp}),
+                bit_rate_in: datas.values.map((datas2) => {return datas2.bit_rate_in}),
+                bit_rate_out: datas.values.map((datas2) => {return datas2.bit_rate_out}),
+                packet_rate_in: datas.values.map((datas2) => {return datas2.packet_rate_in}),
+                packet_rate_out: datas.values.map((datas2) => {return datas2.packet_rate_out}),
+                tcp_established: datas.values.map((datas2) => {return datas2.tcp_established}),
+               }}
+               tempOBJ[i] = newServer // formatovane data ze serveru
+    
+              })
+    
+              console.log(tempOBJ,123)
+            } 
+            else {
+              console.log(response.data.message)
+            }
+              console.log('prvni')
+          })
+          .catch((error) => {
+            console.log("Server is unavailable")
+            console.log(error)
+          })
+
+          return tempOBJ
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
