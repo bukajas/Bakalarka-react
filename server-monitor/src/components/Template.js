@@ -17,7 +17,7 @@ import zoomPlugin from "chartjs-plugin-zoom";
 import { Chart } from 'chart.js'
 import DataCurrent from './dataFormat/dataCurrent'
 import DataRange from './dataFormat/dataRange'
-import StatusSign from '../components/StatusSign'
+import StatusSign from './functions/StatusSign'
 
 
 Chart.register(zoomPlugin);

@@ -1,7 +1,6 @@
 import React from 'react'
 import { Bar, Line } from 'react-chartjs-2'
 import { Chart, registerables } from 'chart.js'
-import GrafHodnot from '../GrafHodnot'
 import AngryJOe from '../AngryJOe'
 import { Spin, DatePicker, TimePicker, Tabs, Button } from 'antd';
 import {
@@ -115,7 +114,7 @@ const optionsJson = {
             responsive: true,
             maintainAspectRatio: false,
             animation: {
-            duration: 100
+            duration: 0
           },
           plugins: {
           zoom: {

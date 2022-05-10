@@ -1,5 +1,4 @@
 import React from 'react';
-import { Bar, Line } from 'react-chartjs-2'
 import { Chart, registerables } from 'chart.js'
 import { CheckboxInt } from '../components/App'
 import AngryJOe from '../components/AngryJOe'
@@ -7,51 +6,64 @@ import { format } from 'date-fns'
 import 'antd/dist/antd.css';
 import { Row, Col, Menu, Dropdown, Space, Card} from 'antd';
 import {DataFetcher} from '../components/dataFetcher'
-import {every_nth} from '../components/every_nth'
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
-import StatusSign from '../components/StatusSign'
+import StatusSign from '../components/functions/StatusSign'
 import Button from '@mui/material/Button';
-
+import SetTempData from '../components/functions/SetTempData'
+import GlobalFirstLast from '../components/functions/GlobalFirstLast'
+import Axios from 'axios'
+import {Config} from '../config.js'
+import AddData from '../components/functions/AddData'
 
 Chart.register(...registerables)
-
-  // const StatusColor = (props) => {
-  //   if(props.stat == true)
-  //   return <p className="statusDotOk">h</p>
-  //   if (props.stat == false) {
-  //     return <p className="statusDotCritical">h</p>
-  //   }
-    
-  //     return <p>no</p>
-    
-  
-  // }
-
-
-
 var secsToSub = 60
 
 
-const DashboardTab = (props) => {
+//pocet dostupnych serveru
+function NumberOfAvailableServers(props){
+  var numberOf = props.dates.filter((datas, i) =>{return datas.status == 'OK' })
+ return (
+   <div className="clock">
+     Available servers: <p>{numberOf.length}/{props.dates.length}</p>
+   </div>
+ )}
 
 
+//posledni stazena hodnota
+function LastValue(props){
+ var lastValue=props.globalData.map((datas) =>{
+   var ip = Object.keys(datas)[0]
+   return datas[ip].timestamp.at(-1).split(".")[0].replace("T", " ")
+ })
+return (  <div className='clock'>Last Downloaded Time <p>{lastValue[0]}</p></div> )
+}
 
-  const context = React.useContext(CheckboxInt)
-  const { startStop, tempCurrentData, setGlobalData, globalData, setTempCurrentData, dates} = context
-  const [seconds, setSeconds] = React.useState(0)
-  const [run, setRun]= React.useState([1])
 
- 
-  React.useEffect(() =>
-  {
-    if(startStop){
-      const waitInterval = setInterval(() => {setSeconds(seconds => seconds + 1)}, 1000)
-    return () => clearInterval(waitInterval)
-    }
-    
+//hodiny
+function Clock(props){
+ const [date, setDate] = React.useState(new Date())
+
+ React.useEffect(() => {
+   var timerID = setInterval( () => tick(), 1000 )
+   return function cleanup() { clearInterval(timerID) }
   })
+
+   function tick() { setDate(new Date())}
+  return (
+   <div>
+     <h2 className="clock">It is {date.toLocaleTimeString()}.</h2>
+   </div>
+ )}
+
+
+
+
+
+const DashboardTab = (props) => {
+  const context = React.useContext(CheckboxInt)
+  const {globalData} = context
+  const run = [1]
 
 
   function averageValue(valueArray) {
@@ -59,50 +71,6 @@ const DashboardTab = (props) => {
     const avg = Math.floor(sum / valueArray.length) || 0
     return avg
   }
-
-
-  var lever = false
-
-  function setTempData(){
-    var time = new Date()
-    var firstTime = new Date(time.getTime() - 60 * 1000)
-    var tempData = globalData.map((datas, i)=> {
-      var ipaddr = Object.keys(datas)[0] 
-      var fromTime = format(firstTime, "yyyy-MM-dd'T'kk:mm:ss.'000000+0200'")
-      var ind
-      if(datas[ipaddr].timestamp.includes(fromTime)){
-        ind = datas[ipaddr].timestamp.indexOf(fromTime)
-      }
-      else{
-        console.log("hovno")
-        ind = 0 - secsToSub
-      }
-      {return {[ipaddr]: {
-        name: datas[ipaddr].name,
-        description: datas[ipaddr].description,
-        cpu: datas[ipaddr].cpu.slice(ind),
-        ram: datas[ipaddr].ram.slice(ind),
-        timestamp: datas[ipaddr].timestamp.slice(ind),
-        bit_rate_in: datas[ipaddr].bit_rate_in.slice(ind),
-        bit_rate_out: datas[ipaddr].bit_rate_out.slice(ind),
-        packet_rate_in: datas[ipaddr].packet_rate_in.slice(ind),
-        packet_rate_out: datas[ipaddr].packet_rate_out.slice(ind),
-        tcp_established: datas[ipaddr].tcp_established.slice(ind),
-      }}}
-    })
-    return tempData
-  }
-
-  React.useEffect(() =>{
-    if(startStop){
-
-      var tempGlob = DataFetcher({type: 'update'}, 'update', globalData)
-      var tempik = setTempData() 
-      setTempCurrentData(tempik)
-      setGlobalData(tempGlob)
-
-    }
-  }, [seconds])
 
 
 function IsAvailable(props){
@@ -118,18 +86,17 @@ function IsAvailable(props){
             <p>bit rate out: {globalData[index][ipaddr].bit_rate_out[arLen]} bits/sec   (avg: {averageValue(globalData[index][ipaddr].bit_rate_out)} bits/sec</p>
             <p>packet rate out: {globalData[index][ipaddr].packet_rate_out[arLen]} packets/sec (avg: {averageValue(globalData[index][ipaddr].packet_rate_out)} packets/sec)</p>
             <p>tcp established: {globalData[index][ipaddr].tcp_established[arLen]} packets/sec    (avg: {averageValue(globalData[index][ipaddr].tcp_established)} packets/sec)</p>
-
         </div>
         <Dropdown overlay={
-            <Card size="small">
-              <p>{props.datas.description}</p>
-            </Card>}>
-              <p className='dashboard-description'>
-                  <Space>
-                    Description
-                  </Space>
-                    </p>
-       </Dropdown>
+          <Card size="small">
+            <p>{props.datas.description}</p>
+          </Card>}>
+          <p className='dashboard-description'>
+            <Space>
+              Description
+            </Space>
+          </p>
+        </Dropdown>
     </div>
         
   )
@@ -137,18 +104,16 @@ function IsAvailable(props){
   
 }
 function IsNotAvailable(){
-
   return (
     <div>
-                  <div className='dashboard-values'>
-              <p>cpu : NULL %   (avg: NULL %) </p>
-              <p>ram: NULL %    (avg: NULL %) </p>
-              <p>bit rate_in: NULL bits/sec  (avg: NULL bits/sec) </p>
-              <p>bit rate out: NULL bits/sec   (avg: NULL bits/sec) </p>
-              <p>packet rate_out: NULL packets/sec (avg: NULL packets/sec) </p>
-              <p>tcp established: NULL packets/sec    (avg: NULL packets/sec) </p>
-            </div>
-            
+       <div className='dashboard-values'>
+          <p>cpu : NULL %   (avg: NULL %) </p>
+          <p>ram: NULL %    (avg: NULL %) </p>
+          <p>bit rate_in: NULL bits/sec  (avg: NULL bits/sec) </p>
+          <p>bit rate out: NULL bits/sec   (avg: NULL bits/sec) </p>
+          <p>packet rate_out: NULL packets/sec (avg: NULL packets/sec) </p>
+          <p>tcp established: NULL packets/sec    (avg: NULL packets/sec) </p>
+        </div>
             <Dropdown overlay={
               <Card size="small">
                   <p>{props.datas.description}</p>
@@ -160,37 +125,25 @@ function IsNotAvailable(){
                 </p>
             </Dropdown>
     </div>
-
-  )
-}
-
-
+  )}
 
      return (
     <div className='dashboard-container'>
-      {
-        run.map((run) => {
+      { run.map((run) => {
           var tempIp = []
           globalData.map((data) => { var globalKey = Object.keys(data)[0]; tempIp.push(globalKey) })
 
-            if(tempIp.includes(props.datas.ip))
-            {
-                var index = tempIp.indexOf(props.datas.ip)
-                var ipaddr = Object.keys(globalData[index])[0]
-                var arLen = globalData[index][ipaddr].cpu.length - 1
+        if(tempIp.includes(props.datas.ip)){
                  return (
                     <div className='dashboard-container-child'>
                       <div>
                          <p className='dashboard-status'>Available: <StatusSign stat={props.datas.status}/></p>
                       <h2>{props.datas.ip} {props.datas.name}</h2>
                       </div>
-                     <IsAvailable tempIp={tempIp} datas={props.datas}/>
-
+                     <IsAvailable key={props.datas.ip} tempIp={tempIp} datas={props.datas}/>
                     </div>
-                  )
-              
-            }
-            else {
+                  )}
+        else {
               return (
                     <div className='dashboard-container-child'>
                       <div>
@@ -198,109 +151,99 @@ function IsNotAvailable(){
                        <p className='dashboard-status'>Available: <StatusSign stat={props.datas.status}/></p>
                       </div>
                      <IsNotAvailable datas={props.datas}/>
-                      
                     </div>
-                 )
-            }
+                 )}
           })
-      }
-      
+      }  
     </div>
-  ) 
-    }
-
+  )}
 
 const Dashboard = () => {
 
+  const [seconds, setSeconds] = React.useState(0)
   const context = React.useContext(CheckboxInt)
-  const { startStop, setStartStop, dates, globalData } = context 
+  const { startStop, setStartStop, dates, globalData, tempCurrentData, setTempCurrentData, setGlobalData } = context 
+
+  React.useEffect(() => {
+    if(startStop) {
+      const waitInterval = setInterval(() => {setSeconds(seconds => seconds + 1)}, 1000)
+      return () => clearInterval(waitInterval)
+    }})
+
+  React.useEffect(() => {
+    if(startStop){
+      var globalDates = GlobalFirstLast(globalData, secsToSub)
+      FetchData('update', {type: "update", last: format(globalDates[1], "yyyy-MM-dd kk:mm:ss")}, globalDates)
+    }
+  }, [seconds])
 
 
 
-  var globalIp = []
+  function FetchData(type, postValues, globalDates){
+    console.log(postValues)
+    var tempOBJ = []
+    
+    Axios.post( Config.server.getData, postValues, {headers: { 'Content-Type': 'application/json' }})
+          .then((response) => {
+            if (!response.data.error) {
+                response.data.data.map((datas, i) => {
+                var fetchedKey = datas.info.ip; 
+                 var newServer = {[fetchedKey]: {
+                  name: datas.info.name,
+                  description: datas.info.os,
+                  cpu: datas.values.map((datas2) => {return datas2.cpu}),
+                  ram: datas.values.map((datas2) => {return datas2.ram}),
+                  timestamp: datas.values.map((datas2) => {return datas2.timestamp}),
+                  bit_rate_in: datas.values.map((datas2) => {return datas2.bit_rate_in}),
+                  bit_rate_out: datas.values.map((datas2) => {return datas2.bit_rate_out}),
+                  packet_rate_in: datas.values.map((datas2) => {return datas2.packet_rate_in}),
+                  packet_rate_out: datas.values.map((datas2) => {return datas2.packet_rate_out}),
+                  tcp_established: datas.values.map((datas2) => {return datas2.tcp_established}),
+                 }}
+                 tempOBJ[i] = newServer // formatovane data ze serveru
+                })
+              } 
+              else {console.log(response.data.message)}
+
+              var tempGlob = AddData(type, globalData, tempOBJ)
+              var tempik = SetTempData(tempGlob, globalDates, secsToSub)
+              setTempCurrentData(tempik)
+              setGlobalData(tempGlob)
+
+            })
+            .catch((error) => {
+              console.log("Server is unavailable")
+              console.log(error)
+            })       
+  }
 
   return (
-    <div><p className='dashboard-topInfo-item'>{startStop ? 
+    <div><div className='dashboard-topInfo-item'>{startStop ? 
         <Button onClick={() => setStartStop(prevState => !prevState)} color="error" variant="contained" >STOP</Button>
         : 
         <Button onClick={() => setStartStop(prevState => !prevState)} variant="contained" >START</Button>
-        }</p>
+        }</div>
       <div className='dashboard-topInfo'>
-        
         <p className='dashboard-topInfo-item'><NumberOfAvailableServers dates={dates}/></p>
         <p className='dashboard-topInfo-item'><LastValue globalData={globalData} startStop={startStop}/></p>
         <p className='dashboard-topInfo-item'><Clock/></p>
       </div>
       
-      <div>
-        
-      </div>      <hr/>
+      <hr/>
       <div>
         <Box xs={{flexGrow: 1}}><Grid container spacing={2}>
-          {
+          {tempCurrentData ?
             dates.map((datas, i) => 
             {
-              return (<Grid xs={7} md={7} lg={5} xl={4}><Card><DashboardTab datas={datas} i={i} globalIp={globalIp}/></Card></Grid>)
-              
-            })
-          
+              return (<Grid xs={7} md={7} lg={5} xl={4}><Card><DashboardTab key={datas.ip} datas={datas} i={i}  /></Card></Grid>)
+            }) : <AngryJOe />
           }
         </Grid></Box>
-
       </div>
-
 </div>
   );
 };
   
-
-function NumberOfAvailableServers(props){
-   var numberOf = props.dates.filter((datas, i) =>{
-      return datas.status == 'OK'
-    })
-    var lenghtOf= props.dates.length
-    console.log(props.dates.length)
-
-
-
-  return (
-    <div className="clock">
-      Available servers: <p>{numberOf.length}/{props.dates.length}</p>
-    </div>
-  )
-}
-
-function LastValue(props){
-  var lastValue=props.globalData.map((datas) =>{
-    var ip = Object.keys(datas)[0]
-    return datas[ip].timestamp.at(-1).split(".")[0].replace("T", " ")
-  })
-
-return (
-  <div className='clock'>Last Downloaded Time <p>{lastValue[0]}</p></div>
-)
-
-}
-
-function Clock(props){
-  const [date, setDate] = React.useState(new Date());
-React.useEffect(() => {
-    var timerID = setInterval( () => tick(), 1000 );
-    return function cleanup() {
-        clearInterval(timerID);
-      };
-   });
-
-   function tick() {
-    setDate(new Date());
-   }
-   return (
-    <div>
-      <h2 className="clock">It is {date.toLocaleTimeString()}.</h2>
-    </div>
-  );
-}
-
 
 
 

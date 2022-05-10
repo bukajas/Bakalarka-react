@@ -1,17 +1,13 @@
 
 import React from 'react';
-import { Bar, Line } from 'react-chartjs-2'
 import GraphCurrent from "../components/graphs/GraphCurrent"
 import { Chart, registerables } from 'chart.js'
-import GrafHodnot from '../components/GrafHodnot'
 import AngryJOe from '../components/AngryJOe'
-import { Spin, DatePicker, TimePicker, Tabs, Button } from 'antd';
 import {
   LoadingOutlined,
 } from '@ant-design/icons';
 import { CheckboxInt } from '../components/App'
 import { InputNumber, Select, Space } from 'antd';
-import {format, set} from 'date-fns'
 
 const { Option } = Select;
 const antIcon = <LoadingOutlined style={{ fontSize: 240 }} spin />;

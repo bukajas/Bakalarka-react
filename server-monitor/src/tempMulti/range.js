@@ -1,17 +1,13 @@
 
 import React from 'react';
 import GraphRange from "../components/graphs/GraphRange"
-
-import { Bar, Line } from 'react-chartjs-2'
 import { Chart, registerables } from 'chart.js'
-import GrafHodnot from '../components/GrafHodnot'
 import AngryJOe from '../components/AngryJOe'
 import { Spin, DatePicker, TimePicker, Tabs } from 'antd';
 import {
   LoadingOutlined,
 } from '@ant-design/icons';
 import { CheckboxInt } from '../components/App'
-import moment from 'moment';
 
 const { RangePicker } = DatePicker;
 const antIcon = <LoadingOutlined style={{ fontSize: 240 }} spin />;
@@ -21,15 +17,7 @@ Chart.register(...registerables)
 const Range = (props) => {
 
     const context = React.useContext(CheckboxInt)
-
-    const { oData, setoData,
-      seconds, setSeconds,
-      startStop, setStartStop,
-      clickedServers, setClickedServers,
-      clickedValues, setClickedValues,
-      valuesPost, setValuesPost,
-      rangeValue, setRangeValue,
-      rangeData, setRangeData } = context
+    const { clickedServers, rangeValue, setRangeValue, } = context
 
 
 
