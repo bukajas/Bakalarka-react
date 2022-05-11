@@ -109,8 +109,7 @@ function Druhy({ children }) {
   const [seconds, setSeconds] = React.useState(0)
   
 
-
-  React.useEffect(() => {
+React.useEffect(() => {
       getDataFromServer( //stazeni prvnich dat
       {
        type: "range",
@@ -120,18 +119,20 @@ function Druhy({ children }) {
        , 'first')
     }, [])
   
-  React.useEffect(() =>
-    {
+
+React.useEffect(() => {
       const interval = setInterval(() => {setSeconds(seconds => seconds + 1)}, 1000)
       return () => clearInterval(interval)
     }, [])
   
-  React.useEffect(() =>
-    {
+
+React.useEffect(() => {
       if(startStop){serverStatus()}
     }, [seconds])
 
-
+React.useEffect(() => {
+      mutationRef.current = globalData
+    }, [globalData])
 
     
   function serverStatus() {
@@ -139,7 +140,6 @@ function Druhy({ children }) {
     var golb
   //  pokud v dates mam ip, a od ni bude chodit data, tak bude true jinak false
       dates.map((data, i) => {
-        var tempIPs = data.ip
         golb = globalData.map((globData, i) => {
           var stat = 0
           var ipaddr = Object.keys(globData)[0]
@@ -147,7 +147,6 @@ function Druhy({ children }) {
             for(var i = 1; i < 6; i++){
               if(globData[ipaddr].cpu.at(0 - i) == null){
                 stat = stat + 1
-                console.log('hovno123')
             } else{
               if(stat >= 2 && stat <5){ return {[ipaddr]: 2} }
               stat = 0
@@ -155,7 +154,7 @@ function Druhy({ children }) {
             }
             } 
             if(stat >= 5){ return {[ipaddr]: stat} } 
-            if(stat >= 2){  return {[ipaddr]: stat} }
+            if(stat >= 2){ return {[ipaddr]: stat} }
           }
         })
       })
@@ -171,30 +170,16 @@ function Druhy({ children }) {
       })
       }
 
-
-
-
-
-// na zacatku a pak priapdne pri zmacknuti upate tlacitka.
-
-
-
-
-
-
-
   function getDataFromServer(postValuess, type){
     var postValues
-        if(type == 'first'){
-          postValues = postValuess
-        }
+    if(type == 'first'){ postValues = postValuess }
     var tempOBJ = []
     var fetchedIps = []
 
     Axios.post( Config.server.getData, postValues, {headers: { 'Content-Type': 'application/json' }})
     .then((response) => {
-      if (!response.data.error)
-      {
+      if (!response.data.error) {
+
           response.data.data.map((datas, i) => {
           var fetchedKey = datas.info.ip;
           fetchedIps.push(fetchedKey)
@@ -210,8 +195,7 @@ function Druhy({ children }) {
             packet_rate_out: datas.values.map((datas2) => {return datas2.packet_rate_out}),
             tcp_established: datas.values.map((datas2) => {return datas2.tcp_established}),
            }}
-           tempOBJ[i] = newServer // formatovane data ze serveru
-
+           tempOBJ[i] = newServer 
           })
             setGlobalData(tempOBJ)
         }
@@ -225,30 +209,7 @@ function Druhy({ children }) {
       })
     }
 
-
-
-
-React.useEffect(() =>{
-  mutationRef.current = globalData
-}, [globalData])
-
-React.useEffect(() =>{
-  mutationRefCurrent.current = tempCurrentData
-}, [tempCurrentData])
-
-React.useEffect(() =>{
-  mutationRefRange.current = tempRangeData
-}, [tempRangeData])
-
-
-
-    // else if(valuesPost == 'times') {
-    //   postValues = {type: "times", times: ["2021-02-01 01:00:00", "2021-02-01 01:00:02", "2021-02-01 03:03:00", "2021-02-01 01:55:55"]}
-    // }
-
-
   return (
-
     <div>
       {children}
     </div>
@@ -260,7 +221,6 @@ React.useEffect(() =>{
 
 
 const App = () => {
-
 
   return(
     <div>

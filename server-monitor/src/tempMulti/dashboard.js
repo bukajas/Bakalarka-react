@@ -4,8 +4,7 @@ import { CheckboxInt } from '../components/App'
 import AngryJOe from '../components/AngryJOe'
 import { format } from 'date-fns'
 import 'antd/dist/antd.css';
-import { Row, Col, Menu, Dropdown, Space, Card} from 'antd';
-import {DataFetcher} from '../components/dataFetcher'
+import { Dropdown, Space, Card} from 'antd';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import StatusSign from '../components/functions/StatusSign'
@@ -22,7 +21,7 @@ var secsToSub = 60
 
 //pocet dostupnych serveru
 function NumberOfAvailableServers(props){
-  var numberOf = props.dates.filter((datas, i) =>{return datas.status == 'OK' })
+  var numberOf = props.dates.filter((datas, i) =>{return datas.status === 'OK' })
  return (
    <div className="clock">
      Available servers: <p>{numberOf.length}/{props.dates.length}</p>
@@ -89,13 +88,13 @@ function IsAvailable(props){
         </div>
         <Dropdown overlay={
           <Card size="small">
-            <p>{props.datas.description}</p>
+            <div>{props.datas.description}</div>
           </Card>}>
-          <p className='dashboard-description'>
+          <div className='dashboard-description'>
             <Space>
               Description
             </Space>
-          </p>
+          </div>
         </Dropdown>
     </div>
         
@@ -116,13 +115,13 @@ function IsNotAvailable(){
         </div>
             <Dropdown overlay={
               <Card size="small">
-                  <p>{props.datas.description}</p>
+                  <div>{props.datas.description}</div>
               </Card>}>
-                <p className='dashboard-description'>
+                <div className='dashboard-description'>
                   <Space>
                     Description
                   </Space>
-                </p>
+                </div>
             </Dropdown>
     </div>
   )}
@@ -131,13 +130,13 @@ function IsNotAvailable(){
     <div className='dashboard-container'>
       { run.map((run) => {
           var tempIp = []
-          globalData.map((data) => { var globalKey = Object.keys(data)[0]; tempIp.push(globalKey) })
+          globalData.map((data) => { var globalKey = Object.keys(data)[0]; tempIp.push(globalKey)})
 
         if(tempIp.includes(props.datas.ip)){
                  return (
-                    <div className='dashboard-container-child'>
+                    <div key={props.datas.ip} className='dashboard-container-child'>
                       <div>
-                         <p className='dashboard-status'>Available: <StatusSign stat={props.datas.status}/></p>
+                         <div className='dashboard-status'>Available: <StatusSign stat={props.datas.status}/></div>
                       <h2>{props.datas.ip} {props.datas.name}</h2>
                       </div>
                      <IsAvailable key={props.datas.ip} tempIp={tempIp} datas={props.datas}/>
@@ -145,10 +144,10 @@ function IsNotAvailable(){
                   )}
         else {
               return (
-                    <div className='dashboard-container-child'>
+                    <div key={props.datas.ip} className='dashboard-container-child'>
                       <div>
                       <h2 className='dashboard-title'>{props.datas.ip} {props.datas.name}</h2>
-                       <p className='dashboard-status'>Available: <StatusSign stat={props.datas.status}/></p>
+                       <div className='dashboard-status'>Available: <StatusSign stat={props.datas.status}/></div>
                       </div>
                      <IsNotAvailable datas={props.datas}/>
                     </div>
@@ -171,7 +170,7 @@ const Dashboard = () => {
     }})
 
   React.useEffect(() => {
-    if(startStop){
+    if(startStop ){
       var globalDates = GlobalFirstLast(globalData, secsToSub)
       FetchData('update', {type: "update", last: format(globalDates[1], "yyyy-MM-dd kk:mm:ss")}, globalDates)
     }
@@ -201,6 +200,7 @@ const Dashboard = () => {
                   tcp_established: datas.values.map((datas2) => {return datas2.tcp_established}),
                  }}
                  tempOBJ[i] = newServer // formatovane data ze serveru
+                 return response.data.data
                 })
               } 
               else {console.log(response.data.message)}
@@ -224,9 +224,9 @@ const Dashboard = () => {
         <Button onClick={() => setStartStop(prevState => !prevState)} variant="contained" >START</Button>
         }</div>
       <div className='dashboard-topInfo'>
-        <p className='dashboard-topInfo-item'><NumberOfAvailableServers dates={dates}/></p>
-        <p className='dashboard-topInfo-item'><LastValue globalData={globalData} startStop={startStop}/></p>
-        <p className='dashboard-topInfo-item'><Clock/></p>
+        <div className='dashboard-topInfo-item'><NumberOfAvailableServers dates={dates}/></div>
+        <div className='dashboard-topInfo-item'><LastValue globalData={globalData} startStop={startStop}/></div>
+        <div className='dashboard-topInfo-item'><Clock/></div>
       </div>
       
       <hr/>
@@ -235,7 +235,7 @@ const Dashboard = () => {
           {tempCurrentData ?
             dates.map((datas, i) => 
             {
-              return (<Grid xs={7} md={7} lg={5} xl={4}><Card><DashboardTab key={datas.ip} datas={datas} i={i}  /></Card></Grid>)
+              return (<Grid key={'grid-'+datas.ip} xs={7} md={7} lg={5} xl={4} item={true}><Card key={'dashboarb-grid-card'}><DashboardTab key={datas.ip} datas={datas} i={i}  /></Card></Grid>)
             }) : <AngryJOe />
           }
         </Grid></Box>

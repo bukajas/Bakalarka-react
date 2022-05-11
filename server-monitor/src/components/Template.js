@@ -1,9 +1,8 @@
 import React from "react"
 import "antd/dist/antd.css";
 import "../index.css";
-import { Layout, Menu, Spin, Button, Row, Col} from 'antd';
+import { Layout, Menu, Button, Row, Col} from 'antd';
 import {
-  LoadingOutlined,
   DatabaseOutlined,
   ClusterOutlined,
 } from '@ant-design/icons';
@@ -24,46 +23,39 @@ Chart.register(zoomPlugin);
 
 
 
-const { Header, Content, Footer, Sider } = Layout;
+const { Header, Sider } = Layout;
 const { SubMenu } = Menu;
-const antIcon = <LoadingOutlined style={{ fontSize: 2 }} spin />;
 
 
-const Template = ({children}) => {
+const Template = () => {
 
   const valuesList2 = ['Cpu/Ram','Bit rate in','Bit rate out','Packet rate in','Packet rate out','Tcp established']
 
     const context = React.useContext(CheckboxInt)
     const { clickedServers, setClickedServers, dates, valuesList} = context
 
-        function handleClickedServers(e) 
-        {
+        function handleClickedServers(e) {
           setClickedServers(e.selectedKeys)
         };
       
-        function selectAllValues(ip) 
-        {
-            var filterClicked = clickedServers.filter((value) => 
-            {
-            var tempString = value.split(" ")[0]
-            return tempString !== ip
+        function selectAllValues(ip) {
+            var filterClicked = clickedServers.filter((value) => {
+                var tempString = value.split(" ")[0]
+                return tempString !== ip
             })
             var tempClicked = [...filterClicked]
-            valuesList.map((value) => 
-            {
-              tempClicked.push(ip + " " + value)
+            valuesList.map((value) => {
+                tempClicked.push(ip + " " + value)
             })
-          setClickedServers(tempClicked)
+            setClickedServers(tempClicked)
         }
 
-        function unSelectAllValues(ip) 
-        {
-            var filterClicked = clickedServers.filter((value) => 
-            {
-            var tempString = value.split(" ")[0]
-            return tempString !== ip
+        function unSelectAllValues(ip) {
+            var filterClicked = clickedServers.filter((value) => {
+                var tempString = value.split(" ")[0]
+                return tempString !== ip
             })
-          setClickedServers(filterClicked)
+            setClickedServers(filterClicked)
         }
 
 
@@ -77,15 +69,15 @@ const Template = ({children}) => {
         height: '100vh',
         overflow: 'auto',
         position: 'fixed',
-
     }}>
+
       <div className="logo" ><ClusterOutlined />Monitoring webApp</div>
       <div className="servers" ><ClusterOutlined />List of servers </div>
         { dates.map((dattes) => { return (
           
           <Menu selectedKeys={clickedServers} onSelect={handleClickedServers} onDeselect={handleClickedServers} multiple={true} theme="dark" mode="inline">
-            <SubMenu disabled={false} multiple={true} key={dattes.ip} icon={<DatabaseOutlined />} title={<p>{dattes.ip} 
-            <StatusSign stat={dattes.status}/></p>} >
+            <SubMenu multiple={true} key={dattes.ip} icon={<DatabaseOutlined />} 
+            title={<div>{dattes.ip}<StatusSign stat={dattes.status}/></div>} >
 
             <Row align="left">
               <Col xs={{ span: 7, offset: 5 }} lg={{ span: 8, offset: 3 }}>

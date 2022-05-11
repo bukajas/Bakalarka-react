@@ -36,7 +36,6 @@ export const AddData= (type, globalData, tempOBJ) => {
                     tempServer[OBJIp].packet_rate_out = [...datas[OBJIp].packet_rate_out, ...tempServer[OBJIp].packet_rate_out]
                     tempServer[OBJIp].tcp_established = [...datas[OBJIp].tcp_established, ...tempServer[OBJIp].tcp_established]
                     tempGlobal[globalIndex] = tempServer
-                    console.log(tempGlobal[globalIndex][OBJIp])
                   }
                   else{
                     var arrayLength = datas[OBJIp].timestamp.length  //delka ziskanych dat

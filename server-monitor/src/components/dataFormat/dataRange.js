@@ -1,33 +1,25 @@
 import React from 'react'
 import { CheckboxInt } from '../App'
 import Range from '../../tempMulti/range'
-import { InputNumber, Select, Space } from 'antd';
-import {format, set, isBefore, isAfter, sub, add, isEqual} from 'date-fns'
+import { Space } from 'antd';
+import {format, isBefore, isAfter, add} from 'date-fns'
 import AngryJOe from '../AngryJOe'
 import moment from 'moment';
-import { Spin, DatePicker, TimePicker, Tabs, Button } from 'antd';
-import {DataFetcher} from '../dataFetcher'
+import { DatePicker, Button } from 'antd';
 import {every_nth} from '../functions/every_nth'
 import {Config} from '../../config.js'
 import Axios from 'axios'
-import SetTempData from '../functions/SetTempData'
-import DateFormater from '../functions/dateFormater'
 import GlobalFirstLast from '../functions/GlobalFirstLast'
 import AddData from '../functions/AddData';
 
 
-
 const { RangePicker } = DatePicker;
-
-const { Option } = Select;
-
 
 
 const DataRange = () => {
 
   const context = React.useContext(CheckboxInt)
-  const { globalData, tempRangeData, setTempRangeData } = context
-  const mutationRef = React.useRef(tempRangeData)
+  const { tempRangeData, setTempRangeData } = context
   const [localRange, setLocalRange] = React.useState([])
   const [returned, setReturned] = React.useState(false)
   const [spacing, setSpacing] = React.useState(1)
@@ -37,17 +29,12 @@ const DataRange = () => {
 function onChange(dates, dateStrings) {
   setReturned(false)
   setPickedDate(dates)
-  //type jeslti chci stahnout data pred nebo po,
-  //globalData, budou data rangeData,
-  //tempOBJ jsou stahnute data.
-
   var postValues
-  console.log(dateStrings, dates[0]._d)
   
-  if(tempRangeData.length == 0){
+
+  if(tempRangeData.length === 0){
     postValues = {type: 'range', from: dateStrings[0], to: dateStrings[1]}
-    FetchData('first', postValues, tempRangeData, dates)
-    console.log(1) 
+    FetchData('first', postValues, tempRangeData, dates) 
   }
   else {
     var rangeDates = GlobalFirstLast(tempRangeData, 60)
@@ -55,14 +42,12 @@ function onChange(dates, dateStrings) {
     {
       postValues = {type: 'range', from: dateStrings[0], to: dateStrings[1]}
       FetchData('first', postValues, tempRangeData, dates)
-      console.log(2) 
     }
     else 
     {
       if(isBefore(dates[0]._d, rangeDates[0])){
         postValues = {type: 'range', from: dateStrings[0], to: rangeDates[3]}
         FetchData('before', postValues, tempRangeData, dates)
-        console.log(3) 
       }      
     }
 
@@ -70,7 +55,6 @@ function onChange(dates, dateStrings) {
     {
       postValues = {type: 'range', from: dateStrings[0], to: dateStrings[1]}
       FetchData('first', postValues, tempRangeData, dates)
-      console.log(4) 
     }
     else 
     {
@@ -78,18 +62,15 @@ function onChange(dates, dateStrings) {
 
         postValues = {type: 'range', from: format(add(rangeDates[1],{seconds: 1}), "yyyy-MM-dd kk:mm:ss") , to:dateStrings[1]}
         FetchData('after', postValues, tempRangeData, dates)
-        console.log(5, dates[1]._d, rangeDates[1]) 
       }
     }
   }
-  if(postValues == undefined){
+  if(postValues === undefined){
     setReturned(false)
     var tempik = setTempData(tempRangeData, dates)
     setLocalRange(tempik)
   }
-
-console.log(postValues, dateStrings, tempRangeData) 
-  
+ 
 
 }
   
@@ -124,24 +105,19 @@ function FetchData(type, postValues, tempRangeData, dateStrings) {
                  if(spacing !== 1){
                   var ever_NTH = localRange ? every_nth(tempik, spacing) : tempik
                   setLocalRange(ever_NTH)
-                }
-                else {
-                  setLocalRange(tempik)
-                }
+                  }
+                  else { setLocalRange(tempik) }
 
-                 setTempRangeData(tempGlob)
+                  setTempRangeData(tempGlob)
                })
                .catch((error) => {
                 console.log("Server is unavailable")
                 console.log(error)
-              })   
-     
-     }
+              })}
       
 
 
 function setTempData(tempGlob, dateStrings){
-  console.log(dateStrings)
   var getIndexFirst, getIndexLast
   var tempData =tempGlob.map((server, i) =>{
   var ipaddr = Object.keys(server)[0] 
@@ -150,8 +126,6 @@ function setTempData(tempGlob, dateStrings){
   getIndexFirst = server[ipaddr].timestamp.indexOf(fromTime)
   getIndexLast = server[ipaddr].timestamp.indexOf(toTime) + 1
   
-  console.log(getIndexFirst, getIndexLast)
-
   return {[ipaddr]: {
     name: server[ipaddr].name,
     description: server[ipaddr].description,
@@ -168,43 +142,40 @@ function setTempData(tempGlob, dateStrings){
     return tempData
 }
 
+
 function setSpace(spacing){
   setSpacing(spacing)
   setReturned(false)
   var tempik = setTempData(tempRangeData, pickedDate)
   if(spacing !== 1){
-    
     setLocalRange(every_nth(tempik, spacing))
-  }
-  else{
+  } else{
     setLocalRange(tempik)
-  }
-}
-
+  }}
 
 React.useEffect(() =>{
   setReturned(true)
 }, [spacing])
 
-
 React.useEffect(() =>{
   setReturned(true)
 },[localRange])
 
+
       return (
         <div>
+          
           <Button onClick={()=> setSpace(1)}>Seconds</Button>
           <Button onClick={()=> setSpace(5)}>Minutes</Button>
           <Button onClick={()=> setSpace(120)}>HOures</Button>
-   <Space direction="vertical">
-    <RangePicker ranges={{ 'This minute': [moment().startOf('minute'), moment()],
-     'This Month': [moment().startOf('month'), moment().endOf('month')],  }}
-     showTime format="YYYY-MM-DD HH:mm:ss" onChange={onChange} />
-   </Space>
-      {returned ? <Range rangeData={localRange}/> : <p>wel wel wel</p>}
-      
-      
-    </div>
+          <Space direction="vertical">
+            <RangePicker ranges={{ 'This minute': [moment().startOf('minute'), moment()],
+              'This Month': [moment().startOf('month'), moment().endOf('month')],  }}
+              showTime format="YYYY-MM-DD HH:mm:ss" onChange={onChange} />
+          </Space>
+          <p>(for zoom and drag press "CTRL" key)</p>
+          {returned ? <Range rangeData={localRange}/> : <p>wel wel wel</p>}
+        </div>
   )
 }
 

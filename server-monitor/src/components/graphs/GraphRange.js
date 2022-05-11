@@ -1,36 +1,23 @@
 import React from 'react'
-import { Bar, Line } from 'react-chartjs-2'
+import { Line } from 'react-chartjs-2'
 import { Chart, registerables } from 'chart.js'
 import AngryJOe from '../AngryJOe'
-import { Spin, DatePicker, TimePicker, Tabs, Button } from 'antd';
+import { Button } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
-import {
-  LoadingOutlined,
-} from '@ant-design/icons';
 import { CheckboxInt } from '../App'
 import GraphOptions from './graphOptions.json'
 
-const { TabPane } = Tabs;
-const { RangePicker } = DatePicker;
-const antIcon = <LoadingOutlined style={{ fontSize: 240 }} spin />;
 Chart.register(...registerables)
-
-function callback(key) {
-  console.log(key);
-}
 
 const GraphRange = (props) => {
 
     const context = React.useContext(CheckboxInt)
-
     const {  valuesList } = context
-
-      var indexOfValues = valuesList.indexOf(props.data1.split(" ")[1]) +1
+    var indexOfValues = valuesList.indexOf(props.data1.split(" ")[1]) +1
 
       var dataJson = {
         labels: props.data2[props.ipAddr].timestamp.map((datas) => datas.split(".")[0].split("T")[1]),
-      datasets: [
-        {
+      datasets: [{
           title: props.ipAddr,
           label: props.data1.split(" ")[1],
           data: props.data2[props.ipAddr][props.data1.split(" ")[1]],
@@ -38,11 +25,9 @@ const GraphRange = (props) => {
           backgroundColor:  GraphOptions[indexOfValues].data.backgroundColor,
           borderColor: GraphOptions[indexOfValues].data.borderColor,
           yAxisID: 'y'
-        },
-      ]
-    }
+        },]}
     
-if(props.cpuram==true){
+if(props.cpuram === true){
       dataJson = {
         labels: props.data2[props.ipAddr].timestamp.map((datas) => datas.split(".")[0].split("T")[1]),
       datasets: [
@@ -120,7 +105,6 @@ if(props.cpuram==true){
 
   return (
         <div> 
-
           <Button icon={<DownloadOutlined/>} onClick={downloadImage} className="btn-download">Download</Button>
             <Line  
             data={dataJson}

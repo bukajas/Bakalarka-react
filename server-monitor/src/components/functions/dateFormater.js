@@ -1,5 +1,3 @@
-import React from 'react'
-
 export const DateFormater = function(date){ // format yyyy-mm-dd HH:MM:SS
     const datum = {
         year: Number(date.split('-')[0]),
@@ -10,5 +8,4 @@ export const DateFormater = function(date){ // format yyyy-mm-dd HH:MM:SS
         second: Number(date.split(' ')[1].split(':')[2])}
   return datum
 }
-
 export default DateFormater
