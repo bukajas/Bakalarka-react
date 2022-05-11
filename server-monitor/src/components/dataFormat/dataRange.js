@@ -5,7 +5,7 @@ import { Space } from 'antd';
 import {format, isBefore, isAfter, add} from 'date-fns'
 import AngryJOe from '../AngryJOe'
 import moment from 'moment';
-import { DatePicker, Button } from 'antd';
+import { DatePicker, Button, Radio } from 'antd';
 import {every_nth} from '../functions/every_nth'
 import {Config} from '../../config.js'
 import Axios from 'axios'
@@ -162,12 +162,27 @@ React.useEffect(() =>{
 },[localRange])
 
 
+function onChangeSpacing(e){
+  console.log(spacing, e.target.value)
+  setSpacing(e.target.value)
+}
+const optionsSpacing = [
+  {label: '1 Secs', value: 1},
+  {label: '5 Secs', value: 5},
+  {label: '2 Mins', value: 120},
+]
+
+
       return (
         <div>
+          <Radio.Group
+           options={optionsSpacing}
+          onChange={onChangeSpacing}
+          value={spacing}
+          optionType="button"
+          buttonStyle="solid"
+        />
           
-          <Button onClick={()=> setSpace(1)}>Seconds</Button>
-          <Button onClick={()=> setSpace(5)}>Minutes</Button>
-          <Button onClick={()=> setSpace(120)}>HOures</Button>
           <Space direction="vertical">
             <RangePicker ranges={{ 'This minute': [moment().startOf('minute'), moment()],
               'This Month': [moment().startOf('month'), moment().endOf('month')],  }}

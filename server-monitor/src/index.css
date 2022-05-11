@@ -276,6 +276,12 @@
 .ant-input-number{
   width: 100px;
 }
+.ant-input-number-input{
+  width: 50px;
+}
+
+
+
 .ant-input-number-group-wrapper{
  float: left;
 }

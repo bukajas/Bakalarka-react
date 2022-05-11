@@ -77,7 +77,7 @@ const Template = () => {
           
           <Menu selectedKeys={clickedServers} onSelect={handleClickedServers} onDeselect={handleClickedServers} multiple={true} theme="dark" mode="inline">
             <SubMenu multiple={true} key={dattes.ip} icon={<DatabaseOutlined />} 
-            title={<div>{dattes.ip}<StatusSign stat={dattes.status}/></div>} >
+            title={<div>{dattes.ip} <StatusSign stat={dattes.status}/></div>} >
 
             <Row align="left">
               <Col xs={{ span: 7, offset: 5 }} lg={{ span: 8, offset: 3 }}>

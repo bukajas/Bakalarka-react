@@ -1,7 +1,7 @@
 import React from 'react'
 import { CheckboxInt } from '../App'
 import Current from '../../tempMulti/current'
-import { InputNumber, Space} from 'antd';
+import { InputNumber, Space, Select} from 'antd';
 import {format, sub, isBefore} from 'date-fns'
 import {every_nth} from '../functions/every_nth'
 import Button from '@mui/material/Button';
@@ -12,10 +12,9 @@ import AddData from '../functions/AddData'
 import SetTempData from '../functions/SetTempData';
 import GlobalFirstLast from '../functions/GlobalFirstLast'
 
+const { Option } = Select;
 
 
-
-var spacing = 1
 var secsToSub = 60
 
 const DataCurrent = () => {
@@ -25,6 +24,7 @@ const DataCurrent = () => {
   const { startStop, setStartStop,  globalData, setGlobalData, tempCurrentData, setTempCurrentData } = context
   const [seconds, setSeconds] = React.useState(0)
   const [returned, setReturned] = React.useState(false)
+  const [spacing, setSpacing] = React.useState(1)
 
 
 React.useEffect(() => {
@@ -35,9 +35,9 @@ React.useEffect(() => {
   })
       
 function onChange(e, f) {
-        if(f === 1){  spacing = 1   }
-        if(f === 2){  spacing = 5   }
-        if(f === 3){  spacing = 120 }
+        if(f === 1){  setSpacing(1)   }
+        if(f === 2){  setSpacing(5)   }
+        if(f === 3){  setSpacing(120) }
         secsToSub = e
         var globalDates = GlobalFirstLast(globalData, secsToSub) //prvni a posledni global dat
           // odectene jedne vteriny aby to navazovalo
@@ -116,6 +116,24 @@ React.useEffect(() =>{
 },[tempCurrentData])
 
 
+function onChangeSpacing(e){
+  console.log(e)
+  setSpacing(e)
+}
+
+
+
+const selectAfter = (
+    <Select onChange={onChangeSpacing} defaultValue="1" style={{ width: 60 }}>
+      <Option value="1">Sec</Option>
+      <Option value="5">Min</Option>
+      <Option value="120">Hour</Option>
+
+    </Select>
+
+)
+
+
 
 
   return (
@@ -129,6 +147,7 @@ React.useEffect(() =>{
       </div>
     <div>
    <Space>
+   <InputNumber min={1} max={3600}  defaultValue={60} onPressEnter={(e) => onChange(parseInt(e.target.defaultValue), 1)} addonAfter={selectAfter}/>
       <InputNumber min={1} max={3600}  defaultValue={60} onPressEnter={(e) => onChange(parseInt(e.target.defaultValue), 1)} addonAfter={'Sec'}/>
       <InputNumber min={1} max={240}  defaultValue={1} onPressEnter={(e) => onChange(parseInt(e.target.defaultValue) * 60, 2)} addonAfter={'Min'}/>
       <InputNumber min={1} max={24}  defaultValue={0} onPressEnter={(e) => onChange(parseInt(e.target.defaultValue) * 3600, 3)} addonAfter={'Hour'}/>
