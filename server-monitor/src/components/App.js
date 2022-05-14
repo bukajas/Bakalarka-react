@@ -5,7 +5,11 @@ import "antd/dist/antd.css";
 import "../index.css";
 import Template from "./Template.js"
 import {format} from 'date-fns'
+import {LoadingOutlined} from '@ant-design/icons'
 export { CheckboxInt }
+
+
+
 
 const CheckboxInt =  createContext()
 
@@ -14,7 +18,6 @@ const CheckboxInt =  createContext()
 
 
 const Hlavni = ({ children }) => {
-
 
   const [globalData, setGlobalData] = React.useState([])
   const [fetchedData, setFetchedData] = React.useState('')
@@ -27,9 +30,7 @@ const Hlavni = ({ children }) => {
       from: format(newTime, 'yyyy-MM-dd kk:mm:ss'),
      to: format(time, 'yyyy-MM-dd kk:mm:ss')
     }
-
     const [timeInterval, setTimeInterval] = React.useState(tempObj) // casovy usek ktery se posle pro stazeni
-
     const [dates, setDates] = React.useState([
     { name: 'Device 1',
       ip: '192.168.0.101',
@@ -50,46 +51,32 @@ const Hlavni = ({ children }) => {
       description: 'ubuntu',
       status: 'CRITICAL'
     }])  // seznam vybranych serveru
-  const [graphOptions, setGraphOptions] = React.useState([])
-  const [graphData, setGraphData] = React.useState([])
-  const [tempData, setTempData] = React.useState(null) //curent data
-  const [rangeData, setRangeData] = React.useState('') //range data
-  const [timeLine, setTimeLine] = React.useState('')
-  const [oData, setoData] = React.useState('')
   const valuesList = ['cpu_ram','bit_rate_in','bit_rate_out','packet_rate_in','packet_rate_out','tcp_established']
-  const [valuesPost, setValuesPost] = React.useState('range')
+
   const [rangeValue, setRangeValue] = React.useState({
     from: "2021-02-01 01:00:00",
     to: "2021-02-01 01:01:00"
   })
+  const [valuesPost, setValuesPost] = React.useState('range')
   const [startStop, setStartStop] = React.useState(false)
-  const [ipAdd, setIpAdd] = React.useState([])
   const [clickedServers, setClickedServers] = React.useState([])
   const [tempCurrentData, setTempCurrentData] = React.useState([])
-  const mutationRefCurrent = React.useRef(tempCurrentData)
   const [tempRangeData, setTempRangeData] = React.useState([])
-  const mutationRefRange = React.useRef(tempRangeData)
+
 
 
 
 
   return ( <CheckboxInt.Provider value={{
-        oData, setoData,
         startStop, setStartStop,
-        ipAdd, setIpAdd,
-        clickedServers, setClickedServers,
         valuesPost, setValuesPost,
+        clickedServers, setClickedServers,
         rangeValue, setRangeValue,
-        rangeData, setRangeData,
         dates, setDates,
         valuesList,
-        tempData, setTempData,
-        timeLine, setTimeLine,
-        graphOptions, setGraphOptions,
-        graphData, setGraphData,
         timeInterval, setTimeInterval,
         globalData, setGlobalData,
-        mutationRef, mutationRefRange, mutationRefCurrent,
+        mutationRef,
         fetchedData, setFetchedData,
         tempCurrentData, setTempCurrentData,
         tempRangeData, setTempRangeData
@@ -102,9 +89,8 @@ const Hlavni = ({ children }) => {
 
 function Druhy({ children }) {
   const context = React.useContext(CheckboxInt)
-  const { dates,startStop, timeInterval,
-    globalData, setGlobalData, mutationRefRange,
-    mutationRefCurrent, tempRangeData, tempCurrentData, mutationRef
+  const { dates, startStop, timeInterval,
+    globalData, setGlobalData, mutationRef
   } = context
   const [seconds, setSeconds] = React.useState(0)
   
@@ -115,8 +101,7 @@ React.useEffect(() => {
        type: "range",
        from: timeInterval.from,
        to: timeInterval.to
-      }
-       , 'first')
+      }, 'first')
     }, [])
   
 
@@ -172,10 +157,10 @@ React.useEffect(() => {
 
   function getDataFromServer(postValuess, type){
     var postValues
-    if(type == 'first'){ postValues = postValuess }
     var tempOBJ = []
     var fetchedIps = []
-
+    if(type == 'first'){ postValues = postValuess }
+    
     Axios.post( Config.server.getData, postValues, {headers: { 'Content-Type': 'application/json' }})
     .then((response) => {
       if (!response.data.error) {

@@ -5,12 +5,12 @@ import { Space } from 'antd';
 import {format, isBefore, isAfter, add} from 'date-fns'
 import AngryJOe from '../AngryJOe'
 import moment from 'moment';
-import { DatePicker, Button, Radio } from 'antd';
-import {every_nth} from '../functions/every_nth'
+import { DatePicker, Radio } from 'antd';
 import {Config} from '../../config.js'
 import Axios from 'axios'
-import GlobalFirstLast from '../functions/GlobalFirstLast'
 import AddData from '../functions/AddData';
+import {GlobalFirstLast, every_nth, SetTempDataRange} from '../functions/Functions'
+
 
 
 const { RangePicker } = DatePicker;
@@ -50,7 +50,6 @@ function onChange(dates, dateStrings) {
         FetchData('before', postValues, tempRangeData, dates)
       }      
     }
-
     if(isAfter(dates[0]._d, rangeDates[1]))
     {
       postValues = {type: 'range', from: dateStrings[0], to: dateStrings[1]}
@@ -67,7 +66,7 @@ function onChange(dates, dateStrings) {
   }
   if(postValues === undefined){
     setReturned(false)
-    var tempik = setTempData(tempRangeData, dates)
+    var tempik = SetTempDataRange(tempRangeData, dates)
     setLocalRange(tempik)
   }
  
@@ -101,7 +100,7 @@ function FetchData(type, postValues, tempRangeData, dateStrings) {
                  else {console.log(response.data.message)}
      
                  var tempGlob = AddData(type, tempRangeData, tempOBJ)
-                 var tempik = setTempData(tempGlob, dateStrings)
+                 var tempik = SetTempDataRange(tempGlob, dateStrings)
                  if(spacing !== 1){
                   var ever_NTH = localRange ? every_nth(tempik, spacing) : tempik
                   setLocalRange(ever_NTH)
@@ -116,37 +115,10 @@ function FetchData(type, postValues, tempRangeData, dateStrings) {
               })}
       
 
-
-function setTempData(tempGlob, dateStrings){
-  var getIndexFirst, getIndexLast
-  var tempData =tempGlob.map((server, i) =>{
-  var ipaddr = Object.keys(server)[0] 
-  var fromTime = format(dateStrings[0]._d, "yyyy-MM-dd'T'kk:mm:ss.'000000+0200'")
-  var toTime = format(dateStrings[1]._d, "yyyy-MM-dd'T'kk:mm:ss.'000000+0200'")
-  getIndexFirst = server[ipaddr].timestamp.indexOf(fromTime)
-  getIndexLast = server[ipaddr].timestamp.indexOf(toTime) + 1
-  
-  return {[ipaddr]: {
-    name: server[ipaddr].name,
-    description: server[ipaddr].description,
-    cpu: server[ipaddr].cpu.slice(getIndexFirst, getIndexLast),
-    ram: server[ipaddr].ram.slice(getIndexFirst, getIndexLast),
-    timestamp: server[ipaddr].timestamp.slice(getIndexFirst, getIndexLast),
-    bit_rate_in: server[ipaddr].bit_rate_in.slice(getIndexFirst, getIndexLast),
-    bit_rate_out: server[ipaddr].bit_rate_out.slice(getIndexFirst, getIndexLast),
-    packet_rate_in: server[ipaddr].packet_rate_in.slice(getIndexFirst, getIndexLast),
-    packet_rate_out: server[ipaddr].packet_rate_out.slice(getIndexFirst, getIndexLast),
-    tcp_established: server[ipaddr].tcp_established.slice(getIndexFirst, getIndexLast),
-  }}
-  })
-    return tempData
-}
-
-
 function setSpace(spacing){
   setSpacing(spacing)
   setReturned(false)
-  var tempik = setTempData(tempRangeData, pickedDate)
+  var tempik = SetTempDataRange(tempRangeData, pickedDate)
   if(spacing !== 1){
     setLocalRange(every_nth(tempik, spacing))
   } else{
@@ -164,7 +136,7 @@ React.useEffect(() =>{
 
 function onChangeSpacing(e){
   console.log(spacing, e.target.value)
-  setSpacing(e.target.value)
+  setSpace(e.target.value)
 }
 const optionsSpacing = [
   {label: '1 Secs', value: 1},
@@ -182,7 +154,6 @@ const optionsSpacing = [
           optionType="button"
           buttonStyle="solid"
         />
-          
           <Space direction="vertical">
             <RangePicker ranges={{ 'This minute': [moment().startOf('minute'), moment()],
               'This Month': [moment().startOf('month'), moment().endOf('month')],  }}

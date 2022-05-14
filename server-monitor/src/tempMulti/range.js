@@ -1,4 +1,3 @@
-
 import React from 'react';
 import GraphRange from "../components/graphs/GraphRange"
 import { Chart, registerables } from 'chart.js'

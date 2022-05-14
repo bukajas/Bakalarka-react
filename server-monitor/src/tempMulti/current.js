@@ -7,7 +7,7 @@ import {
   LoadingOutlined,
 } from '@ant-design/icons';
 import { CheckboxInt } from '../components/App'
-import { Select, Space } from 'antd';
+import { Select } from 'antd';
 
 const { Option } = Select;
 Chart.register(...registerables)
@@ -17,7 +17,6 @@ const Current = (props) =>  {
 
   const context = React.useContext(CheckboxInt)
   const { clickedServers } = context
-
 
 return (
       <div> 

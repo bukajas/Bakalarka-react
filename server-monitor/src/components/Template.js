@@ -16,8 +16,7 @@ import zoomPlugin from "chartjs-plugin-zoom";
 import { Chart } from 'chart.js'
 import DataCurrent from './dataFormat/dataCurrent'
 import DataRange from './dataFormat/dataRange'
-import StatusSign from './functions/StatusSign'
-
+import {StatusSign} from './functions/Functions'
 
 Chart.register(zoomPlugin);
 
@@ -32,11 +31,11 @@ const Template = () => {
   const valuesList2 = ['Cpu/Ram','Bit rate in','Bit rate out','Packet rate in','Packet rate out','Tcp established']
 
     const context = React.useContext(CheckboxInt)
-    const { clickedServers, setClickedServers, dates, valuesList} = context
+    const { clickedServers, setClickedServers, dates, valuesList } = context
 
         function handleClickedServers(e) {
           setClickedServers(e.selectedKeys)
-        };
+        }
       
         function selectAllValues(ip) {
             var filterClicked = clickedServers.filter((value) => {
@@ -58,7 +57,6 @@ const Template = () => {
             setClickedServers(filterClicked)
         }
 
-
   return (
     <div>
       
@@ -75,11 +73,11 @@ const Template = () => {
       <div className="servers" ><ClusterOutlined />List of servers </div>
         { dates.map((dattes) => { return (
           
-          <Menu selectedKeys={clickedServers} onSelect={handleClickedServers} onDeselect={handleClickedServers} multiple={true} theme="dark" mode="inline">
+          <Menu key={dattes.ip + 'menu'} selectedKeys={clickedServers} onSelect={handleClickedServers} onDeselect={handleClickedServers} multiple={true} theme="dark" mode="inline">
             <SubMenu multiple={true} key={dattes.ip} icon={<DatabaseOutlined />} 
-            title={<div>{dattes.ip} <StatusSign stat={dattes.status}/></div>} >
+            title={<div>{dattes.ip}<StatusSign stat={dattes.status}/></div>} >
 
-            <Row align="left">
+            <Row key={dattes.ip + 'row'}   align="left">
               <Col xs={{ span: 7, offset: 5 }} lg={{ span: 8, offset: 3 }}>
               <Button ghost key={dattes.ip} className='but-menu' onClick={()=> selectAllValues(dattes.ip)}>All</Button>
               </Col>

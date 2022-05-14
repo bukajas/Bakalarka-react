@@ -1,19 +1,17 @@
 import React from 'react';
+import {Config} from '../config.js'
+import 'antd/dist/antd.css';
 import { Chart, registerables } from 'chart.js'
 import { CheckboxInt } from '../components/App'
 import AngryJOe from '../components/AngryJOe'
 import { format } from 'date-fns'
-import 'antd/dist/antd.css';
 import { Dropdown, Space, Card} from 'antd';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import StatusSign from '../components/functions/StatusSign'
 import Button from '@mui/material/Button';
-import SetTempData from '../components/functions/SetTempData'
-import GlobalFirstLast from '../components/functions/GlobalFirstLast'
 import Axios from 'axios'
-import {Config} from '../config.js'
 import AddData from '../components/functions/AddData'
+import {GlobalFirstLast, SetTempData, StatusSign} from '../components/functions/Functions'
 
 Chart.register(...registerables)
 var secsToSub = 60

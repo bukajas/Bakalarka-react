@@ -1,5 +1,5 @@
 import React from 'react'
-import { Bar, Line } from 'react-chartjs-2'
+import { Line } from 'react-chartjs-2'
 import { Chart, registerables } from 'chart.js'
 import AngryJOe from '../AngryJOe'
 import { Spin, DatePicker, TimePicker, Tabs, Button } from 'antd';
@@ -13,10 +13,12 @@ import GraphOptions from './graphOptions.json'
 
 
 
-
 const { TabPane } = Tabs;
 const { RangePicker } = DatePicker;
 const antIcon = <LoadingOutlined style={{ fontSize: 240 }} spin />;
+
+
+
 Chart.register(...registerables)
 var errors = [] 
 const GraphCurrent = (props) => {
@@ -44,10 +46,7 @@ React.useEffect(() =>{
 
 }, [props.data2[props.ipAddr].timestamp.at(0)])
 
-
-
  var indexOfValues = valuesList.indexOf(props.data1.split(" ")[1]) +1
- 
  var dataJson = {
     labels: props.data2[props.ipAddr].timestamp.map((datas) => datas.split(".")[0].split("T")[1]),
   datasets: [
@@ -167,7 +166,6 @@ const optionsJson = {
         <div >
           <div className='whole-graph'>
           <Button icon={<DownloadOutlined/>} onClick={downloadImage} className="btn-download">Download</Button>
-          
             <Line  
             data={dataJson}
             height={500}
