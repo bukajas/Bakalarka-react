@@ -5,10 +5,11 @@ import "antd/dist/antd.css";
 import "../index.css";
 import Template from "./Template.js"
 import {format} from 'date-fns'
-import {LoadingOutlined} from '@ant-design/icons'
+import ListOfServers from "./ListOfServers.json"
+import {Filterer} from "./functions/Functions"
+
+
 export { CheckboxInt }
-
-
 
 
 const CheckboxInt =  createContext()
@@ -17,40 +18,20 @@ const CheckboxInt =  createContext()
 
 
 
-const Hlavni = ({ children }) => {
+const Main = ({ children }) => {
 
   const [globalData, setGlobalData] = React.useState([])
   const [fetchedData, setFetchedData] = React.useState('')
   const mutationRef = React.useRef(globalData)
 
-    var time = new Date()
-    var newTime = new Date(time.getTime() - 60 * 1000)
-    var tempObj =
-    {
-      from: format(newTime, 'yyyy-MM-dd kk:mm:ss'),
-     to: format(time, 'yyyy-MM-dd kk:mm:ss')
+  var time = new Date()
+  var newTime = new Date(time.getTime() - 60 * 1000)
+  var tempObj = {
+    from: format(newTime, 'yyyy-MM-dd kk:mm:ss'),
+    to: format(time, 'yyyy-MM-dd kk:mm:ss')
     }
-    const [timeInterval, setTimeInterval] = React.useState(tempObj) // casovy usek ktery se posle pro stazeni
-    const [dates, setDates] = React.useState([
-    { name: 'Device 1',
-      ip: '192.168.0.101',
-      description: 'well Hello there',
-      status: 'CRITICAL'
-
-  }, { name: 'Device 2',
-      ip: '192.168.0.102',
-      description: 'How are you',
-      status: 'CRITICAL'
-  }, { name: 'Device 4',
-    ip: '192.168.0.104',
-    description: 'What the hell',
-    status: 'CRITICAL'
-  }, {
-      name: 'Device 3',
-      ip: '192.168.0.103',
-      description: 'ubuntu',
-      status: 'CRITICAL'
-    }])  // seznam vybranych serveru
+  const [timeInterval, setTimeInterval] = React.useState(tempObj) // casovy usek ktery se posle pro stazeni
+  const [dates, setDates] = React.useState(ListOfServers)  // seznam vybranych serveru
   const valuesList = ['cpu_ram','bit_rate_in','bit_rate_out','packet_rate_in','packet_rate_out','tcp_established']
 
   const [rangeValue, setRangeValue] = React.useState({
@@ -155,6 +136,8 @@ React.useEffect(() => {
       })
       }
 
+
+
   function getDataFromServer(postValuess, type){
     var postValues
     var tempOBJ = []
@@ -165,7 +148,8 @@ React.useEffect(() => {
     .then((response) => {
       if (!response.data.error) {
 
-          response.data.data.map((datas, i) => {
+        var newData = Filterer(dates, response.data.data)
+        newData.map((datas, i) => {
           var fetchedKey = datas.info.ip;
           fetchedIps.push(fetchedKey)
            var newServer = {[datas.info.ip]: {
@@ -206,14 +190,13 @@ React.useEffect(() => {
 
 
 const App = () => {
-
   return(
     <div>
-    <Hlavni>
+    <Main>
       <Druhy>
         <Template/>
       </Druhy>
-    </Hlavni>
+    </Main>
     </div>
   )
 }

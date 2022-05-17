@@ -1,26 +1,39 @@
-
-
-
 .whole-graph{
   box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
   border-radius: 15px;
   margin-right: 3%;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: 25px;
+  margin-bottom: 55px;
   background-color: rgb(255, 255, 255);
-  height: 300px;
-}
+  height: 320px;
 
+}
 .templateGraf{
-  
   border-radius: 15px;
-
   background-color: rgb(255, 255, 255);
   height: 300px;
+  width: 100px;
 }
-
-
-
+.btn-download {
+  margin-top: 7px;
+  margin-right: 20px;
+  float: right;
+  border-radius: 10px;
+}
+.graph-title{
+  margin-left: 5px;
+  float:left;
+  font-size: 25px;
+  font-family: "Segoe UI";
+}
+.graph-title-name{
+  margin-left: 5px;
+  float:left;
+  font-size: 20px;
+  font-family: "Segoe UI";
+  color: rgb(153, 153, 153);
+  margin-top: 5px;
+}
 .graph {
     background-color: white;
 }
@@ -32,40 +45,11 @@
     width: 20%;
     height: 20%;
 }
-.sidenav {
-    height: 100%; /* Full-height: remove this if you want "auto" height */
-    width: 15%; /* Set the width of the sidebar */
-    position: fixed; /* Fixed Sidebar (stay in place on scroll) */
-    z-index: 1; /* Stay on top */
-    top: 0; /* Stay at the top */
-    left: 0;
-    overflow-x: hidden; /* Disable horizontal scroll */
-    padding-top: 20px;
-  }
-  .main {
-    margin-left: 20%; /* Same as the width of the sidenav */
-    font-size: 20px; /* Increased text to enable scrolling */
-    padding: 0px 10px;
-  }
-.btn-start-stop {
-    color: red;
-    background-color:pink;
-}
-.graf {
-   border: 1px solid;
-    display: inline-block;
-    width: 700px;
-    height: 300px;
-
-}
 .status {
     text-align: left;
 }
-.btn-download {
-    text-align: right;
-}
-.logo {
 
+.logo {
     float: left;
     width: 200px;
     height: 64px;
@@ -73,6 +57,7 @@
     background: #2c798c;
     font-size: 20px;
   }
+
 .servers{
   float: left;
   text-align: center;
@@ -100,12 +85,9 @@
     width: 50%;
 }
 .template{
-
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
   box-shadow: rgb(51, 51, 51) 0px 0px 0px 3px;
 }
-
-
 
 .dashboard-container-child {
   margin-left: 10px;
@@ -114,47 +96,56 @@
   margin-bottom: 10px;
 }
 .statusDotOk{
-    height: 10px;
-    width: 10px;
+    height: 12px;
+    width: 12px;
     margin-bottom: 0%;
-    background-color: green;
+    margin-left: 10px;
+    background-color: rgb(39, 129, 39);
     border-radius: 50%;
     display: inline-block;
 }
 .statusDotWarning{
-  height: 10px;
-  width: 10px;
+  height: 12px;
+  width: 12px;
   margin-bottom: 0%;
+  margin-left: 10px;
   background-color: orange;
   border-radius: 50%;
   display: inline-block;}
 
 .statusDotCritical{
-  height: 10px;
-  width: 10px;
+  height: 12px;
+  width: 12px;
   margin-bottom: 0%;
-  background-color: red;
+  margin-left: 10px;
+  background-color: rgb(187, 3, 3);
   border-radius: 50%;
   display: inline-block;}
-
 
 .but-menu {
   height: 30px;
   width: 100%;
+  border-radius: 10px;
 }
+.servers{
+  border-radius: 10px;
+}
+
+
 .dashboard-description {
   height: 30px;
   border: 1px solid;
   text-align: center;
+  box-shadow:
 }
 .dashboard-status{
   border: 1px solid;
   text-align: right;
+  padding-right: 5px;
   float: right;
 }
 .dashboard-title{
   border: 1px solid;
-  float: left;
 }
 .dashboard-values{
   border: 1px solid;
@@ -162,18 +153,15 @@
 }
 
 
-
-
-
 .whole-content{
   margin-left: 10px;
   height: 50%;
 }
-
 .header{
   width: 100%;
   background-color:rgb(54, 57, 65);
 }
+
 
 .ant-menu-item .ant-menu-item-active .ant-menu-item-selected .ant-menu-item-only-child{
  background: pink;
@@ -185,13 +173,16 @@
 
 .ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal) .ant-menu-item-selected {
   background-color: #536f98;
+
 }
 
 .ant-menu.ant-menu-dark .ant-menu-item-selected, .ant-menu-submenu-popup.ant-menu-dark .ant-menu-item-selected {
   background-color: #737373;
+  border-radius: 10px;
 }
 .ant-menu-dark.ant-menu-horizontal > .ant-menu-item:hover{
-  background: rgb(92, 92, 0);
+  background: #536f98;
+  border-radius: 10px;
 }
 .ant-menu-dark.ant-menu-vertical > .ant-menu-item:hover{
   background: rgb(92, 92, 0);
@@ -212,66 +203,77 @@
   text-align: left;
 }
 
-.ant-col{
-  text-align: left;
-  width: 100%;
-}
-
-
-
 .ant-layout-sider-children {
   height: 100%;
   margin-top: -0.1px;
   padding-top: 0.1px;
   background-color: #363941;
 }
-
 .ant-card-bordered{
   width: 450px;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
   border-radius: 15px;
   margin-left: 50px;
- 
   margin-top: 10px;
   margin-bottom: 10px;
   background-color: rgb(255, 255, 255);
 }
 .dashboard-container {
   width: 400px;
-  height: 320px;
+  height: 310px;
   background-color: white;
 }
-
 .dashboard-topInfo{
-  
   background-image: linear-gradient(#2c798c,#266170 );;
   height: 100px;
-  width: 100%;
-  margin-left: 25%
-
-
-
-
+  width: 75%;
+  border-bottom-left-radius: 10px;
+  /* margin-left: 25%; */
+  float: right;
 }
-
 .dashboard-topInfo-item{
   color: black;
-  width: 25%;
+  width: 32.5%;
+  height: 90%;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-left: 5px;
+  border: .1px solid;
+  border-radius: 5px;
+  border-color: #b1baa9;
+  float:left;
+}
+.dashboard-topInfo-btn{
+  color: black;
   height: 90%;
   margin-top: 5px;
   margin-bottom: 5px;
   border: .1px solid;
   border-radius: 5px;
   border-color: #b1baa9;
-  float:left;
+  float: left;
 }
 
+.ant-dropdown{
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+}
+
+.dashboard-card-name{
+float: left;
+}
+.dashboard-card-ip{
+  float: left;
+  }
 
 .clock{
-  font-size: 25px;
+  font-size: 1.5vw;
   text-align: center;
   color: #b1baa9;
 }
+
+
+
+
 
 .ant-input-number{
   width: 100px;
@@ -286,8 +288,6 @@
  float: left;
 }
 .css-sghohy-MuiButtonBase-root-MuiButton-root{
-  color: pink;
-  background-color: pink;
   height: 50px;
   width: 100px;
 }
@@ -298,17 +298,54 @@
 
 .settings-form-whole{
   color: pink;
-  width: 50%;
-  flex: left;
-  display: inline-block;
+  width: 100%;
 }
 .settings-remove-whole{
-  display: inline-block;
-  flex: right;
+  margin-top: 100px;
   width:50%
+}
+.settings-remove-item{
+
+  margin-top: 20px;
+
 }
 
 .ant-form .ant-form-horizontal{
   color: pink;
   height: 10px;
+}
+.ant-space-align-center{
+  width: 100%;
+}
+
+.current-pick{
+  margin-left: 45px;
+  margin-top: 15px;
+  display: inline-block;
+  font-size: 18px;
+  text-align: left;
+}
+.current-spacing{
+  margin-top: 1%;
+  margin-right: 20%;
+  float: right;
+  right: 5px;
+  height: 50px;
+
+}
+.current-spacing-name{
+  margin-top: 1.5%;
+  margin-left: 20%;
+  margin-right: 20px;
+  float: right;
+  font-size: 16px;
+}
+.informative{
+  margin-right: 20px;
+  margin-top:  -1%;
+  text-align: right;
+}
+
+.ant-form-item-control-input-content {
+  color: white;
 }

@@ -1,8 +1,8 @@
 import React from 'react';
-import GraphRange from "../components/graphs/GraphRange"
+import GraphRange from "../graphs/GraphRange"
 import { Chart, registerables } from 'chart.js'
-import AngryJOe from '../components/AngryJOe'
-import { CheckboxInt } from '../components/App'
+import AngryJOe from '../AngryJOe'
+import { CheckboxInt } from '../App'
 
 
 Chart.register(...registerables)

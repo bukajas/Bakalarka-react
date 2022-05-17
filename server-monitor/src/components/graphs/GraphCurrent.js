@@ -1,21 +1,13 @@
 import React from 'react'
 import { Line } from 'react-chartjs-2'
 import { Chart, registerables } from 'chart.js'
-import AngryJOe from '../AngryJOe'
-import { Spin, DatePicker, TimePicker, Tabs, Button } from 'antd';
-import {
-  LoadingOutlined,
-} from '@ant-design/icons';
+import { Tabs, Button } from 'antd';
+
 import { CheckboxInt } from '../App'
 import { DownloadOutlined } from '@ant-design/icons';
 import GraphOptions from './graphOptions.json'
 
-
-
-
 const { TabPane } = Tabs;
-const { RangePicker } = DatePicker;
-const antIcon = <LoadingOutlined style={{ fontSize: 240 }} spin />;
 
 
 
@@ -26,9 +18,6 @@ const GraphCurrent = (props) => {
     const context = React.useContext(CheckboxInt)
     const { valuesList } = context
 
-
- 
- 
 
 React.useEffect(() =>{
   var lenghtOfData = props.data2[props.ipAddr].timestamp.length
@@ -64,8 +53,8 @@ React.useEffect(() =>{
       label: 'error',
       data: errors,
       fill: true,
-      backgroundColor: 'red',
-      borderColor: 'red',
+      backgroundColor: 'rgba(255, 0, 0, .2)',
+      borderColor: 'rgba(255, 0, 0, 1)',
       yAxisID: 'y1'
     }
   ]
@@ -107,7 +96,7 @@ if(props.cpuram==true){
 const optionsJson = {
             elements: {
               point: {
-                radius: 0
+                radius: 1
               }
             },
             responsive: true,
@@ -139,13 +128,6 @@ const optionsJson = {
               modifierKey: 'ctrl'
             }
           },
-          title: {
-            display: true,
-            text: props.ipAddr + " " + props.name,
-            font: {
-              size: 20
-                  }
-                }
         },
         scales: GraphOptions[indexOfValues].options.scales
           }
@@ -165,15 +147,17 @@ const optionsJson = {
   return (
         <div >
           <div className='whole-graph'>
+            <div className='graph-title'>{props.ipAddr}</div>
+            <div className='graph-title-name'>{props.name}</div>
           <Button icon={<DownloadOutlined/>} onClick={downloadImage} className="btn-download">Download</Button>
-            <Line  
+          <Line  
             data={dataJson}
             height={500}
             width={2000} 
             options= {optionsJson}
             ref={downloadImg}
             className="templateGraf"
-        />
+            /> 
           </div>
           
         </div>

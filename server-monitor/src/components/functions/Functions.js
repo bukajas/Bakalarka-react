@@ -139,12 +139,15 @@ const SetTempDataRange = (tempGlob, dateStrings) =>{
       return tempData
   }
 
+  const Filterer = (Servers, data) => {
+    var Ips  = []
+    Servers.map((data) => { var globalKey = data.ip; Ips.push(globalKey) })
+    var result = data.filter(servers => Ips.includes(servers.info.ip))
+      return result
+    }
 
 
-
-
-
-export {DateFormater, GlobalFirstLast, SetPostValues, StatusSign, SetTempData, every_nth, SetTempDataRange}
+export {DateFormater, GlobalFirstLast, SetPostValues, StatusSign, SetTempData, every_nth, SetTempDataRange, Filterer}
 
 
 

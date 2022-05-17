@@ -1,18 +1,18 @@
 import React from "react"
 import "antd/dist/antd.css";
 import "../index.css";
-import { Layout, Menu, Button, Row, Col} from 'antd';
+import { Layout, Menu, Button, Row, Col} from 'antd'
 import {
   DatabaseOutlined,
   ClusterOutlined,
-} from '@ant-design/icons';
+} from '@ant-design/icons'
 import {CheckboxInt} from './App'
-import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
-import Dashboard from '../tempMulti/dashboard';
-import Settings from '../tempMulti/settings';
-import Navbar from '../tempMulti/navbar';
-import 'chartjs-plugin-zoom';
-import zoomPlugin from "chartjs-plugin-zoom";
+import { BrowserRouter as Router, Routes, Route} from 'react-router-dom'
+import Dashboard from './tempMulti/dashboard'
+import Settings from './tempMulti/settings'
+import Navbar from './tempMulti/navbar'
+import 'chartjs-plugin-zoom'
+import zoomPlugin from "chartjs-plugin-zoom"
 import { Chart } from 'chart.js'
 import DataCurrent from './dataFormat/dataCurrent'
 import DataRange from './dataFormat/dataRange'

@@ -1,6 +1,6 @@
 import React from 'react'
 import { CheckboxInt } from '../App'
-import Range from '../../tempMulti/range'
+import Range from '../tempMulti/range'
 import { Space } from 'antd';
 import {format, isBefore, isAfter, add} from 'date-fns'
 import AngryJOe from '../AngryJOe'
@@ -9,8 +9,8 @@ import { DatePicker, Radio } from 'antd';
 import {Config} from '../../config.js'
 import Axios from 'axios'
 import AddData from '../functions/AddData';
-import {GlobalFirstLast, every_nth, SetTempDataRange} from '../functions/Functions'
-
+import {GlobalFirstLast, every_nth, SetTempDataRange, Filterer} from '../functions/Functions'
+import { LoadingOutlined } from '@ant-design/icons'
 
 
 const { RangePicker } = DatePicker;
@@ -19,7 +19,7 @@ const { RangePicker } = DatePicker;
 const DataRange = () => {
 
   const context = React.useContext(CheckboxInt)
-  const { tempRangeData, setTempRangeData } = context
+  const { dates, tempRangeData, setTempRangeData } = context
   const [localRange, setLocalRange] = React.useState([])
   const [returned, setReturned] = React.useState(false)
   const [spacing, setSpacing] = React.useState(1)
@@ -80,7 +80,9 @@ function FetchData(type, postValues, tempRangeData, dateStrings) {
              .then((response) => {
                if (!response.data.error) 
                {
-                   response.data.data.map((datas, i) => {
+
+                var newData = Filterer(dates, response.data.data)
+                newData.map((datas, i) => {
                    var fetchedKey = datas.info.ip; 
                     var newServer = {[fetchedKey]: {
                      name: datas.info.name,
@@ -135,7 +137,6 @@ React.useEffect(() =>{
 
 
 function onChangeSpacing(e){
-  console.log(spacing, e.target.value)
   setSpace(e.target.value)
 }
 const optionsSpacing = [
@@ -143,7 +144,6 @@ const optionsSpacing = [
   {label: '5 Secs', value: 5},
   {label: '2 Mins', value: 120},
 ]
-
 
       return (
         <div>
@@ -160,7 +160,7 @@ const optionsSpacing = [
               showTime format="YYYY-MM-DD HH:mm:ss" onChange={onChange} />
           </Space>
           <p>(for zoom and drag press "CTRL" key)</p>
-          {returned ? <Range rangeData={localRange}/> : <p>wel wel wel</p>}
+          {returned ? <Range rangeData={localRange}/> : <LoadingOutlined />}
         </div>
   )
 }

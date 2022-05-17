@@ -1,26 +1,22 @@
-import React from "react";
-import {  Button, message, Form, Input } from 'antd';
-import { CheckboxInt } from '../components/App'
+import React from "react"
+import {  Button, message, Form, Input } from 'antd'
+import { CheckboxInt } from '../App'
 
 const Settings = () => {
   const context = React.useContext(CheckboxInt)
   const { dates, setDates, clickedServers, setClickedServers } = context
 
   const onFinish = (values) => {
-    console.log('Success:', values);
     setDates([...dates, {name: values.name,ip: values.ip, description: values.description, status: 'CRITICAL' } ])
     message.success('Server successfully added');
   }
   
   const onFinishFailed = (errorInfo) => {
-    console.log('Failed:', errorInfo);
     message.error('Error adding server');
   }
   
   function removeServer(e){
       const x = e.target.getAttribute("removeips")
-      console.log(e)
-      console.log(x)
       setDates(dates.filter((items) => items.ip !== x))
       var filterClicked = clickedServers.filter((value) => {
         var tempString = value.split(" ")[0]
@@ -29,9 +25,6 @@ const Settings = () => {
       setClickedServers(filterClicked)
   }
 
-
-  
-  
   return (
     <div>
     <div className="settings-form-whole">
@@ -73,10 +66,9 @@ const Settings = () => {
         </Button>
       </Form.Item>
     </Form>
-
     </div>
 <div className="settings-remove-whole">
-    {dates.map((dates) => <div>{dates.ip} <Button danger><div removeips={dates.ip} onClick={removeServer}>Remove Server</div> </Button></div>)}
+    {dates.map((dates) => <div className="settings-remove-item">{dates.ip} <Button danger><div removeips={dates.ip} onClick={removeServer}>Remove</div> </Button></div>)}
 </div>
     </div>
   )}

@@ -1,21 +1,21 @@
 import React from 'react';
-import {Config} from '../config.js'
+import {Config} from '../../config.js'
+import Axios from 'axios'
 import 'antd/dist/antd.css';
 import { Chart, registerables } from 'chart.js'
-import { CheckboxInt } from '../components/App'
-import AngryJOe from '../components/AngryJOe'
+import { CheckboxInt } from '../App'
+import AngryJOe from '../AngryJOe'
 import { format } from 'date-fns'
-import { Dropdown, Space, Card} from 'antd';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Axios from 'axios'
-import AddData from '../components/functions/AddData'
-import {GlobalFirstLast, SetTempData, StatusSign} from '../components/functions/Functions'
+import { Dropdown, Space, Card} from 'antd'
+import Grid from '@mui/material/Grid'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import AddData from '../functions/AddData'
+import {GlobalFirstLast, SetTempData, StatusSign, Filterer} from '../functions/Functions'
+
 
 Chart.register(...registerables)
 var secsToSub = 60
-
 
 //pocet dostupnych serveru
 function NumberOfAvailableServers(props){
@@ -45,7 +45,6 @@ function Clock(props){
    var timerID = setInterval( () => tick(), 1000 )
    return function cleanup() { clearInterval(timerID) }
   })
-
    function tick() { setDate(new Date())}
   return (
    <div>
@@ -63,7 +62,7 @@ const DashboardTab = (props) => {
   const run = [1]
 
 
-  function averageValue(valueArray) {
+  function AverageValue(valueArray) {
     const sum = valueArray.reduce((a,b) => a + b, 0)
     const avg = Math.floor(sum / valueArray.length) || 0
     return avg
@@ -77,12 +76,12 @@ function IsAvailable(props){
   return (
     <div>
       <div className='dashboard-values'>
-            <p>cpu : {globalData[index][ipaddr].cpu[arLen]} %   (avg: {averageValue(globalData[index][ipaddr].cpu)} %) </p>
-            <p>ram: {globalData[index][ipaddr].ram[arLen]} %    (avg: {averageValue(globalData[index][ipaddr].ram)} %)</p>
-            <p>bit rate in: {globalData[index][ipaddr].bit_rate_in[arLen]} bits/sec  (avg: {averageValue(globalData[index][ipaddr].bit_rate_in)} bits/sec)</p>
-            <p>bit rate out: {globalData[index][ipaddr].bit_rate_out[arLen]} bits/sec   (avg: {averageValue(globalData[index][ipaddr].bit_rate_out)} bits/sec</p>
-            <p>packet rate out: {globalData[index][ipaddr].packet_rate_out[arLen]} packets/sec (avg: {averageValue(globalData[index][ipaddr].packet_rate_out)} packets/sec)</p>
-            <p>tcp established: {globalData[index][ipaddr].tcp_established[arLen]} packets/sec    (avg: {averageValue(globalData[index][ipaddr].tcp_established)} packets/sec)</p>
+            <p>cpu : {globalData[index][ipaddr].cpu[arLen]} %   (avg: {AverageValue(globalData[index][ipaddr].cpu)} %) </p>
+            <p>ram: {globalData[index][ipaddr].ram[arLen]} %    (avg: {AverageValue(globalData[index][ipaddr].ram)} %)</p>
+            <p>bit rate in: {globalData[index][ipaddr].bit_rate_in[arLen]} bits/sec  (avg: {AverageValue(globalData[index][ipaddr].bit_rate_in)} bits/sec)</p>
+            <p>bit rate out: {globalData[index][ipaddr].bit_rate_out[arLen]} bits/sec   (avg: {AverageValue(globalData[index][ipaddr].bit_rate_out)} bits/sec</p>
+            <p>packet rate out: {globalData[index][ipaddr].packet_rate_out[arLen]} packets/sec (avg: {AverageValue(globalData[index][ipaddr].packet_rate_out)} packets/sec)</p>
+            <p>tcp established: {globalData[index][ipaddr].tcp_established[arLen]} packets/sec    (avg: {AverageValue(globalData[index][ipaddr].tcp_established)} packets/sec)</p>
         </div>
         <Dropdown overlay={
           <Card size="small">
@@ -96,21 +95,20 @@ function IsAvailable(props){
         </Dropdown>
     </div>
         
-  )
+  )}
 
-  
-}
+
 function IsNotAvailable(){
   return (
     <div>
        <div className='dashboard-values'>
-          <p>cpu : NULL %   (avg: NULL %) </p>
-          <p>ram: NULL %    (avg: NULL %) </p>
-          <p>bit rate_in: NULL bits/sec  (avg: NULL bits/sec) </p>
-          <p>bit rate out: NULL bits/sec   (avg: NULL bits/sec) </p>
-          <p>packet rate_out: NULL packets/sec (avg: NULL packets/sec) </p>
-          <p>tcp established: NULL packets/sec    (avg: NULL packets/sec) </p>
-        </div>
+          <p>cpu : X %   (avg: X %) </p>
+          <p>ram: X %    (avg: X %) </p>
+          <p>bit rate_in: X bits/sec  (avg: X bits/sec) </p>
+          <p>bit rate out: X bits/sec   (avg: X bits/sec) </p>
+          <p>packet rate_out: X packets/sec (avg: X packets/sec) </p>
+          <p>tcp established: X packets/sec    (avg: X packets/sec) </p>
+       </div>
             <Dropdown overlay={
               <Card size="small">
                   <div>{props.datas.description}</div>
@@ -124,6 +122,7 @@ function IsNotAvailable(){
     </div>
   )}
 
+
      return (
     <div className='dashboard-container'>
       { run.map((run) => {
@@ -134,8 +133,9 @@ function IsNotAvailable(){
                  return (
                     <div key={props.datas.ip} className='dashboard-container-child'>
                       <div>
-                         <div className='dashboard-status'>Available: <StatusSign stat={props.datas.status}/></div>
-                      <h2>{props.datas.ip} {props.datas.name}</h2>
+                         <div className='dashboard-status'>Status: <StatusSign stat={props.datas.status}/></div>
+                         <div className='dashboard-card-ip'>{props.datas.ip}</div>
+                         <div className='dashboard-card-name'>{props.datas.name}</div>
                       </div>
                      <IsAvailable key={props.datas.ip} tempIp={tempIp} datas={props.datas}/>
                     </div>
@@ -143,9 +143,10 @@ function IsNotAvailable(){
         else {
               return (
                     <div key={props.datas.ip} className='dashboard-container-child'>
-                      <div>
-                      <h2 className='dashboard-title'>{props.datas.ip} {props.datas.name}</h2>
-                       <div className='dashboard-status'>Available: <StatusSign stat={props.datas.status}/></div>
+                      <div className="dashboard-top">
+                       <div className='dashboard-status'>Status: <StatusSign stat={props.datas.status}/></div>
+                      <div  className='dashboard-card-ip'>{props.datas.ip}</div>
+                      <div  className='dashboard-card-name'>{props.datas.name}</div>
                       </div>
                      <IsNotAvailable datas={props.datas}/>
                     </div>
@@ -177,13 +178,14 @@ const Dashboard = () => {
 
 
   function FetchData(type, postValues, globalDates){
-    console.log(postValues)
     var tempOBJ = []
     
     Axios.post( Config.server.getData, postValues, {headers: { 'Content-Type': 'application/json' }})
           .then((response) => {
             if (!response.data.error) {
-                response.data.data.map((datas, i) => {
+
+              var newData = Filterer(dates, response.data.data)
+              newData.map((datas, i) => {
                 var fetchedKey = datas.info.ip; 
                  var newServer = {[fetchedKey]: {
                   name: datas.info.name,
@@ -212,11 +214,13 @@ const Dashboard = () => {
             .catch((error) => {
               console.log("Server is unavailable")
               console.log(error)
-            })       
-  }
+            })}
+
+
 
   return (
-    <div><div className='dashboard-topInfo-item'>{startStop ? 
+    <div>
+    <div className="dashboard-topInfo-btn">{startStop ? 
         <Button onClick={() => setStartStop(prevState => !prevState)} color="error" variant="contained" >STOP</Button>
         : 
         <Button onClick={() => setStartStop(prevState => !prevState)} variant="contained" >START</Button>
@@ -226,8 +230,6 @@ const Dashboard = () => {
         <div className='dashboard-topInfo-item'><LastValue globalData={globalData} startStop={startStop}/></div>
         <div className='dashboard-topInfo-item'><Clock/></div>
       </div>
-      
-      <hr/>
       <div>
         <Box xs={{flexGrow: 1}}><Grid container spacing={2}>
           {tempCurrentData ?
@@ -239,8 +241,8 @@ const Dashboard = () => {
         </Grid></Box>
       </div>
 </div>
-  );
-};
+  )
+}
   
 
 

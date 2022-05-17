@@ -35,7 +35,7 @@ if(props.cpuram === true){
           title: props.ipAddr,
           label: props.data1.split(" ")[1].split("_")[0],
           data: props.data2[props.ipAddr][props.data1.split(" ")[1].split("_")[0]],
-          fill: false,
+          fill: true,
           backgroundColor:  GraphOptions[0].data.backgroundColor,
           borderColor: GraphOptions[0].data.borderColor,
           yAxisID: 'y'
@@ -44,7 +44,7 @@ if(props.cpuram === true){
           title: props.ipAddr,
           label: props.data1.split(" ")[1].split("_")[1],
           data: props.data2[props.ipAddr][props.data1.split(" ")[1].split("_")[1]],
-          fill: false,
+          fill: true,
           backgroundColor:  GraphOptions[1].data.backgroundColor,
           borderColor:  GraphOptions[1].data.backgroundColor,
         },
@@ -53,6 +53,13 @@ if(props.cpuram === true){
     }   
  
     const optionsJson = {
+      elements: {
+        point: {
+          radius: 1
+        }
+      },
+      responsive: true,
+      maintainAspectRatio: false,
       animation: {
       duration: 0
     },
@@ -70,7 +77,6 @@ if(props.cpuram === true){
           backgroundColor: 'lightblue',
           borderColor: 'blue',
           borderWidth: 1,
-
         }
       },
       pan: {
@@ -80,31 +86,25 @@ if(props.cpuram === true){
         modifierKey: 'ctrl'
       }
     },
-    title: {
-      display: true,
-      text: props.ipAddr + " " + props.name,
-      font: {
-        size: 20
-            }
-          }
   },
   scales: GraphOptions[indexOfValues].options.scales
     }
 
-
-
   const downloadImg = React.useRef(null);
   const downloadImage = React.useCallback(() => {
-      var a = document.createElement('a');
-      a.download = 'chart';
-      a.href = downloadImg.current.toBase64Image();
-      a.click();
-    }, []);
+      var a = document.createElement('a')
+      a.download = 'chart'
+      a.href = downloadImg.current.toBase64Image()
+      a.click()
+    }, [])
 
 
 
   return (
         <div> 
+          <div className='whole-graph'>
+            <div className='graph-title'>{props.ipAddr}</div>
+            <div className='graph-title-name'>{props.name}</div>
           <Button icon={<DownloadOutlined/>} onClick={downloadImage} className="btn-download">Download</Button>
             <Line  
             data={dataJson}
@@ -114,6 +114,7 @@ if(props.cpuram === true){
             ref={downloadImg}
             className="templateGraf"
             />  
+            </div>
         </div>
   )
 }

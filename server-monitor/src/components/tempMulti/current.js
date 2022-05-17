@@ -1,12 +1,12 @@
 
 import React from 'react';
-import GraphCurrent from "../components/graphs/GraphCurrent"
+import GraphCurrent from "../graphs/GraphCurrent"
 import { Chart, registerables } from 'chart.js'
-import AngryJOe from '../components/AngryJOe'
+import AngryJOe from '../AngryJOe'
 import {
   LoadingOutlined,
 } from '@ant-design/icons';
-import { CheckboxInt } from '../components/App'
+import { CheckboxInt } from '../App'
 import { Select } from 'antd';
 
 const { Option } = Select;

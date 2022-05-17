@@ -1,13 +1,12 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { Layout, Menu, Breadcrumb, Spin, Button } from 'antd';
-import {CheckboxInt} from '../components/App'
+import { Menu } from 'antd';
+import {CheckboxInt} from '../App'
 import {
   LineChartOutlined,
   SettingOutlined,
   ColumnWidthOutlined,
   ClusterOutlined,
-  RightOutlined ,
 } from '@ant-design/icons';
 
 
@@ -16,12 +15,11 @@ const Navbar = () => {
 
     const context = React.useContext(CheckboxInt)
     const { setValuesPost, setStartStop } = context
-
   
   return (
       <div >
 
-      <Menu className="headerr"theme="dark" mode="horizontal">
+      <Menu className="headerr" theme="dark" mode="horizontal">
       <Menu.Item onClick={() => {setValuesPost('current'); }} key="1" icon={<ClusterOutlined />} >
                <NavLink to="/dashboard" activeStyle >
                     Dashboard
@@ -46,6 +44,6 @@ const Navbar = () => {
           </Menu>
       </div>
 
-  );
-};
+  )
+}
 export default Navbar;
