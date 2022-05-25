@@ -1,7 +1,7 @@
 import React from "react"
 import "antd/dist/antd.css";
 import "../index.css";
-import { Layout, Menu, Button, Row, Col} from 'antd'
+import { Layout, Menu} from 'antd'
 import {
   DatabaseOutlined,
   ClusterOutlined,
@@ -79,15 +79,21 @@ const valuesList2 = ['Cpu/Ram','Bit rate in','Bit rate out','Packet rate in','Pa
           <Menu key={dattes.ip + 'menu'} selectedKeys={clickedServers} onSelect={handleClickedServers} onDeselect={handleClickedServers} multiple={true} theme="dark" mode="inline">
             <SubMenu multiple={true} key={dattes.ip} icon={<DatabaseOutlined />} 
             title={<>{dattes.ip}<StatusSign stat={dattes.status}/></>} >
+              <Menu.Item disabled key='j'>
+             <button className='but-menu' onClick={()=> selectAllValues(dattes.ip)}>All</button>
+              
+              </Menu.Item>
+              <Menu.Item disabled key='l' >
 
-            <Row key={dattes.ip + 'row'}   align="left">
-              <Col xs={{ span: 7, offset: 5 }} lg={{ span: 8, offset: 3 }}>
-              <Button ghost key={dattes.ip} className='but-menu' onClick={()=> selectAllValues(dattes.ip)}>All</Button>
-              </Col>
-              <Col xs={{ span: 7, offset: 5 }} lg={{ span: 8, offset: 3 }}>
-                <Button ghost key={dattes.ip} className='but-menu' onClick={()=> unSelectAllValues(dattes.ip)}>None</Button>
-              </Col>
-          </Row>
+               <button className='but-menu' onClick={()=> unSelectAllValues(dattes.ip)}>None</button>
+
+
+              </Menu.Item>
+            
+
+                
+            
+
               {valuesList.map((values, i) => {
                 return <Menu.Item disabled={dattes.stat} key={dattes.ip +" "+ values}>{valuesList2[i]}</Menu.Item>})}
             </SubMenu>
@@ -101,7 +107,7 @@ const valuesList2 = ['Cpu/Ram','Bit rate in','Bit rate out','Packet rate in','Pa
       <Layout className="site-layout" style={{ marginLeft: 200 }}>
         <Router>
           <Header className="header">
-              <Navbar  className="header"/>
+              <Navbar className="header"/>
           </Header> 
           <div className='whole-content'>
              <Routes>

@@ -55,7 +55,7 @@ const SetPostValues = (type, globalDates) => {
 const StatusSign = (props) => {
 
   if(props.stat === 'OK')
-  return <div className="statusDotOk"></div>
+  return <p className="statusDotOk"></p>
   if (props.stat === 'WARNING') {
     return <div className="statusDotWarning"></div>
   } if (props.stat === 'CRITICAL') {

@@ -150,7 +150,7 @@ const checkNumber = (_, value) => {
 
       </Form.Item>
       <Form.Item>
-        <Button type="default" htmlType="submit"> Update </Button>
+        <Button type="default"> Update </Button>
       </Form.Item>
     </Form>
         </div> 

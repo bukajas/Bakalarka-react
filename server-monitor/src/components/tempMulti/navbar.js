@@ -20,23 +20,23 @@ const Navbar = () => {
       <div >
       <Menu className="headerr" theme="dark" mode="horizontal">
       <Menu.Item key="1" icon={<ClusterOutlined />} >
-               <NavLink to="/dashboard" activeStyle >
+               <NavLink to="/dashboard">
                     Dashboard
               </NavLink>
           </Menu.Item>
         <Menu.Item  key="2" icon={<LineChartOutlined />}>
-               <NavLink to="/current" activeStyle>
+               <NavLink to="/current">
                     Current
               </NavLink>
           </Menu.Item>
         <Menu.Item  
         onClick={() => {setStartStop(false)}} key="3"   icon={ <ColumnWidthOutlined />}>
-               <NavLink to="/range" activeStyle>
+               <NavLink to="/range">
                     Range
               </NavLink>
         </Menu.Item>
         <Menu.Item onClick={() => {setStartStop(false)}} key="4"   icon={<SettingOutlined />}>
-               <NavLink to="/settings" activeStyle>
+               <NavLink to="/settings">
                     Settings
               </NavLink>
           </Menu.Item>
