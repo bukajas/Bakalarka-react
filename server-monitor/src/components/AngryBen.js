@@ -1,7 +1,5 @@
 import React from 'react'
 
-
-
 const AngryJOe = () => {
   return (
     <div className="angryjoe">

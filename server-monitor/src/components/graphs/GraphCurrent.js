@@ -15,13 +15,13 @@ const GraphCurrent = (props) => {
     const context = React.useContext(CheckboxInt)
     const { valuesList } = context
 
-var firstTimeStamp = props.data2[props.ipAddr].timestamp.at(0)
+var firstTimeStamp = props.dataValue[props.ipAddr].timestamp.at(0)
 
 React.useEffect(() =>{
-  var lenghtOfData = props.data2[props.ipAddr].timestamp.length
+  var lenghtOfData = props.dataValue[props.ipAddr].timestamp.length
   errors = []
   for(var i=0; i<lenghtOfData; i++){
-    if(props.data2[props.ipAddr].cpu[i] == null){   
+    if(props.dataValue[props.ipAddr].cpu[i] == null){   
       errors = [...errors, 100]
     }
     else{
@@ -31,14 +31,14 @@ React.useEffect(() =>{
 
 }, [firstTimeStamp])
 
- var indexOfValues = valuesList.indexOf(props.data1.split(" ")[1]) +1
+ var indexOfValues = valuesList.indexOf(props.dataInfo.split(" ")[1]) +1
  var dataJson = {
-    labels: props.data2[props.ipAddr].timestamp.map((datas) => datas.split(".")[0].split("T")[1]),
+    labels: props.dataValue[props.ipAddr].timestamp.map((datas) => datas.split(".")[0].split("T")[1]),
   datasets: [
     {
       title: props.ipAddr,
-      label: props.data1.split(" ")[1],
-      data: props.data2[props.ipAddr][props.data1.split(" ")[1]],
+      label: props.dataInfo.split(" ")[1],
+      data: props.dataValue[props.ipAddr][props.dataInfo.split(" ")[1]],
       fill: false,
       backgroundColor:  GraphOptions[indexOfValues].data.backgroundColor,
       borderColor: GraphOptions[indexOfValues].data.borderColor,
@@ -57,12 +57,12 @@ React.useEffect(() =>{
 }
 if(props.cpuram === true){
   dataJson = {
-    labels: props.data2[props.ipAddr].timestamp.map((datas) => datas.split(".")[0].split("T")[1]),
+    labels: props.dataValue[props.ipAddr].timestamp.map((datas) => datas.split(".")[0].split("T")[1]),
   datasets: [
     {
       title: props.ipAddr,
-      label: props.data1.split(" ")[1].split("_")[0],
-      data: props.data2[props.ipAddr][props.data1.split(" ")[1].split("_")[0]],
+      label: props.dataInfo.split(" ")[1].split("_")[0],
+      data: props.dataValue[props.ipAddr][props.dataInfo.split(" ")[1].split("_")[0]],
       fill: true,
       backgroundColor:  GraphOptions[0].data.backgroundColor,
       borderColor: GraphOptions[0].data.borderColor,
@@ -70,8 +70,8 @@ if(props.cpuram === true){
     },
     {
       title: props.ipAddr,
-      label: props.data1.split(" ")[1].split("_")[1],
-      data: props.data2[props.ipAddr][props.data1.split(" ")[1].split("_")[1]],
+      label: props.dataInfo.split(" ")[1].split("_")[1],
+      data: props.dataValue[props.ipAddr][props.dataInfo.split(" ")[1].split("_")[1]],
       fill: true,
       backgroundColor:  GraphOptions[1].data.backgroundColor,
       borderColor:  GraphOptions[1].data.backgroundColor,

@@ -8,19 +8,13 @@ import {format} from 'date-fns'
 import ListOfServers from "./ListOfServers.json"
 import {Filterer} from "./functions/Functions"
 
-
-
-
-
 const CheckboxInt =  createContext()
-
-
 
 
 const Main = ({ children }) => {
 
   const [globalData, setGlobalData] = React.useState([])
-  const [fetchedData, setFetchedData] = React.useState('')
+
   const mutationRef = React.useRef(globalData)
 
   var time = new Date()
@@ -32,11 +26,6 @@ const Main = ({ children }) => {
   const [timeInterval, setTimeInterval] = React.useState(tempObj) // casovy usek ktery se posle pro stazeni
   const [dates, setDates] = React.useState(ListOfServers)  // seznam vybranych serveru
   const valuesList = ['cpu_ram','bit_rate_in','bit_rate_out','packet_rate_in','packet_rate_out','tcp_established']
-
-  const [rangeValue, setRangeValue] = React.useState({
-    from: "2021-02-01 01:00:00",
-    to: "2021-02-01 01:01:00"
-  })
   const [valuesPost, setValuesPost] = React.useState('range')
   const [startStop, setStartStop] = React.useState(false)
   const [clickedServers, setClickedServers] = React.useState([])
@@ -51,23 +40,20 @@ const Main = ({ children }) => {
         startStop, setStartStop,
         valuesPost, setValuesPost,
         clickedServers, setClickedServers,
-        rangeValue, setRangeValue,
         dates, setDates,
         valuesList,
         timeInterval, setTimeInterval,
         globalData, setGlobalData,
         mutationRef,
-        fetchedData, setFetchedData,
         tempCurrentData, setTempCurrentData,
         tempRangeData, setTempRangeData
-         }}>
-      {children}
+         }}>{children}
       </CheckboxInt.Provider>)
 }
 
 
 
-function Druhy({ children }) {
+function Second({ children }) {
   const context = React.useContext(CheckboxInt)
   const { dates, startStop, timeInterval,
     globalData, setGlobalData
@@ -101,7 +87,6 @@ React.useEffect(() => {
   function serverStatus() {
     var tempIp = dates.map((data) => {return data.ip })
     var golb
-  //  pokud v dates mam ip, a od ni bude chodit data, tak bude true jinak false
       dates.forEach((data) => {
         golb = globalData.map((globData, i) => {
           var stat = 0
@@ -190,9 +175,9 @@ const App = () => {
   return(
     <div>
     <Main>
-      <Druhy>
+      <Second>
         <Template/>
-      </Druhy>
+      </Second>
     </Main>
     </div>
   )

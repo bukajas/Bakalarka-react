@@ -10,15 +10,15 @@ Chart.register(...registerables)
 
 const GraphRange = (props) => {
     const context = React.useContext(CheckboxInt)
-    const {  valuesList } = context
-    var indexOfValues = valuesList.indexOf(props.data1.split(" ")[1]) +1
+    const { valuesList } = context
+    var indexOfValues = valuesList.indexOf(props.dataInfo.split(" ")[1]) +1
 
       var dataJson = {
-        labels: props.data2[props.ipAddr].timestamp.map((datas) => datas.split(".")[0].split("T")[1]),
+        labels: props.dataValue[props.ipAddr].timestamp.map((datas) => datas.split(".")[0].split("T")[1]),
       datasets: [{
           title: props.ipAddr,
-          label: props.data1.split(" ")[1],
-          data: props.data2[props.ipAddr][props.data1.split(" ")[1]],
+          label: props.dataInfo.split(" ")[1],
+          data: props.dataValue[props.ipAddr][props.dataInfo.split(" ")[1]],
           fill: false,
           backgroundColor:  GraphOptions[indexOfValues].data.backgroundColor,
           borderColor: GraphOptions[indexOfValues].data.borderColor,
@@ -27,12 +27,12 @@ const GraphRange = (props) => {
     
 if(props.cpuram === true){
       dataJson = {
-        labels: props.data2[props.ipAddr].timestamp.map((datas) => datas.split(".")[0].split("T")[1]),
+        labels: props.dataValue[props.ipAddr].timestamp.map((datas) => datas.split(".")[0].split("T")[1]),
       datasets: [
         {
           title: props.ipAddr,
-          label: props.data1.split(" ")[1].split("_")[0],
-          data: props.data2[props.ipAddr][props.data1.split(" ")[1].split("_")[0]],
+          label: props.dataInfo.split(" ")[1].split("_")[0],
+          data: props.dataValue[props.ipAddr][props.dataInfo.split(" ")[1].split("_")[0]],
           fill: true,
           backgroundColor:  GraphOptions[0].data.backgroundColor,
           borderColor: GraphOptions[0].data.borderColor,
@@ -40,8 +40,8 @@ if(props.cpuram === true){
         },
         {
           title: props.ipAddr,
-          label: props.data1.split(" ")[1].split("_")[1],
-          data: props.data2[props.ipAddr][props.data1.split(" ")[1].split("_")[1]],
+          label: props.dataInfo.split(" ")[1].split("_")[1],
+          data: props.dataValue[props.ipAddr][props.dataInfo.split(" ")[1].split("_")[1]],
           fill: true,
           backgroundColor:  GraphOptions[1].data.backgroundColor,
           borderColor:  GraphOptions[1].data.backgroundColor,

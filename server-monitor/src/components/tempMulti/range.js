@@ -11,7 +11,7 @@ Chart.register(...registerables)
 const Range = (props) => {
 
     const context = React.useContext(CheckboxInt)
-    const { clickedServers} = context
+    const { clickedServers } = context
 
   return (
         <div>
@@ -30,17 +30,16 @@ const Range = (props) => {
         if(ipaddr[0] === temp.split(" ")[0] && Object.keys(temp2[ipaddr]).slice(1).includes(temp.split(" ")[1]))
         {
           return <GraphRange key={ipaddr+ temp.split(" ")[1]}
-          cpuram={false} data1={temp} data2={temp2} ipAddr={ipaddr} name={temp2[ipaddr].name}
+          cpuram={false} dataInfo={temp} dataValue={temp2} ipAddr={ipaddr} name={temp2[ipaddr].name}
           />
         }
-      else{
-        return null
-      }}  
+      else{ return null }
+    }  
   ) : <AngryJOe />
 )   : <AngryJOe />
 }
         </div>
   )
-};
+}
   
 export default Range;

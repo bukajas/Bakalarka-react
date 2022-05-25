@@ -1,9 +1,8 @@
 import React from "react"
 import "antd/dist/antd.css";
 import "../index.css";
-import { Layout, Menu} from 'antd'
-import {
-  DatabaseOutlined,
+import { Layout, Menu } from 'antd'
+import { DatabaseOutlined,
   ClusterOutlined,
 } from '@ant-design/icons'
 import {CheckboxInt} from './App'
@@ -32,7 +31,7 @@ const Template = () => {
 const valuesList2 = ['Cpu/Ram','Bit rate in','Bit rate out','Packet rate in','Packet rate out','Tcp established']
 
     const context = React.useContext(CheckboxInt)
-    const { clickedServers, setClickedServers, dates, valuesList } = context
+    const { clickedServers, setClickedServers , dates, valuesList } = context
 
         function handleClickedServers(e) {
           setClickedServers(e.selectedKeys)
@@ -60,7 +59,6 @@ const valuesList2 = ['Cpu/Ram','Bit rate in','Bit rate out','Packet rate in','Pa
 
   return (
     <div>
-      
 <Layout>
   <Sider 
       style={{
@@ -78,30 +76,20 @@ const valuesList2 = ['Cpu/Ram','Bit rate in','Bit rate out','Packet rate in','Pa
           
           <Menu key={dattes.ip + 'menu'} selectedKeys={clickedServers} onSelect={handleClickedServers} onDeselect={handleClickedServers} multiple={true} theme="dark" mode="inline">
             <SubMenu multiple={true} key={dattes.ip} icon={<DatabaseOutlined />} 
-            title={<>{dattes.ip}<StatusSign stat={dattes.status}/></>} >
-              <Menu.Item disabled key='j'>
+            title={<div>{dattes.ip}<StatusSign stat={dattes.status}/></div>}>
+
+              <Menu.Item disabled key='All'>
              <button className='but-menu' onClick={()=> selectAllValues(dattes.ip)}>All</button>
-              
               </Menu.Item>
-              <Menu.Item disabled key='l' >
-
+              <Menu.Item disabled key='None' >
                <button className='but-menu' onClick={()=> unSelectAllValues(dattes.ip)}>None</button>
-
-
               </Menu.Item>
             
-
-                
-            
-
               {valuesList.map((values, i) => {
                 return <Menu.Item disabled={dattes.stat} key={dattes.ip +" "+ values}>{valuesList2[i]}</Menu.Item>})}
             </SubMenu>
           </Menu>
-        )
-        }
-        )
-        }
+        )  }  )  }
   
   </Sider>
       <Layout className="site-layout" style={{ marginLeft: 200 }}>
@@ -121,11 +109,8 @@ const valuesList2 = ['Cpu/Ram','Bit rate in','Bit rate out','Packet rate in','Pa
              
         </Router>
       </Layout>
-      
 </Layout>
-
 </div>
-
   )
 }
 

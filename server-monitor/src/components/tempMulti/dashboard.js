@@ -40,7 +40,7 @@ return (  <div className='clock'>Last Downloaded Time <p>{lastValue[0]}</p></div
 
 
 //hodiny
-function Clock(props){
+function Clock(){
  const [date, setDate] = React.useState(new Date())
 
  React.useEffect(() => {
@@ -118,14 +118,11 @@ function IsNotAvailable(){
                     <div key={props.datas.ip} className='dashboard-container-child'>
                       <div className='dash-card'>
                          <div className='dashboard-card-ip'>
-
                             {props.datas.ip}  {" "}
-
-
-                            <Dropdown overlay={
-                              <Card size="small">
-                                  <div>{props.datas.description}</div>
-                              </Card>}>
+                            <Dropdown selectable='false' overlay={
+                                  <div style={{backgroundColor:"white", paddingLeft:"10px", paddingRight:"10px", borderRadius:"5px",fontSize:"15px"}}>
+                                    {props.datas.description}
+                                  </div> }>
                                   <QuestionCircleOutlined/>
                             </Dropdown>
                             </div>
@@ -140,12 +137,11 @@ function IsNotAvailable(){
                     <div key={props.datas.ip} className='dashboard-container-child'>
                       <div className='dash-card'>
                       <div className='dashboard-card-ip'>
-                           
                            {props.datas.ip} {" "}
                            <Dropdown overlay={
-                             <Card size="small">
-                                 <div>{props.datas.description}</div>
-                             </Card>}>
+                                 <div style={{backgroundColor:"white", paddingLeft:"10px", paddingRight:"10px", borderRadius:"5px",fontSize:"15px"}}>
+                                    {props.datas.description}
+                                  </div>}>
                                  <QuestionCircleOutlined/>
                            </Dropdown>
                            </div>
