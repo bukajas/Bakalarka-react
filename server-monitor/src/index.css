@@ -44,9 +44,11 @@
 .angryjoe-img {
     width: 20%;
     height: 20%;
+    text-align: center;
 }
-.status {
-    text-align: left;
+.angryjoe{
+  text-align: center;
+  margin-top: 5%;
 }
 
 .logo {
@@ -136,21 +138,43 @@
   height: 30px;
   border: 1px solid;
   text-align: center;
-  box-shadow:
 }
+
 .dashboard-status{
-  border: 1px solid;
+  font-size: 18px;
   text-align: right;
-  padding-right: 5px;
-  float: right;
+  margin-top: -33px;
 }
+
+
+.dashboard-card-name{
+color:rgb(161, 159, 159);
+
+
+} 
+
+.dashboard-card-ip{
+  margin-top: -18px;
+  /* padding-right: 10px; */
+  font-size: 22px;
+  } 
+
+
+  
+
+.dash-card{
+  padding-bottom: 10px;
+}
+  
 .dashboard-title{
   border: 1px solid;
 }
 .dashboard-values{
-  border: 1px solid;
+  /* border: 1px solid; */
   margin-top: 10px;
 }
+
+
 
 
 .whole-content{
@@ -189,14 +213,13 @@
 }
 
 .headerr{
-  /* margin-left: 1200px; */
   text-align: right;
   width: 1000px;
   color: pink;
+  font-size: 15px;
 }
 
 .ant-input{
-  width: 50%;
   text-align: left;
 }
 .input{
@@ -214,34 +237,34 @@
   box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
   border-radius: 15px;
   margin-left: 50px;
-  margin-top: 10px;
+  margin-top: 40px;
   margin-bottom: 10px;
   background-color: rgb(255, 255, 255);
 }
 .dashboard-container {
   width: 400px;
-  height: 310px;
+  height: 280px;
   background-color: white;
 }
 .dashboard-topInfo{
-  background-image: linear-gradient(#2c798c,#266170 );;
+  background-color: rgb(44 121 140);
   height: 100px;
-  width: 75%;
+  width: 60%;
   border-bottom-left-radius: 10px;
-  /* margin-left: 25%; */
-  float: right;
+  position: absolute;
+  right: 0px;
 }
 .dashboard-topInfo-item{
   color: black;
-  width: 32.5%;
+  width: 29%;
   height: 90%;
   margin-top: 5px;
   margin-bottom: 5px;
-  margin-left: 5px;
+  margin-right: 20px;
   border: .1px solid;
   border-radius: 5px;
   border-color: #b1baa9;
-  float:left;
+  float: right;
 }
 .dashboard-topInfo-btn{
   color: black;
@@ -252,28 +275,18 @@
   border-radius: 5px;
   border-color: #b1baa9;
   float: left;
+  text-size-adjust: 80%;
 }
 
 .ant-dropdown{
   box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
 }
 
-.dashboard-card-name{
-float: left;
-}
-.dashboard-card-ip{
-  float: left;
-  }
-
 .clock{
   font-size: 1.5vw;
   text-align: center;
   color: #b1baa9;
 }
-
-
-
-
 
 .ant-input-number{
   width: 100px;
@@ -297,18 +310,19 @@ float: left;
 }
 
 .settings-form-whole{
-  color: pink;
-  width: 100%;
+  padding-top: 10px;
+  padding-right: 70%;
+
 }
 .settings-remove-whole{
   margin-top: 100px;
-  width:50%
 }
 .settings-remove-item{
-
   margin-top: 20px;
-
+  font-size: 15px;
 }
+
+
 
 .ant-form .ant-form-horizontal{
   color: pink;
@@ -319,33 +333,43 @@ float: left;
 }
 
 .current-pick{
-  margin-left: 45px;
+  margin-left: 10px;
   margin-top: 15px;
   display: inline-block;
-  font-size: 18px;
+  font-size: 15px;
   text-align: left;
 }
 .current-spacing{
   margin-top: 1%;
-  margin-right: 20%;
+  margin-right: 3%;
   float: right;
   right: 5px;
   height: 50px;
 
 }
 .current-spacing-name{
-  margin-top: 1.5%;
-  margin-left: 20%;
-  margin-right: 20px;
-  float: right;
-  font-size: 16px;
+  padding-top: 5px;
+padding-right: 5px;
+font-size: 15px;
+  float: left;
+  margin-left: 10px;;
+
 }
 .informative{
-  margin-right: 20px;
-  margin-top:  -1%;
+  margin-right: 3%;
+  margin-top:  1.5%;
   text-align: right;
 }
 
 .ant-form-item-control-input-content {
   color: white;
 }
+
+.ant-picker-range {
+  margin-top: 4%;
+  margin-left: 7%;
+
+
+
+}
+

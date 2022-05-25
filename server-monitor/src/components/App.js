@@ -9,11 +9,10 @@ import ListOfServers from "./ListOfServers.json"
 import {Filterer} from "./functions/Functions"
 
 
-export { CheckboxInt }
+
 
 
 const CheckboxInt =  createContext()
-
 
 
 
@@ -71,7 +70,7 @@ const Main = ({ children }) => {
 function Druhy({ children }) {
   const context = React.useContext(CheckboxInt)
   const { dates, startStop, timeInterval,
-    globalData, setGlobalData, mutationRef
+    globalData, setGlobalData
   } = context
   const [seconds, setSeconds] = React.useState(0)
   
@@ -96,22 +95,20 @@ React.useEffect(() => {
       if(startStop){serverStatus()}
     }, [seconds])
 
-React.useEffect(() => {
-      mutationRef.current = globalData
-    }, [globalData])
+
 
     
   function serverStatus() {
     var tempIp = dates.map((data) => {return data.ip })
     var golb
   //  pokud v dates mam ip, a od ni bude chodit data, tak bude true jinak false
-      dates.map((data, i) => {
+      dates.forEach((data) => {
         golb = globalData.map((globData, i) => {
           var stat = 0
           var ipaddr = Object.keys(globData)[0]
           if(tempIp.includes(ipaddr)){
-            for(var i = 1; i < 6; i++){
-              if(globData[ipaddr].cpu.at(0 - i) == null){
+            for(var k = 1; k < 6; k++){
+              if(globData[ipaddr].cpu.at(0 - k) == null){
                 stat = stat + 1
             } else{
               if(stat >= 2 && stat <5){ return {[ipaddr]: 2} }
@@ -125,13 +122,13 @@ React.useEffect(() => {
         })
       })
       var status = Array(tempIp.length).fill(0)
-      golb.map((datas,i) => {
+      golb.forEach((datas,i) => {
         var ip = Object.keys(datas)[0]
         if(tempIp.includes(ip)){
           status[tempIp.indexOf(ip)] = datas[ip]
-          if(status[tempIp.indexOf(ip)] == 0){ dates[tempIp.indexOf(ip)].status = 'OK' }
-          if(status[tempIp.indexOf(ip)] == 2){ dates[tempIp.indexOf(ip)].status = 'WARNING' }
-          if(status[tempIp.indexOf(ip)] == 5){ dates[tempIp.indexOf(ip)].status = 'CRITICAL' }
+          if(status[tempIp.indexOf(ip)] === 0){ dates[tempIp.indexOf(ip)].status = 'OK' }
+          if(status[tempIp.indexOf(ip)] === 2){ dates[tempIp.indexOf(ip)].status = 'WARNING' }
+          if(status[tempIp.indexOf(ip)] === 5){ dates[tempIp.indexOf(ip)].status = 'CRITICAL' }
         }
       })
       }
@@ -142,14 +139,14 @@ React.useEffect(() => {
     var postValues
     var tempOBJ = []
     var fetchedIps = []
-    if(type == 'first'){ postValues = postValuess }
+    if(type === 'first'){ postValues = postValuess }
     
     Axios.post( Config.server.getData, postValues, {headers: { 'Content-Type': 'application/json' }})
     .then((response) => {
       if (!response.data.error) {
 
         var newData = Filterer(dates, response.data.data)
-        newData.map((datas, i) => {
+        newData.forEach((datas, i) => {
           var fetchedKey = datas.info.ip;
           fetchedIps.push(fetchedKey)
            var newServer = {[datas.info.ip]: {
@@ -201,5 +198,5 @@ const App = () => {
   )
 }
 
-
+export { CheckboxInt }
 export default App

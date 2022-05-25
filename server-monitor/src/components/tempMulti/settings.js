@@ -1,6 +1,12 @@
 import React from "react"
-import {  Button, message, Form, Input } from 'antd'
+import { Dropdown, Card, Button, message, Form, Input } from 'antd'
 import { CheckboxInt } from '../App'
+import {
+  QuestionCircleOutlined
+} from '@ant-design/icons'
+
+
+
 
 const Settings = () => {
   const context = React.useContext(CheckboxInt)
@@ -48,7 +54,7 @@ const Settings = () => {
       </Form.Item>
 
       <Form.Item
-       className='input'
+
         label="Description"
         name="description"
         >
@@ -61,14 +67,31 @@ const Settings = () => {
           span: 16,
         }}
         >
-        <Button type="primary" htmlType="submit">
+        <Button variant="contained" type="primary" htmlType="submit">
           Submit
         </Button>
       </Form.Item>
     </Form>
     </div>
 <div className="settings-remove-whole">
-    {dates.map((dates) => <div className="settings-remove-item">{dates.ip} <Button danger><div removeips={dates.ip} onClick={removeServer}>Remove</div> </Button></div>)}
+  <hr></hr>
+    {dates.map((dates) => <div key={dates.ip} className="settings-remove-item">
+
+      <div className='dashboard-card-ip'>{dates.ip} 
+      <Dropdown overlay={       
+        <Card size="small">
+            <div>{dates.description}</div>
+        </Card>}>
+        <QuestionCircleOutlined/>
+      </Dropdown> {" "}
+
+      <Button type="primary" danger><div removeips={dates.ip} onClick={removeServer}>Remove</div> </Button></div>
+      <div 
+
+      className='dashboard-card-name'> {dates.name} 
+      </div>
+      <hr style={{width: '230px', marginLeft:'0' }}></hr>
+      </div>)}
 </div>
     </div>
   )}

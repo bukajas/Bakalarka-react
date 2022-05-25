@@ -1,7 +1,6 @@
 import React from 'react'
 import { Line } from 'react-chartjs-2'
 import { Chart, registerables } from 'chart.js'
-import AngryJOe from '../AngryJOe'
 import { Button } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { CheckboxInt } from '../App'
@@ -10,7 +9,6 @@ import GraphOptions from './graphOptions.json'
 Chart.register(...registerables)
 
 const GraphRange = (props) => {
-
     const context = React.useContext(CheckboxInt)
     const {  valuesList } = context
     var indexOfValues = valuesList.indexOf(props.data1.split(" ")[1]) +1

@@ -3,14 +3,14 @@ import { CheckboxInt } from '../App'
 import Range from '../tempMulti/range'
 import { Space } from 'antd';
 import {format, isBefore, isAfter, add} from 'date-fns'
-import AngryJOe from '../AngryJOe'
+import AngryBen from '../AngryBen'
 import moment from 'moment';
 import { DatePicker, Radio } from 'antd';
 import {Config} from '../../config.js'
 import Axios from 'axios'
 import AddData from '../functions/AddData';
 import {GlobalFirstLast, every_nth, SetTempDataRange, Filterer} from '../functions/Functions'
-import { LoadingOutlined } from '@ant-design/icons'
+
 
 
 const { RangePicker } = DatePicker;
@@ -82,7 +82,7 @@ function FetchData(type, postValues, tempRangeData, dateStrings) {
                {
 
                 var newData = Filterer(dates, response.data.data)
-                newData.map((datas, i) => {
+                newData.forEach((datas, i) => {
                    var fetchedKey = datas.info.ip; 
                     var newServer = {[fetchedKey]: {
                      name: datas.info.name,
@@ -145,22 +145,29 @@ const optionsSpacing = [
   {label: '2 Mins', value: 120},
 ]
 
+
       return (
         <div>
+          <Space direction="vertical">
+            <RangePicker 
+            ranges={{ 'This minute': [moment().startOf('minute'), moment()]}}
+              showTime format="YYYY-MM-DD HH:mm:ss" onChange={onChange} 
+              size='large'
+              />
+          </Space>
+          <div className="current-spacing"> 
+          <div className="current-spacing-name">Spacing:  </div>
           <Radio.Group
            options={optionsSpacing}
           onChange={onChangeSpacing}
           value={spacing}
           optionType="button"
           buttonStyle="solid"
+          size="large"
         />
-          <Space direction="vertical">
-            <RangePicker ranges={{ 'This minute': [moment().startOf('minute'), moment()],
-              'This Month': [moment().startOf('month'), moment().endOf('month')],  }}
-              showTime format="YYYY-MM-DD HH:mm:ss" onChange={onChange} />
-          </Space>
-          <p>(for zoom and drag press "CTRL" key)</p>
-          {returned ? <Range rangeData={localRange}/> : <LoadingOutlined />}
+        </div> 
+          <div className="informative">(for zoom and drag press "CTRL" key)  {" "}</div>
+          {localRange.length > 0 ? (returned ? <Range rangeData={localRange}/> : <AngryBen/>) : <AngryBen/>}
         </div>
   )
 }

@@ -3,11 +3,13 @@ import { Config } from '../../config.js'
 import Axios from 'axios'
 import { CheckboxInt } from '../App'
 import Current from '../tempMulti/current'
-import { Space, Select, Input, Form, Radio} from 'antd';
+import { Select, Input, Form, Radio} from 'antd';
 import { format, sub, isBefore } from 'date-fns'
 import Button from '@mui/material/Button';
 import AddData from '../functions/AddData'
 import { GlobalFirstLast, SetTempData, SetPostValues, every_nth, Filterer } from '../functions/Functions';
+
+
 
 const { Option } = Select
 
@@ -19,7 +21,6 @@ const DataCurrent = () => {
   const context = React.useContext(CheckboxInt)
   const { dates, startStop, setStartStop,  globalData, setGlobalData, tempCurrentData, setTempCurrentData } = context
   const [seconds, setSeconds] = React.useState(0)
-  const [returned, setReturned] = React.useState(false)
   const [spacing, setSpacing] = React.useState(1)
 
   const optionsSpacing = [
@@ -37,47 +38,39 @@ React.useEffect(() => {
   })
      
   const onFinish = (values) => {
-
     if(values.number.timeValue === 's'){ secsToSub = values.number.number }
     if(values.number.timeValue === 'm'){  secsToSub = values.number.number * 60 }
     if(values.number.timeValue === 'h'){  secsToSub = values.number.number * 3600 }
-    
     var tempInterval
     var globalDates = GlobalFirstLast(globalData, secsToSub) 
     let interval = sub(globalDates[1], {seconds: secsToSub}) 
-  
     if(isBefore(interval, globalDates[0])){         
       tempInterval = SetPostValues('before', globalDates)
       FetchData('before', tempInterval, globalDates)
-    }
-    else {
+    } else {
       var tempik = SetTempData(globalData, globalDates)
       if(spacing !== 1){
         var ever_NTH = tempCurrentData ? every_nth(tempik, spacing) : tempik
         setTempCurrentData(ever_NTH)
-      }
-      else{setTempCurrentData(tempik)}}
-  
-  }
+      } 
+      else{setTempCurrentData(tempik)}}}
   
 React.useEffect(() =>{
   if(startStop){
     var dattes = GlobalFirstLast(globalData, secsToSub)
     FetchData('update', {type: "update", last: format(dattes[1], "yyyy-MM-dd kk:mm:ss")}, dattes)
-  }
-}, [seconds])
+  }}, [seconds])
 
 
 function FetchData(type, postValues, globalDates){
-  setReturned(false)
   var tempOBJ = []
   Axios.post( Config.server.getData, postValues, {headers: { 'Content-Type': 'application/json' }})
         .then((response) => {
           if (!response.data.error) 
           {
-
             var newData = Filterer(dates, response.data.data)
-            newData.map((datas, i) => {
+
+            newData.forEach((datas, i) => {
               var fetchedKey = datas.info.ip; 
                var newServer = {[fetchedKey]: {
                 name: datas.info.name,
@@ -100,9 +93,7 @@ function FetchData(type, postValues, globalDates){
             if(spacing !== 1){
               var ever_NTH = tempCurrentData ? every_nth(tempik, spacing) : tempik
               setTempCurrentData(ever_NTH)
-            }
-            else{ setTempCurrentData(tempik) }
-
+            } else{ setTempCurrentData(tempik) }
             setGlobalData(tempGlob)
           })
           .catch((error) => {
@@ -111,9 +102,6 @@ function FetchData(type, postValues, globalDates){
           })       
 }
 
-React.useEffect(() =>{
-  setReturned(true)
-},[tempCurrentData])
 
 
 
@@ -122,12 +110,10 @@ const checkNumber = (_, value) => {
   return Promise.reject(new Error('Number must be greater than zero!'))}
 
   function onChangeSpacing(e){
-   setSpace(e.target.value)
-  }
+   setSpace(e.target.value) }
 
   function setSpace(spacing){
     setSpacing(spacing)
-    setReturned(false)
     var tempik = SetTempData(globalData, GlobalFirstLast(globalData, secsToSub), secsToSub)
     if(spacing !== 1){ 
       setTempCurrentData(every_nth(tempik, spacing))
@@ -137,9 +123,8 @@ const checkNumber = (_, value) => {
 
 
   return (
-    <div >
+    <div>
       <div>
-
       <div className="dashboard-topInfo-btn">
         {startStop ? 
         <Button onClick={() => setStartStop(prevState => !prevState)} color="error" variant="contained" >STOP</Button>
@@ -147,9 +132,7 @@ const checkNumber = (_, value) => {
         <Button onClick={() => setStartStop(prevState => !prevState)} variant="contained" >START</Button>
         }
       </div>
-
     <div>
-       
         <div className="current-pick">
       <Form
         name="customized_form_controls"
@@ -158,7 +141,6 @@ const checkNumber = (_, value) => {
         initialValues={{
           number: { number: 1, timeValue: 's' }}}
       >
-
       <Form.Item
         name="number"
         label="Interval"
@@ -171,10 +153,10 @@ const checkNumber = (_, value) => {
         <Button type="default" htmlType="submit"> Update </Button>
       </Form.Item>
     </Form>
-        <div className="current-pick">Current setting:  {secsToSub} seconds</div>
         </div> 
+        <div className="current-pick">Current setting:  {secsToSub} seconds</div>
         <div className="current-spacing">          
-        
+        <div className="current-spacing-name">Spacing:  </div>
           <Radio.Group
           options={optionsSpacing}
           onChange={onChangeSpacing}
@@ -184,11 +166,8 @@ const checkNumber = (_, value) => {
           size="large"
         />  
         </div>
-
-    <div className="current-spacing-name">Spacing:  </div>
+    
     </div>
-
-
       </div>
       <div className="informative">(for zoom and drag press "CTRL" key)</div>
       <Current tempData={tempCurrentData.length > 0 ? tempCurrentData : globalData}/>
@@ -210,24 +189,19 @@ const ValueInput = ({ value = {}, onChange }) => {
   }
   const onNumberChange = (e) => {
     const newNumber = parseInt(e.target.value || '0', 10)
-    if (Number.isNaN(number)) {
-      return
-    }
-    if (!('number' in value)) {
-      setNumber(newNumber)
-    }
-    triggerChange({
-      number: newNumber,
-    })}
+    if (Number.isNaN(number)) {  return   }
+    if (!('number' in value)) {      setNumber(newNumber)    }
+
+    triggerChange({ number: newNumber,  })}
 
   const onTimeValueChange = (newTimeValue) => {
     if (!('timeValue' in value)) {
-      setTimeValue(newTimeValue);
+      setTimeValue(newTimeValue)
     }
     triggerChange({
       timeValue: newTimeValue,
-    })
-  }
+    })}
+    
   return (
     <span>
       <Input

@@ -1,13 +1,10 @@
 import React from 'react'
 import { Line } from 'react-chartjs-2'
 import { Chart, registerables } from 'chart.js'
-import { Tabs, Button } from 'antd';
-
+import { Button } from 'antd';
 import { CheckboxInt } from '../App'
 import { DownloadOutlined } from '@ant-design/icons';
 import GraphOptions from './graphOptions.json'
-
-const { TabPane } = Tabs;
 
 
 
@@ -18,6 +15,7 @@ const GraphCurrent = (props) => {
     const context = React.useContext(CheckboxInt)
     const { valuesList } = context
 
+var firstTimeStamp = props.data2[props.ipAddr].timestamp.at(0)
 
 React.useEffect(() =>{
   var lenghtOfData = props.data2[props.ipAddr].timestamp.length
@@ -31,9 +29,7 @@ React.useEffect(() =>{
     }
   }
 
-  
-
-}, [props.data2[props.ipAddr].timestamp.at(0)])
+}, [firstTimeStamp])
 
  var indexOfValues = valuesList.indexOf(props.data1.split(" ")[1]) +1
  var dataJson = {
@@ -59,7 +55,7 @@ React.useEffect(() =>{
     }
   ]
 }
-if(props.cpuram==true){
+if(props.cpuram === true){
   dataJson = {
     labels: props.data2[props.ipAddr].timestamp.map((datas) => datas.split(".")[0].split("T")[1]),
   datasets: [
@@ -158,8 +154,7 @@ const optionsJson = {
             ref={downloadImg}
             className="templateGraf"
             /> 
-          </div>
-          
+          </div> 
         </div>
   )
 }

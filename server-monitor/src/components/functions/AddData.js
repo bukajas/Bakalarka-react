@@ -1,9 +1,6 @@
-import {format, set, sub, isBefore} from 'date-fns'
-
-export const AddData= (type, globalData, tempOBJ) => {
+export const AddData = (type, globalData, tempOBJ) => {
 
 
-    //props - tempfetched data
 
 //postvalues je typ a casovy usek
 //type je rozliseni
@@ -13,10 +10,10 @@ export const AddData= (type, globalData, tempOBJ) => {
     var tempGlobal = [...globalData]
     var globalIps  = []
     var fetchedIps = []
-    tempGlobal.map((data) => { var globalKey = Object.keys(data)[0]; globalIps.push(globalKey) })
-    tempOBJ.map((data) => { var fetchedKey = Object.keys(data)[0]; fetchedIps.push(fetchedKey) })
+    tempGlobal.forEach((data) => { var globalKey = Object.keys(data)[0]; globalIps.push(globalKey) })
+    tempOBJ.forEach((data) => { var fetchedKey = Object.keys(data)[0]; fetchedIps.push(fetchedKey) })
   
-              tempOBJ.map((datas, i) => {  //fetched data
+              tempOBJ.forEach((datas, i) => {  //fetched data
                 var OBJIp = Object.keys(datas)[0] // ipadresa objektu
                 if(globalIps.includes(OBJIp))
                 {
@@ -25,7 +22,7 @@ export const AddData= (type, globalData, tempOBJ) => {
                   tempServer = {...tempGlobal[globalIndex]}
 
                   //replace data from server to avoid duplacates, and to replace the nulls
-                  if(type == 'before'){
+                  if(type === 'before'){
                     var arrayLength = datas[OBJIp].timestamp.length  //delka ziskanych dat
                     tempServer[OBJIp].cpu = [...datas[OBJIp].cpu, ...tempServer[OBJIp].cpu]
                     tempServer[OBJIp].ram = [...datas[OBJIp].ram, ...tempServer[OBJIp].ram]
@@ -38,7 +35,7 @@ export const AddData= (type, globalData, tempOBJ) => {
                     tempGlobal[globalIndex] = tempServer
                   }
                   else{
-                    var arrayLength = datas[OBJIp].timestamp.length  //delka ziskanych dat
+                    arrayLength = datas[OBJIp].timestamp.length  //delka ziskanych dat
                     tempServer[OBJIp].cpu = [...tempServer[OBJIp].cpu, ...datas[OBJIp].cpu]
                     tempServer[OBJIp].ram = [...tempServer[OBJIp].ram, ...datas[OBJIp].ram]
                     tempServer[OBJIp].timestamp = [...tempServer[OBJIp].timestamp, ...datas[OBJIp].timestamp]
@@ -76,13 +73,12 @@ export const AddData= (type, globalData, tempOBJ) => {
                     tempServer[OBJIp].tcp_established = [ ...tempArrPre,...tempServer[OBJIp].tcp_established]
                     tempServer[OBJIp].timestamp = [...tempGlobal[0][Object.keys(tempGlobal[0])].timestamp, ...tempServer[OBJIp].timestamp, ]
                     tempGlobal[tempGlobal.length] = tempServer
-
                   }
                   else{
                     tempGlobal[tempGlobal.length] = {...datas}
                   }
                 }
-                tempGlobal.map((datas2, i2) => {
+                tempGlobal.forEach((datas2, i2) => {
                   var tempIPglob = Object.keys(datas2)[0]
                   if(!fetchedIps.includes(tempIPglob)){
                     tempServer = {...datas2}

@@ -5,14 +5,16 @@ import 'antd/dist/antd.css';
 import { Chart, registerables } from 'chart.js'
 import { CheckboxInt } from '../App'
 import AngryJOe from '../AngryJOe'
+import {
+  QuestionCircleOutlined
+} from '@ant-design/icons'
 import { format } from 'date-fns'
-import { Dropdown, Space, Card} from 'antd'
+import { Dropdown, Card} from 'antd'
 import Grid from '@mui/material/Grid'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import AddData from '../functions/AddData'
 import {GlobalFirstLast, SetTempData, StatusSign, Filterer} from '../functions/Functions'
-
 
 Chart.register(...registerables)
 var secsToSub = 60
@@ -76,23 +78,14 @@ function IsAvailable(props){
   return (
     <div>
       <div className='dashboard-values'>
-            <p>cpu : {globalData[index][ipaddr].cpu[arLen]} %   (avg: {AverageValue(globalData[index][ipaddr].cpu)} %) </p>
-            <p>ram: {globalData[index][ipaddr].ram[arLen]} %    (avg: {AverageValue(globalData[index][ipaddr].ram)} %)</p>
-            <p>bit rate in: {globalData[index][ipaddr].bit_rate_in[arLen]} bits/sec  (avg: {AverageValue(globalData[index][ipaddr].bit_rate_in)} bits/sec)</p>
-            <p>bit rate out: {globalData[index][ipaddr].bit_rate_out[arLen]} bits/sec   (avg: {AverageValue(globalData[index][ipaddr].bit_rate_out)} bits/sec</p>
-            <p>packet rate out: {globalData[index][ipaddr].packet_rate_out[arLen]} packets/sec (avg: {AverageValue(globalData[index][ipaddr].packet_rate_out)} packets/sec)</p>
-            <p>tcp established: {globalData[index][ipaddr].tcp_established[arLen]} packets/sec    (avg: {AverageValue(globalData[index][ipaddr].tcp_established)} packets/sec)</p>
+            <p>Cpu : {globalData[index][ipaddr].cpu[arLen]} %   (avg: {AverageValue(globalData[index][ipaddr].cpu)} %) </p>
+            <p>Ram: {globalData[index][ipaddr].ram[arLen]} %    (avg: {AverageValue(globalData[index][ipaddr].ram)} %)</p>
+            <p>Bit rate in: {globalData[index][ipaddr].bit_rate_in[arLen]} bits/sec  (avg: {AverageValue(globalData[index][ipaddr].bit_rate_in)} bits/sec)</p>
+            <p>Bit rate out: {globalData[index][ipaddr].bit_rate_out[arLen]} bits/sec   (avg: {AverageValue(globalData[index][ipaddr].bit_rate_out)} bits/sec)</p>
+            <p>Packet rate out: {globalData[index][ipaddr].packet_rate_out[arLen]} packets/sec (avg: {AverageValue(globalData[index][ipaddr].packet_rate_out)} packets/sec)</p>
+            <p>Tcp established: {globalData[index][ipaddr].tcp_established[arLen]} packets/sec    (avg: {AverageValue(globalData[index][ipaddr].tcp_established)} packets/sec)</p>
         </div>
-        <Dropdown overlay={
-          <Card size="small">
-            <div>{props.datas.description}</div>
-          </Card>}>
-          <div className='dashboard-description'>
-            <Space>
-              Description
-            </Space>
-          </div>
-        </Dropdown>
+
     </div>
         
   )}
@@ -109,16 +102,7 @@ function IsNotAvailable(){
           <p>packet rate_out: X packets/sec (avg: X packets/sec) </p>
           <p>tcp established: X packets/sec    (avg: X packets/sec) </p>
        </div>
-            <Dropdown overlay={
-              <Card size="small">
-                  <div>{props.datas.description}</div>
-              </Card>}>
-                <div className='dashboard-description'>
-                  <Space>
-                    Description
-                  </Space>
-                </div>
-            </Dropdown>
+
     </div>
   )}
 
@@ -127,14 +111,25 @@ function IsNotAvailable(){
     <div className='dashboard-container'>
       { run.map((run) => {
           var tempIp = []
-          globalData.map((data) => { var globalKey = Object.keys(data)[0]; tempIp.push(globalKey)})
+          globalData.forEach((data) => { var globalKey = Object.keys(data)[0]; tempIp.push(globalKey)})
 
         if(tempIp.includes(props.datas.ip)){
                  return (
                     <div key={props.datas.ip} className='dashboard-container-child'>
-                      <div>
+                      <div className='dash-card'>
+                         <div className='dashboard-card-ip'>
+
+                            {props.datas.ip}  {" "}
+
+
+                            <Dropdown overlay={
+                              <Card size="small">
+                                  <div>{props.datas.description}</div>
+                              </Card>}>
+                                  <QuestionCircleOutlined/>
+                            </Dropdown>
+                            </div>
                          <div className='dashboard-status'>Status: <StatusSign stat={props.datas.status}/></div>
-                         <div className='dashboard-card-ip'>{props.datas.ip}</div>
                          <div className='dashboard-card-name'>{props.datas.name}</div>
                       </div>
                      <IsAvailable key={props.datas.ip} tempIp={tempIp} datas={props.datas}/>
@@ -143,10 +138,19 @@ function IsNotAvailable(){
         else {
               return (
                     <div key={props.datas.ip} className='dashboard-container-child'>
-                      <div className="dashboard-top">
-                       <div className='dashboard-status'>Status: <StatusSign stat={props.datas.status}/></div>
-                      <div  className='dashboard-card-ip'>{props.datas.ip}</div>
-                      <div  className='dashboard-card-name'>{props.datas.name}</div>
+                      <div className='dash-card'>
+                      <div className='dashboard-card-ip'>
+                           
+                           {props.datas.ip} {" "}
+                           <Dropdown overlay={
+                             <Card size="small">
+                                 <div>{props.datas.description}</div>
+                             </Card>}>
+                                 <QuestionCircleOutlined/>
+                           </Dropdown>
+                           </div>
+                        <div className='dashboard-status'>Status: <StatusSign stat={props.datas.status}/></div>
+                        <div className='dashboard-card-name'>{props.datas.name}</div>
                       </div>
                      <IsNotAvailable datas={props.datas}/>
                     </div>
@@ -235,7 +239,7 @@ const Dashboard = () => {
           {tempCurrentData ?
             dates.map((datas, i) => 
             {
-              return (<Grid key={'grid-'+datas.ip} xs={7} md={7} lg={5} xl={4} item={true}><Card key={'dashboarb-grid-card'}><DashboardTab key={datas.ip} datas={datas} i={i}  /></Card></Grid>)
+              return (<Grid key={'grid-'+ datas.ip} xs={10} md={10} lg={6} xl={4} item={true}><Card key={'dashboarb-grid-card'}><DashboardTab key={datas.ip} datas={datas} i={i}  /></Card></Grid>)
             }) : <AngryJOe />
           }
         </Grid></Box>

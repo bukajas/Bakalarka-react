@@ -1,15 +1,9 @@
-
 import React from 'react';
 import GraphCurrent from "../graphs/GraphCurrent"
 import { Chart, registerables } from 'chart.js'
 import AngryJOe from '../AngryJOe'
-import {
-  LoadingOutlined,
-} from '@ant-design/icons';
 import { CheckboxInt } from '../App'
-import { Select } from 'antd';
 
-const { Option } = Select;
 Chart.register(...registerables)
 
 
@@ -21,20 +15,25 @@ const Current = (props) =>  {
 return (
       <div> 
 {
+
       clickedServers.length > 0 ? clickedServers.map((temp) => 
       props.tempData ? props.tempData.map((temp2) => {
         var ipaddr = Object.keys(temp2)
-        if(ipaddr == temp.split(" ")[0] && temp.split(" ")[1] == 'cpu_ram'){
-          return <GraphCurrent  
+        if(ipaddr[0] === temp.split(" ")[0] && temp.split(" ")[1] === 'cpu_ram'){
+          return <GraphCurrent  key={ipaddr+ temp.split(" ")[1]}
           cpuram={true} data1={temp} data2={temp2} ipAddr={ipaddr} name={temp2[ipaddr].name} 
            />
         }
-        if(ipaddr == temp.split(" ")[0] && Object.keys(temp2[ipaddr]).slice(1).includes(temp.split(" ")[1]))
+        if(ipaddr[0] === temp.split(" ")[0] && Object.keys(temp2[ipaddr]).slice(1).includes(temp.split(" ")[1]))
         {
-           return <GraphCurrent  
+           return <GraphCurrent key={ipaddr+ temp.split(" ")[1]} 
            cpuram={false} data1={temp} data2={temp2} ipAddr={ipaddr} name={temp2[ipaddr].name} 
            />
-        }} ): <AngryJOe/>)  : <AngryJOe />
+        }
+      else{
+        return null
+      }
+      } ): <AngryJOe/>)  : <AngryJOe />
       }
       </div>
 )

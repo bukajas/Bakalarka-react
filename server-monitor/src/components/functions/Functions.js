@@ -6,7 +6,7 @@ import {sub, format, isBefore} from 'date-fns'
 const GlobalFirstLast = (data, secsToSub) => {
     
         var getGlobalFirst, getGlobalLast
-        data.map((data, i) =>{
+        data.forEach((data, i) =>{
           var ipadr = Object.keys(data)[0]
           getGlobalFirst = data[ipadr].timestamp.at(0).split(".")[0].replace("T", " ") // prvni global cas
           getGlobalLast = data[ipadr].timestamp.at(-1).split(".")[0].replace("T", " ")
@@ -37,14 +37,14 @@ const DateFormater = function(date){ // format yyyy-mm-dd HH:MM:SS
 const SetPostValues = (type, globalDates) => {
     var postValues
 
-          if(type == 'before'){ // = range, curent
+          if(type === 'before'){ // = range, curent
             var tempInterval = {type: 'range', from:  format(globalDates[2], "yyyy-MM-dd kk:mm:ss"), to: format(globalDates[3], "yyyy-MM-dd kk:mm:ss")}
             if(isBefore(globalDates[2], globalDates[0])){
               postValues = tempInterval
             }
             else{ return null }
           }
-          if(type == 'update'){
+          if(type === 'update'){
             postValues = {type: "update", last: format(globalDates[1], "yyyy-MM-dd kk:mm:ss")}
       }
   return postValues
@@ -74,7 +74,7 @@ const SetTempData = (data, dates, secsToSub) => {
           ind = server[ipaddr].timestamp.indexOf(fromTime)
         }
         else{ ind = 0 - secsToSub }
-        {return {[ipaddr]: {
+        return {[ipaddr]: {
           name: server[ipaddr].name,
           description: server[ipaddr].description,
           cpu: server[ipaddr].cpu.slice(ind),
@@ -85,7 +85,7 @@ const SetTempData = (data, dates, secsToSub) => {
           packet_rate_in: server[ipaddr].packet_rate_in.slice(ind),
           packet_rate_out: server[ipaddr].packet_rate_out.slice(ind),
           tcp_established: server[ipaddr].tcp_established.slice(ind),
-        }}}
+        }}
       })
       return tempData
 }
@@ -97,7 +97,7 @@ const SetTempData = (data, dates, secsToSub) => {
 const every_nth = (data, nth) => {
     var tempFilter = [...data]
     var tempFilterServer
-    tempFilter.map((date, i) => {
+    tempFilter.forEach((date, i) => {
       var ipadddr = Object.keys(date)[0] 
       tempFilterServer = {...date}
       tempFilterServer[ipadddr].cpu = tempFilterServer[ipadddr].cpu.filter((e,i) => i % nth === nth -1)
@@ -113,7 +113,6 @@ const every_nth = (data, nth) => {
     })
     return tempFilter // cely data, at se neseru a state
   }
-
 const SetTempDataRange = (tempGlob, dateStrings) =>{
     var getIndexFirst, getIndexLast
     var tempData =tempGlob.map((server, i) =>{
@@ -141,7 +140,7 @@ const SetTempDataRange = (tempGlob, dateStrings) =>{
 
   const Filterer = (Servers, data) => {
     var Ips  = []
-    Servers.map((data) => { var globalKey = data.ip; Ips.push(globalKey) })
+    Servers.forEach((data) => { var globalKey = data.ip; Ips.push(globalKey) })
     var result = data.filter(servers => Ips.includes(servers.info.ip))
       return result
     }
