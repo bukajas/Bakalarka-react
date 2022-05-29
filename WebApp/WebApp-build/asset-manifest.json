@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/static/css/main.838a977e.css",
+    "main.js": "/static/js/main.b1ae7e6c.js",
+    "static/media/vut-logo.jpg": "/static/media/vut-logo.960be6e3691eeee029ab.jpg",
+    "index.html": "/index.html",
+    "main.838a977e.css.map": "/static/css/main.838a977e.css.map",
+    "main.b1ae7e6c.js.map": "/static/js/main.b1ae7e6c.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.838a977e.css",
+    "static/js/main.b1ae7e6c.js"
+  ]
+}

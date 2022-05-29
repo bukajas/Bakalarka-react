@@ -1,0 +1,44 @@
+
+.graph {
+    background-color: white;
+}
+.Left-column {
+    background-color: blue;
+}
+
+.angryjoe-img {
+    width: 50%;
+    height: 50%;
+}
+.sidenav {
+    height: 100%; /* Full-height: remove this if you want "auto" height */
+    width: 15%; /* Set the width of the sidebar */
+    position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+    z-index: 1; /* Stay on top */
+    top: 0; /* Stay at the top */
+    left: 0;
+    overflow-x: hidden; /* Disable horizontal scroll */
+    padding-top: 20px;
+  }
+  .main {
+    margin-left: 20%; /* Same as the width of the sidenav */
+    font-size: 20px; /* Increased text to enable scrolling */
+    padding: 0px 10px;
+  }
+.btn-start-stop {
+    color: red;
+    background-color:pink;
+}
+.graf {
+   border: 1px solid;
+    display: inline-block;
+    width: 700px;
+    height: 300px;
+
+}
+.status {
+    text-align: left;
+}
+.btn-download {
+    text-align: right;
+}
